@@ -98,14 +98,9 @@ body {
     filter: brightness(1.08);
 }
 
-.status {
-    color: #55d6be !important;
-    font-weight: bold;
-}
-
 
 /* =========================================
-   PLAYER — MANTÉM A CORREÇÃO FUNCIONAL
+   PLAYER — CORREÇÃO FUNCIONAL PRESERVADA
    ========================================= */
 
 #game {
@@ -153,7 +148,6 @@ body {
     object-fit: contain !important;
 }
 
-
 @media (max-width: 600px) {
 
     .container {
@@ -174,7 +168,6 @@ body {
 </style>
 </head>
 
-
 <body>
 
 <main class="container">
@@ -191,12 +184,9 @@ body {
 
     </div>
 
-
     <div id="launcher" class="start">
 
-        <h2>
-            Game Boy Advance
-        </h2>
+        <h2>Game Boy Advance</h2>
 
         <p id="message">
             Pronto para jogar.
@@ -212,21 +202,25 @@ body {
 
     </div>
 
-
     <div id="game"></div>
 
 </main>
-
 
 <script>
 
 /* =========================================
    MACEON PLAY
-   VERSÃO PLAY DIRETO + SAVE
+   PLAY DIRETO + SAVE
    ========================================= */
 
 const GAME_URL = "./games/jogo.gba";
 const GAME_NAME = "Maceon Play";
+
+/*
+   ID NUMÉRICO E FIXO DO JOGO.
+   Não alterar posteriormente.
+*/
+const GAME_ID = 1001;
 
 const launcher =
     document.getElementById("launcher");
@@ -257,27 +251,26 @@ function startEmulator() {
     message.textContent =
         "Carregando jogo...";
 
-
-    /*
-       Oculta a tela inicial.
-    */
-
-    launcher.style.display = "none";
+    launcher.style.display =
+        "none";
 
 
-    /*
-       Configuração do EmulatorJS.
-       Mantém a configuração que funcionou
-       no Maceon Play.
-    */
+    /* =====================================
+       CONFIGURAÇÃO DO EMULATORJS
+       ===================================== */
 
-    window.EJS_player = "#game";
+    window.EJS_player =
+        "#game";
 
     window.EJS_gameName =
         GAME_NAME;
 
+    /*
+       IMPORTANTE:
+       EmulatorJS exige ID numérico.
+    */
     window.EJS_gameID =
-        "maceon-play-gba";
+        GAME_ID;
 
     window.EJS_gameUrl =
         GAME_URL;
@@ -291,26 +284,48 @@ function startEmulator() {
     window.EJS_startOnLoaded =
         true;
 
-
     /*
-       SAVE:
-       força o EmulatorJS a sincronizar
-       periodicamente o save interno do jogo.
-
-       7000 = 7 segundos.
+       Solicita ao core a sincronização
+       periódica do save.
     */
-
     window.EJS_fixedSaveInterval =
         7000;
-
 
     window.EJS_language =
         "pt-BR";
 
 
     /*
-       Carrega o EmulatorJS.
+       CALLBACK OFICIAL DO EMULATORJS.
+
+       É executado quando o EmulatorJS
+       detecta alteração no save.
     */
+    window.EJS_onSaveUpdate =
+        function(event) {
+
+            console.log(
+                "Maceon Play: save atualizado.",
+                event
+            );
+
+            /*
+               Apenas registramos a confirmação.
+               Não modificamos o save recebido.
+            */
+
+            if (event && event.save) {
+
+                console.log(
+                    "Maceon Play: buffer de save recebido."
+                );
+            }
+        };
+
+
+    /* =====================================
+       CARREGAR EMULATORJS
+       ===================================== */
 
     const loader =
         document.createElement("script");
