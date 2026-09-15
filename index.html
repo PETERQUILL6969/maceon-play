@@ -215,7 +215,7 @@ body {
 
 /* =========================================
    MACEON PLAY
-   PLAY DIRETO + SAVE SRM LOCAL
+   PLAY DIRETO + SAVE SRM LOCAL AUTOMÁTICO
    ========================================= */
 
 const GAME_URL =
@@ -229,7 +229,7 @@ const GAME_ID =
 
 
 /* =========================================
-   BANCO LOCAL DO SAVE
+   BANCO LOCAL
    ========================================= */
 
 const DB_NAME =
@@ -257,6 +257,12 @@ const playButton =
 
 let emulatorStarted =
     false;
+
+let automaticSaveTimer =
+    null;
+
+let lastAutomaticSaveSignature =
+    null;
 
 
 /* =========================================
@@ -365,7 +371,7 @@ async function storeSaveBuffer(buffer) {
                     db.close();
 
                     console.log(
-                        "Maceon Play: SRM armazenado.",
+                        "Maceon Play: SRM armazenado no IndexedDB.",
                         copy.byteLength,
                         "bytes"
                     );
@@ -449,7 +455,270 @@ async function getStoredSave() {
 
 
 /* =========================================
-   RESTAURAR SRM NO EMULATORJS
+   ASSINATURA SIMPLES DO SRM
+
+   Serve para evitar gravar no IndexedDB
+   repetidamente quando nada mudou.
+   ========================================= */
+
+function makeSaveSignature(bytes) {
+
+    if (
+        !bytes ||
+        !bytes.byteLength
+    ) {
+
+        return null;
+    }
+
+
+    let hash =
+        2166136261;
+
+
+    for (
+        let i = 0;
+        i < bytes.length;
+        i += 64
+    ) {
+
+        hash ^=
+            bytes[i];
+
+        hash =
+            Math.imul(
+                hash,
+                16777619
+            );
+    }
+
+
+    return (
+        bytes.byteLength +
+        ":" +
+        (hash >>> 0)
+    );
+}
+
+
+/* =========================================
+   LOCALIZAR O GAMEMANAGER
+   ========================================= */
+
+function getGameManager() {
+
+    const emulator =
+        window.EJS_emulator;
+
+
+    if (
+        !emulator ||
+        !emulator.gameManager
+    ) {
+
+        return null;
+    }
+
+
+    return emulator.gameManager;
+}
+
+
+/* =========================================
+   LER O SRM ATUAL DO EMULADOR
+   ========================================= */
+
+function readCurrentSRM() {
+
+    try {
+
+        const gameManager =
+            getGameManager();
+
+
+        if (
+            !gameManager ||
+            !gameManager.FS ||
+            typeof gameManager.getSaveFilePath !==
+                "function"
+        ) {
+
+            return null;
+        }
+
+
+        const savePath =
+            gameManager.getSaveFilePath();
+
+
+        if (!savePath) {
+
+            return null;
+        }
+
+
+        const FS =
+            gameManager.FS;
+
+
+        const analysis =
+            FS.analyzePath(
+                savePath
+            );
+
+
+        if (
+            !analysis ||
+            !analysis.exists
+        ) {
+
+            return null;
+        }
+
+
+        const bytes =
+            FS.readFile(
+                savePath
+            );
+
+
+        if (
+            !bytes ||
+            !bytes.byteLength
+        ) {
+
+            return null;
+        }
+
+
+        return (
+            bytes instanceof Uint8Array
+                ? bytes.slice()
+                : new Uint8Array(bytes)
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Maceon Play: erro ao ler SRM atual.",
+            error
+        );
+
+        return null;
+    }
+}
+
+
+/* =========================================
+   CAPTURA AUTOMÁTICA
+   ========================================= */
+
+async function captureCurrentSRM(force = false) {
+
+    try {
+
+        const bytes =
+            readCurrentSRM();
+
+
+        if (!bytes) {
+
+            return false;
+        }
+
+
+        const signature =
+            makeSaveSignature(
+                bytes
+            );
+
+
+        if (
+            !force &&
+            signature ===
+                lastAutomaticSaveSignature
+        ) {
+
+            return false;
+        }
+
+
+        await storeSaveBuffer(
+            bytes
+        );
+
+
+        lastAutomaticSaveSignature =
+            signature;
+
+
+        console.log(
+            "Maceon Play: SAVE AUTOMÁTICO CAPTURADO.",
+            bytes.byteLength,
+            "bytes"
+        );
+
+
+        return true;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Maceon Play: erro no save automático.",
+            error
+        );
+
+        return false;
+    }
+}
+
+
+/* =========================================
+   INICIAR MONITOR DE SAVE
+   ========================================= */
+
+function startAutomaticSaveMonitor() {
+
+    if (automaticSaveTimer) {
+
+        clearInterval(
+            automaticSaveTimer
+        );
+    }
+
+
+    /*
+       Verificação a cada 7 segundos.
+
+       Só grava no IndexedDB quando
+       o conteúdo do SRM mudar.
+    */
+
+    automaticSaveTimer =
+        setInterval(
+            function() {
+
+                captureCurrentSRM(
+                    false
+                );
+
+            },
+            7000
+        );
+
+
+    console.log(
+        "Maceon Play: monitor automático de save iniciado."
+    );
+}
+
+
+/* =========================================
+   RESTAURAR SRM
    ========================================= */
 
 async function restoreStoredSave() {
@@ -488,10 +757,6 @@ async function restoreStoredSave() {
         );
 
 
-        /*
-           Aguarda o gameManager do EmulatorJS.
-        */
-
         const timeout =
             Date.now() + 15000;
 
@@ -500,12 +765,8 @@ async function restoreStoredSave() {
             Date.now() < timeout
         ) {
 
-            const emulator =
-                window.EJS_emulator;
-
             const gameManager =
-                emulator &&
-                emulator.gameManager;
+                getGameManager();
 
 
             if (
@@ -523,11 +784,6 @@ async function restoreStoredSave() {
                 const FS =
                     gameManager.FS;
 
-
-                /*
-                   O próprio EmulatorJS informa
-                   onde este core espera o save.
-                */
 
                 const savePath =
                     gameManager.getSaveFilePath();
@@ -548,11 +804,6 @@ async function restoreStoredSave() {
                     return false;
                 }
 
-
-                /*
-                   Cria os diretórios necessários,
-                   caso ainda não existam.
-                */
 
                 const parts =
                     savePath.split("/");
@@ -611,11 +862,6 @@ async function restoreStoredSave() {
                 }
 
 
-                /*
-                   Remove eventual SRM vazio
-                   criado pelo core.
-                */
-
                 try {
 
                     if (
@@ -635,10 +881,6 @@ async function restoreStoredSave() {
                 }
 
 
-                /*
-                   Escreve o nosso SRM real.
-                */
-
                 FS.writeFile(
                     savePath,
                     bytes
@@ -651,10 +893,6 @@ async function restoreStoredSave() {
                     "bytes"
                 );
 
-
-                /*
-                   Confirma que o arquivo existe.
-                */
 
                 try {
 
@@ -680,11 +918,6 @@ async function restoreStoredSave() {
                     );
                 }
 
-
-                /*
-                   Faz o EmulatorJS recarregar
-                   os arquivos de save.
-                */
 
                 if (
                     typeof gameManager.loadSaveFiles ===
@@ -719,6 +952,20 @@ async function restoreStoredSave() {
 
                     return false;
                 }
+
+
+                /*
+                   Como este é o SRM que acabou
+                   de ser restaurado, registramos
+                   sua assinatura para que o
+                   monitor não o grave novamente
+                   sem necessidade.
+                */
+
+                lastAutomaticSaveSignature =
+                    makeSaveSignature(
+                        bytes
+                    );
 
 
                 console.log(
@@ -787,10 +1034,6 @@ function startEmulator() {
         "none";
 
 
-    /* =====================================
-       CONFIGURAÇÃO EMULATORJS
-       ===================================== */
-
     window.EJS_player =
         "#game";
 
@@ -815,12 +1058,18 @@ function startEmulator() {
     window.EJS_language =
         "pt-BR";
 
+
+    /*
+       Faz o próprio core atualizar
+       periodicamente seu arquivo SRM.
+    */
+
     window.EJS_fixedSaveInterval =
         7000;
 
 
     /* =====================================
-       CAPTURAR SRM
+       SALVAMENTO MANUAL DE SEGURANÇA
        ===================================== */
 
     window.EJS_onSaveSave =
@@ -849,20 +1098,19 @@ function startEmulator() {
                         );
 
 
-                console.log(
-                    "Maceon Play: SRM recebido:",
-                    bytes.byteLength,
-                    "bytes"
-                );
-
-
                 await storeSaveBuffer(
                     bytes
                 );
 
 
+                lastAutomaticSaveSignature =
+                    makeSaveSignature(
+                        bytes
+                    );
+
+
                 console.log(
-                    "Maceon Play: PROGRESSO SALVO NO NAVEGADOR."
+                    "Maceon Play: SAVE MANUAL ARMAZENADO."
                 );
 
             }
@@ -878,8 +1126,7 @@ function startEmulator() {
 
 
     /* =====================================
-       QUANDO O JOGO ESTIVER PRONTO,
-       RESTAURAR O SRM
+       JOGO INICIADO
        ===================================== */
 
     window.EJS_onGameStart =
@@ -900,6 +1147,14 @@ function startEmulator() {
                     "Maceon Play: restauração finalizada."
                 );
             }
+
+
+            /*
+               Depois da restauração,
+               começamos a observar o SRM.
+            */
+
+            startAutomaticSaveMonitor();
         };
 
 
@@ -938,6 +1193,33 @@ function startEmulator() {
         loader
     );
 }
+
+
+/* =========================================
+   ÚLTIMA TENTATIVA AO SAIR DA PÁGINA
+   ========================================= */
+
+document.addEventListener(
+    "visibilitychange",
+    function() {
+
+        if (
+            document.visibilityState ===
+            "hidden"
+        ) {
+
+            /*
+               Não dependemos desta gravação,
+               mas fazemos uma última leitura
+               quando a página perde visibilidade.
+            */
+
+            captureCurrentSRM(
+                true
+            );
+        }
+    }
+);
 
 
 /* =========================================
