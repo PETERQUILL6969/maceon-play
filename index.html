@@ -525,7 +525,7 @@ function getGameManager() {
 
 
 /* =========================================
-   LER O SRM ATUAL DO EMULADOR
+   OBTER O SAVE ATUAL DIRETAMENTE DO CORE
    ========================================= */
 
 function readCurrentSRM() {
@@ -535,74 +535,46 @@ function readCurrentSRM() {
         const gameManager =
             getGameManager();
 
-
         if (
             !gameManager ||
-            !gameManager.FS ||
-            typeof gameManager.getSaveFilePath !==
-                "function"
+            typeof gameManager.getSaveFile !== "function"
         ) {
-
-            return null;
-        }
-
-
-        const savePath =
-            gameManager.getSaveFilePath();
-
-
-        if (!savePath) {
-
-            return null;
-        }
-
-
-        const FS =
-            gameManager.FS;
-
-
-        const analysis =
-            FS.analyzePath(
-                savePath
+            console.log(
+                "Maceon Play: getSaveFile ainda não disponível."
             );
+            return null;
+        }
 
+        const save =
+            gameManager.getSaveFile();
 
         if (
-            !analysis ||
-            !analysis.exists
+            !save ||
+            !save.byteLength
         ) {
-
+            console.log(
+                "Maceon Play: core ainda não forneceu save."
+            );
             return null;
         }
-
 
         const bytes =
-            FS.readFile(
-                savePath
-            );
+            save instanceof Uint8Array
+                ? save.slice()
+                : new Uint8Array(save);
 
-
-        if (
-            !bytes ||
-            !bytes.byteLength
-        ) {
-
-            return null;
-        }
-
-
-        return (
-            bytes instanceof Uint8Array
-                ? bytes.slice()
-                : new Uint8Array(bytes)
+        console.log(
+            "Maceon Play: SAVE obtido diretamente do core:",
+            bytes.byteLength,
+            "bytes"
         );
 
-    }
+        return bytes;
 
-    catch (error) {
+    } catch (error) {
 
         console.error(
-            "Maceon Play: erro ao ler SRM atual.",
+            "Maceon Play: erro ao obter save diretamente do core.",
             error
         );
 
