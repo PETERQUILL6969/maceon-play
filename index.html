@@ -184,9 +184,12 @@ body {
 
     </div>
 
+
     <div id="launcher" class="start">
 
-        <h2>Game Boy Advance</h2>
+        <h2>
+            Game Boy Advance
+        </h2>
 
         <p id="message">
             Pronto para jogar.
@@ -202,34 +205,44 @@ body {
 
     </div>
 
+
     <div id="game"></div>
 
 </main>
+
 
 <script>
 
 /* =========================================
    MACEON PLAY
-   PLAY DIRETO + TESTE DE CAPTURA DO SAVE
+   PLAY DIRETO + SAVE SRM LOCAL
    ========================================= */
 
-const GAME_URL = "./games/jogo.gba";
-const GAME_NAME = "Maceon Play";
+const GAME_URL =
+    "./games/jogo.gba";
 
-/*
-   ID NUMÉRICO E FIXO DO JOGO.
-*/
-const GAME_ID = 1001;
+const GAME_NAME =
+    "Maceon Play";
+
+const GAME_ID =
+    1001;
 
 
-/*
-   CHAVES TEMPORÁRIAS PARA O TESTE.
-*/
-const SAVE_TEST_KEY =
-    "maceon-save-test";
+/* =========================================
+   BANCO LOCAL DO SAVE
+   ========================================= */
 
-const SAVE_TEST_DATE_KEY =
-    "maceon-save-test-date";
+const DB_NAME =
+    "MaceonPlaySaves";
+
+const DB_VERSION =
+    1;
+
+const STORE_NAME =
+    "saves";
+
+const SAVE_KEY =
+    "gba-main-srm";
 
 
 const launcher =
@@ -241,32 +254,342 @@ const message =
 const playButton =
     document.getElementById("playButton");
 
-let emulatorStarted = false;
+
+let emulatorStarted =
+    false;
+
+let saveBlobUrl =
+    null;
+
+
+/* =========================================
+   ABRIR INDEXEDDB
+   ========================================= */
+
+function openSaveDatabase() {
+
+    return new Promise(
+        function(resolve, reject) {
+
+            const request =
+                indexedDB.open(
+                    DB_NAME,
+                    DB_VERSION
+                );
+
+
+            request.onupgradeneeded =
+                function(event) {
+
+                    const db =
+                        event.target.result;
+
+                    if (
+                        !db.objectStoreNames.contains(
+                            STORE_NAME
+                        )
+                    ) {
+
+                        db.createObjectStore(
+                            STORE_NAME
+                        );
+                    }
+                };
+
+
+            request.onsuccess =
+                function() {
+
+                    resolve(
+                        request.result
+                    );
+                };
+
+
+            request.onerror =
+                function() {
+
+                    reject(
+                        request.error
+                    );
+                };
+        }
+    );
+}
+
+
+/* =========================================
+   GUARDAR SRM
+   ========================================= */
+
+async function storeSaveBuffer(buffer) {
+
+    const bytes =
+        buffer instanceof Uint8Array
+            ? buffer
+            : new Uint8Array(buffer);
+
+
+    /*
+       Faz uma cópia independente dos bytes.
+    */
+
+    const copy =
+        bytes.slice();
+
+
+    const db =
+        await openSaveDatabase();
+
+
+    return new Promise(
+        function(resolve, reject) {
+
+            const transaction =
+                db.transaction(
+                    STORE_NAME,
+                    "readwrite"
+                );
+
+            const store =
+                transaction.objectStore(
+                    STORE_NAME
+                );
+
+
+            store.put(
+                {
+                    bytes: copy,
+                    size: copy.byteLength,
+                    savedAt:
+                        new Date().toISOString()
+                },
+                SAVE_KEY
+            );
+
+
+            transaction.oncomplete =
+                function() {
+
+                    db.close();
+
+                    console.log(
+                        "Maceon Play: SRM armazenado.",
+                        copy.byteLength,
+                        "bytes"
+                    );
+
+                    resolve();
+                };
+
+
+            transaction.onerror =
+                function() {
+
+                    const error =
+                        transaction.error;
+
+                    db.close();
+
+                    reject(error);
+                };
+        }
+    );
+}
+
+
+/* =========================================
+   RECUPERAR SRM
+   ========================================= */
+
+async function getStoredSave() {
+
+    const db =
+        await openSaveDatabase();
+
+
+    return new Promise(
+        function(resolve, reject) {
+
+            const transaction =
+                db.transaction(
+                    STORE_NAME,
+                    "readonly"
+                );
+
+            const store =
+                transaction.objectStore(
+                    STORE_NAME
+                );
+
+            const request =
+                store.get(
+                    SAVE_KEY
+                );
+
+
+            request.onsuccess =
+                function() {
+
+                    const result =
+                        request.result;
+
+                    db.close();
+
+                    resolve(result || null);
+                };
+
+
+            request.onerror =
+                function() {
+
+                    const error =
+                        request.error;
+
+                    db.close();
+
+                    reject(error);
+                };
+        }
+    );
+}
+
+
+/* =========================================
+   PREPARAR SAVE PARA RESTAURAÇÃO
+   ========================================= */
+
+async function prepareStoredSave() {
+
+    try {
+
+        const stored =
+            await getStoredSave();
+
+
+        if (
+            !stored ||
+            !stored.bytes
+        ) {
+
+            console.log(
+                "Maceon Play: nenhum SRM local encontrado."
+            );
+
+            return false;
+        }
+
+
+        const bytes =
+            stored.bytes instanceof Uint8Array
+                ? stored.bytes
+                : new Uint8Array(
+                    stored.bytes
+                );
+
+
+        console.log(
+            "Maceon Play: SRM local encontrado:",
+            bytes.byteLength,
+            "bytes"
+        );
+
+
+        /*
+           Cria uma URL temporária para o arquivo
+           armazenado no IndexedDB.
+        */
+
+        const blob =
+            new Blob(
+                [bytes],
+                {
+                    type:
+                        "application/octet-stream"
+                }
+            );
+
+
+        saveBlobUrl =
+            URL.createObjectURL(blob);
+
+
+        /*
+           EJS_externalFiles é uma opção oficial
+           do EmulatorJS.
+
+           Colocamos o SRM no caminho usado
+           pelo core mGBA.
+        */
+
+        window.EJS_externalFiles = {
+            "/data/saves/mGBA/sram.srm":
+                saveBlobUrl
+        };
+
+
+        console.log(
+            "Maceon Play: SRM preparado para restauração."
+        );
+
+
+        return true;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Maceon Play: erro ao preparar SRM.",
+            error
+        );
+
+        return false;
+    }
+}
 
 
 /* =========================================
    INICIAR EMULATORJS
    ========================================= */
 
-function startEmulator() {
+async function startEmulator() {
 
     if (emulatorStarted) {
         return;
     }
 
-    emulatorStarted = true;
 
-    playButton.disabled = true;
+    emulatorStarted =
+        true;
+
+    playButton.disabled =
+        true;
+
+    message.textContent =
+        "Preparando jogo...";
+
+
+    /*
+       PRIMEIRO procuramos um save existente.
+
+       Isso acontece ANTES de carregar
+       o EmulatorJS.
+    */
+
+    await prepareStoredSave();
+
 
     message.textContent =
         "Carregando jogo...";
+
 
     launcher.style.display =
         "none";
 
 
     /* =====================================
-       CONFIGURAÇÃO DO EMULATORJS
+       CONFIGURAÇÃO EMULATORJS
        ===================================== */
 
     window.EJS_player =
@@ -290,45 +613,39 @@ function startEmulator() {
     window.EJS_startOnLoaded =
         true;
 
+    window.EJS_language =
+        "pt-BR";
+
 
     /*
-       Solicita sincronização periódica
-       do save interno do jogo.
+       Mantemos a sincronização periódica.
     */
 
     window.EJS_fixedSaveInterval =
         7000;
 
 
-    window.EJS_language =
-        "pt-BR";
-
-
     /* =====================================
-       CAPTURA DO SAVE
+       CAPTURAR O SRM
        =====================================
 
-       Quando o EmulatorJS informar que
-       houve atualização do save, verificamos
-       se recebemos o buffer correspondente.
+       Este callback é acionado pelo comando
+       "Save SAV Files" do EmulatorJS.
 
-       Nesta etapa ainda NÃO restauramos
-       automaticamente o save.
+       Em vez de baixar jogo.srm,
+       guardaremos os bytes no IndexedDB.
     */
 
-    window.EJS_onSaveUpdate =
-        function(event) {
+    window.EJS_onSaveSave =
+        async function(event) {
 
-            console.log(
-                "Maceon Play: alteração de SAVE detectada.",
-                event
-            );
+            if (
+                !event ||
+                !event.save
+            ) {
 
-
-            if (!event || !event.save) {
-
-                console.log(
-                    "Maceon Play: evento recebido sem buffer de save."
+                console.error(
+                    "Maceon Play: EmulatorJS não forneceu o SRM."
                 );
 
                 return;
@@ -337,61 +654,28 @@ function startEmulator() {
 
             try {
 
-                const saveBuffer =
-                    event.save;
-
-
                 const bytes =
-                    saveBuffer instanceof Uint8Array
-                        ? saveBuffer
-                        : new Uint8Array(saveBuffer);
+                    event.save instanceof Uint8Array
+                        ? event.save
+                        : new Uint8Array(
+                            event.save
+                        );
 
 
                 console.log(
-                    "Maceon Play: SAVE CAPTURADO COM SUCESSO."
-                );
-
-
-                console.log(
-                    "Tamanho do save:",
+                    "Maceon Play: SRM recebido:",
                     bytes.byteLength,
                     "bytes"
                 );
 
 
-                /*
-                   Para este teste, transformamos
-                   os bytes em uma lista numérica.
-
-                   Isso permite comprovar que os
-                   dados chegaram ao navegador.
-                */
-
-                const saveCopy =
-                    Array.from(bytes);
-
-
-                localStorage.setItem(
-                    SAVE_TEST_KEY,
-                    JSON.stringify(saveCopy)
-                );
-
-
-                localStorage.setItem(
-                    SAVE_TEST_DATE_KEY,
-                    new Date().toISOString()
+                await storeSaveBuffer(
+                    bytes
                 );
 
 
                 console.log(
-                    "Maceon Play: save de teste armazenado no navegador."
-                );
-
-
-                console.log(
-                    "Maceon Play: quantidade armazenada:",
-                    saveCopy.length,
-                    "bytes"
+                    "Maceon Play: PROGRESSO SALVO NO NAVEGADOR."
                 );
 
             }
@@ -399,7 +683,7 @@ function startEmulator() {
             catch (error) {
 
                 console.error(
-                    "Maceon Play: erro ao processar o save.",
+                    "Maceon Play: erro ao armazenar SRM.",
                     error
                 );
             }
@@ -411,7 +695,10 @@ function startEmulator() {
        ===================================== */
 
     const loader =
-        document.createElement("script");
+        document.createElement(
+            "script"
+        );
+
 
     loader.src =
         "https://cdn.emulatorjs.org/stable/data/loader.js";
