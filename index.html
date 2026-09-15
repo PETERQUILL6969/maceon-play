@@ -210,7 +210,7 @@ body {
 
 /* =========================================
    MACEON PLAY
-   PLAY DIRETO + SAVE
+   PLAY DIRETO + TESTE DE CAPTURA DO SAVE
    ========================================= */
 
 const GAME_URL = "./games/jogo.gba";
@@ -218,9 +218,19 @@ const GAME_NAME = "Maceon Play";
 
 /*
    ID NUMÉRICO E FIXO DO JOGO.
-   Não alterar posteriormente.
 */
 const GAME_ID = 1001;
+
+
+/*
+   CHAVES TEMPORÁRIAS PARA O TESTE.
+*/
+const SAVE_TEST_KEY =
+    "maceon-save-test";
+
+const SAVE_TEST_DATE_KEY =
+    "maceon-save-test-date";
+
 
 const launcher =
     document.getElementById("launcher");
@@ -265,10 +275,6 @@ function startEmulator() {
     window.EJS_gameName =
         GAME_NAME;
 
-    /*
-       IMPORTANTE:
-       EmulatorJS exige ID numérico.
-    */
     window.EJS_gameID =
         GAME_ID;
 
@@ -284,40 +290,117 @@ function startEmulator() {
     window.EJS_startOnLoaded =
         true;
 
+
     /*
-       Solicita ao core a sincronização
-       periódica do save.
+       Solicita sincronização periódica
+       do save interno do jogo.
     */
+
     window.EJS_fixedSaveInterval =
         7000;
+
 
     window.EJS_language =
         "pt-BR";
 
 
-    /*
-       CALLBACK OFICIAL DO EMULATORJS.
+    /* =====================================
+       CAPTURA DO SAVE
+       =====================================
 
-       É executado quando o EmulatorJS
-       detecta alteração no save.
+       Quando o EmulatorJS informar que
+       houve atualização do save, verificamos
+       se recebemos o buffer correspondente.
+
+       Nesta etapa ainda NÃO restauramos
+       automaticamente o save.
     */
+
     window.EJS_onSaveUpdate =
         function(event) {
 
             console.log(
-                "Maceon Play: save atualizado.",
+                "Maceon Play: alteração de SAVE detectada.",
                 event
             );
 
-            /*
-               Apenas registramos a confirmação.
-               Não modificamos o save recebido.
-            */
 
-            if (event && event.save) {
+            if (!event || !event.save) {
 
                 console.log(
-                    "Maceon Play: buffer de save recebido."
+                    "Maceon Play: evento recebido sem buffer de save."
+                );
+
+                return;
+            }
+
+
+            try {
+
+                const saveBuffer =
+                    event.save;
+
+
+                const bytes =
+                    saveBuffer instanceof Uint8Array
+                        ? saveBuffer
+                        : new Uint8Array(saveBuffer);
+
+
+                console.log(
+                    "Maceon Play: SAVE CAPTURADO COM SUCESSO."
+                );
+
+
+                console.log(
+                    "Tamanho do save:",
+                    bytes.byteLength,
+                    "bytes"
+                );
+
+
+                /*
+                   Para este teste, transformamos
+                   os bytes em uma lista numérica.
+
+                   Isso permite comprovar que os
+                   dados chegaram ao navegador.
+                */
+
+                const saveCopy =
+                    Array.from(bytes);
+
+
+                localStorage.setItem(
+                    SAVE_TEST_KEY,
+                    JSON.stringify(saveCopy)
+                );
+
+
+                localStorage.setItem(
+                    SAVE_TEST_DATE_KEY,
+                    new Date().toISOString()
+                );
+
+
+                console.log(
+                    "Maceon Play: save de teste armazenado no navegador."
+                );
+
+
+                console.log(
+                    "Maceon Play: quantidade armazenada:",
+                    saveCopy.length,
+                    "bytes"
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Maceon Play: erro ao processar o save.",
+                    error
                 );
             }
         };
@@ -334,22 +417,26 @@ function startEmulator() {
         "https://cdn.emulatorjs.org/stable/data/loader.js";
 
 
-    loader.onerror = function() {
+    loader.onerror =
+        function() {
 
-        emulatorStarted = false;
+            emulatorStarted =
+                false;
 
-        launcher.style.display =
-            "flex";
+            launcher.style.display =
+                "flex";
 
-        message.textContent =
-            "Não foi possível carregar o emulador.";
+            message.textContent =
+                "Não foi possível carregar o emulador.";
 
-        playButton.disabled =
-            false;
-    };
+            playButton.disabled =
+                false;
+        };
 
 
-    document.body.appendChild(loader);
+    document.body.appendChild(
+        loader
+    );
 }
 
 
