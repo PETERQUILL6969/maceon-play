@@ -145,17 +145,52 @@ input[type=file]{
 
 <script>
 
-document.getElementById("romFile").addEventListener("change", function(event){
+<script>
+document.getElementById("romFile").addEventListener("change", function(event) {
 
     const file = event.target.files[0];
-
-    if(!file) return;
+    if (!file) return;
 
     const gameURL = URL.createObjectURL(file);
+    const gameName = file.name.replace(/\.[^/.]+$/, "");
 
     document.getElementById("launcher").style.display = "none";
 
     window.EJS_player = "#game";
+
+    // Identificação
+    window.EJS_gameName = gameName;
+    window.EJS_gameID = "maceon-gba-001";
+
+    // Arquivo selecionado pelo usuário
+    window.EJS_gameUrl = gameURL;
+
+    // Game Boy Advance
+    window.EJS_core = "gba";
+
+    // Explicitamente sem BIOS externa
+    window.EJS_biosUrl = "";
+
+    // EmulatorJS
+    window.EJS_pathtodata =
+        "https://cdn.emulatorjs.org/stable/data/";
+
+    window.EJS_startOnLoaded = true;
+    window.EJS_threads = false;
+
+    // Evita alguns recursos desnecessários
+    window.EJS_disableDatabases = true;
+    window.EJS_askBeforeExit = false;
+
+    const script = document.createElement("script");
+    script.src =
+        "https://cdn.emulatorjs.org/stable/data/loader.js";
+
+    document.body.appendChild(script);
+});
+</script>
+
+window.EJS_player = "#game";
 window.EJS_core = "gba";
 window.EJS_startOnLoaded = true;
 window.EJS_threads = false;
