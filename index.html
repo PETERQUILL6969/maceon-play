@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111111">
+
+  <title>Maceon Play</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      background: #080808;
+      color: white;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .logo {
+      font-size: clamp(32px, 8vw, 64px);
+      font-weight: 900;
+      letter-spacing: 3px;
+      margin-bottom: 8px;
+    }
+
+    .play {
+      color: #55d6be;
+    }
+
+    .subtitle {
+      color: #bdbdbd;
+      font-size: 16px;
+      margin-bottom: 35px;
+    }
+
+    .player {
+      width: 100%;
+      min-height: 420px;
+      background: #000;
+      border-radius: 18px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .status {
+      color: #ddd;
+      padding: 30px;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 12px;
+      }
+
+      .player {
+        min-height: 70vh;
+        border-radius: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="container">
+
+    <div class="logo">
+      MACEON <span class="play">PLAY</span>
+    </div>
+
+    <div class="subtitle">
+      Toque. Abra. Jogue.
+    </div>
+
+    <div id="game" class="player">
+      <div class="status">
+        Maceon Play pronto para receber o jogo.
+      </div>
+    </div>
+
+  </main>
+
+</body>
+</html>
