@@ -222,7 +222,7 @@ body {
 
 /* =========================================
    MACEON PLAY
-   VERSÃO PLAY DIRETO
+   VERSÃO PLAY DIRETO + SAVE
    ========================================= */
 
 const GAME_URL = "./games/jogo.gba";
@@ -290,6 +290,19 @@ function startEmulator() {
 
     window.EJS_startOnLoaded =
         true;
+
+
+    /*
+       SAVE:
+       força o EmulatorJS a sincronizar
+       periodicamente o save interno do jogo.
+
+       7000 = 7 segundos.
+    */
+
+    window.EJS_fixedSaveInterval =
+        7000;
+
 
     window.EJS_language =
         "pt-BR";
