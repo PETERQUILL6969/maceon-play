@@ -84,7 +84,17 @@ input[type=file]{
 
 #game{
     width:100%;
-    min-height:70vh;
+    height:70vh;
+    min-height:500px;
+    position:relative;
+    background:#000;
+}
+
+#game canvas{
+    width:100% !important;
+    height:100% !important;
+    object-fit:contain;
+    display:block !important;
 }
 
 @media(max-width:600px){
@@ -146,9 +156,9 @@ document.getElementById("romFile").addEventListener("change", function(event){
     document.getElementById("launcher").style.display = "none";
 
     window.EJS_player = "#game";
-    window.EJS_core = "gba";
-    window.EJS_gameUrl = gameURL;
-    window.EJS_gameName = file.name.replace(/\.[^/.]+$/, "");
+window.EJS_core = "gba";
+window.EJS_startOnLoaded = true;
+window.EJS_threads = false;
 
     window.EJS_pathtodata =
         "https://cdn.emulatorjs.org/stable/data/";
