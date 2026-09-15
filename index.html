@@ -72,7 +72,8 @@ body {
 
 .start p {
     color: #bbbbbb;
-    max-width: 500px;
+    max-width: 520px;
+    line-height: 1.45;
 }
 
 input[type="file"] {
@@ -83,22 +84,40 @@ input[type="file"] {
     display: inline-block;
     margin-top: 18px;
     padding: 16px 28px;
-
+    border: 0;
     border-radius: 12px;
 
     background: #55d6be;
     color: #07110f;
 
+    font-family: inherit;
     font-weight: bold;
     font-size: 17px;
 
     cursor: pointer;
 }
 
+.secondary {
+    margin-top: 16px;
+    border: 0;
+    background: transparent;
+    color: #999999;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.secondary:hover {
+    color: #ffffff;
+}
+
+.status {
+    color: #55d6be !important;
+    font-weight: bold;
+}
+
 
 /* =========================================
-   ÁREA DO EMULADOR
-   Altura fixa evita o loop de redimensionamento
+   PLAYER — PRESERVA A CORREÇÃO FUNCIONAL
    ========================================= */
 
 #game {
@@ -112,12 +131,6 @@ input[type="file"] {
     background: #000000;
 }
 
-
-/*
-   Depois que o EmulatorJS inicia,
-   #game recebe a classe ejs_parent.
-*/
-
 #game.ejs_parent {
     width: 100% !important;
     height: 600px !important;
@@ -126,11 +139,6 @@ input[type="file"] {
     position: relative !important;
     overflow: hidden !important;
 }
-
-
-/*
-   Contêiner criado pelo EmulatorJS.
-*/
 
 #game .ejs_canvas_parent {
     position: absolute !important;
@@ -146,11 +154,6 @@ input[type="file"] {
     overflow: hidden !important;
 }
 
-
-/*
-   Canvas onde o jogo é desenhado.
-*/
-
 #game canvas.ejs_canvas {
     width: 100% !important;
     height: 100% !important;
@@ -159,7 +162,6 @@ input[type="file"] {
     max-height: 100% !important;
 
     display: block !important;
-
     object-fit: contain !important;
 }
 
@@ -204,16 +206,40 @@ input[type="file"] {
 
     <div id="launcher" class="start">
 
-        <h2>Game Boy Advance</h2>
+        <h2 id="launcherTitle">
+            Game Boy Advance
+        </h2>
 
-        <p>
-            Selecione no seu aparelho um jogo GBA que você possua.
-            O arquivo será carregado localmente no navegador.
+        <p id="message">
+            Verificando jogo armazenado...
         </p>
 
-        <label class="button" for="romFile">
+        <label
+            id="selectButton"
+            class="button"
+            for="romFile"
+            style="display:none;"
+        >
             SELECIONAR JOGO
         </label>
+
+        <button
+            id="playButton"
+            class="button"
+            type="button"
+            style="display:none;"
+        >
+            JOGAR
+        </button>
+
+        <button
+            id="removeButton"
+            class="secondary"
+            type="button"
+            style="display:none;"
+        >
+            Remover jogo deste aparelho
+        </button>
 
         <input
             id="romFile"
@@ -231,63 +257,288 @@ input[type="file"] {
 
 <script>
 
-const romInput = document.getElementById("romFile");
-const launcher = document.getElementById("launcher");
+/* =========================================
+   MACEON PLAY
+   Armazenamento local do jogo com IndexedDB
+   ========================================= */
 
-romInput.addEventListener("change", function(event) {
+const DB_NAME = "MaceonPlayDB";
+const DB_VERSION = 1;
+const STORE_NAME = "games";
+const GAME_KEY = "gba-main";
 
-    const file = event.target.files[0];
 
-    if (!file) {
+const romInput =
+    document.getElementById("romFile");
+
+const launcher =
+    document.getElementById("launcher");
+
+const message =
+    document.getElementById("message");
+
+const selectButton =
+    document.getElementById("selectButton");
+
+const playButton =
+    document.getElementById("playButton");
+
+const removeButton =
+    document.getElementById("removeButton");
+
+
+let storedGame = null;
+let emulatorStarted = false;
+
+
+/* =========================================
+   ABRIR BANCO LOCAL
+   ========================================= */
+
+function openDatabase() {
+
+    return new Promise((resolve, reject) => {
+
+        const request =
+            indexedDB.open(DB_NAME, DB_VERSION);
+
+
+        request.onupgradeneeded = function(event) {
+
+            const db =
+                event.target.result;
+
+            if (!db.objectStoreNames.contains(STORE_NAME)) {
+
+                db.createObjectStore(STORE_NAME);
+            }
+        };
+
+
+        request.onsuccess = function(event) {
+
+            resolve(event.target.result);
+        };
+
+
+        request.onerror = function() {
+
+            reject(request.error);
+        };
+    });
+}
+
+
+/* =========================================
+   SALVAR JOGO LOCALMENTE
+   ========================================= */
+
+async function saveGame(file) {
+
+    const db =
+        await openDatabase();
+
+    return new Promise((resolve, reject) => {
+
+        const transaction =
+            db.transaction(
+                STORE_NAME,
+                "readwrite"
+            );
+
+        const store =
+            transaction.objectStore(STORE_NAME);
+
+
+        const gameData = {
+
+            name: file.name,
+
+            type:
+                file.type ||
+                "application/octet-stream",
+
+            blob: file,
+
+            savedAt: Date.now()
+        };
+
+
+        const request =
+            store.put(
+                gameData,
+                GAME_KEY
+            );
+
+
+        request.onsuccess = function() {
+
+            resolve(gameData);
+        };
+
+
+        request.onerror = function() {
+
+            reject(request.error);
+        };
+
+
+        transaction.oncomplete = function() {
+
+            db.close();
+        };
+    });
+}
+
+
+/* =========================================
+   LER JOGO ARMAZENADO
+   ========================================= */
+
+async function loadStoredGame() {
+
+    const db =
+        await openDatabase();
+
+    return new Promise((resolve, reject) => {
+
+        const transaction =
+            db.transaction(
+                STORE_NAME,
+                "readonly"
+            );
+
+        const store =
+            transaction.objectStore(STORE_NAME);
+
+
+        const request =
+            store.get(GAME_KEY);
+
+
+        request.onsuccess = function() {
+
+            resolve(request.result || null);
+        };
+
+
+        request.onerror = function() {
+
+            reject(request.error);
+        };
+
+
+        transaction.oncomplete = function() {
+
+            db.close();
+        };
+    });
+}
+
+
+/* =========================================
+   REMOVER JOGO ARMAZENADO
+   ========================================= */
+
+async function deleteStoredGame() {
+
+    const db =
+        await openDatabase();
+
+    return new Promise((resolve, reject) => {
+
+        const transaction =
+            db.transaction(
+                STORE_NAME,
+                "readwrite"
+            );
+
+        const store =
+            transaction.objectStore(STORE_NAME);
+
+
+        const request =
+            store.delete(GAME_KEY);
+
+
+        request.onsuccess = function() {
+
+            resolve();
+        };
+
+
+        request.onerror = function() {
+
+            reject(request.error);
+        };
+
+
+        transaction.oncomplete = function() {
+
+            db.close();
+        };
+    });
+}
+
+
+/* =========================================
+   INICIAR EMULATORJS
+   ========================================= */
+
+function startEmulator(gameData) {
+
+    if (emulatorStarted) {
         return;
     }
 
-    /*
-       Cria uma URL temporária local.
-       O arquivo não é enviado para o GitHub.
-    */
+    emulatorStarted = true;
 
-    const gameURL = URL.createObjectURL(file);
+
+    const gameURL =
+        URL.createObjectURL(gameData.blob);
+
 
     const gameName =
-        file.name.replace(/\.[^/.]+$/, "");
+        gameData.name.replace(
+            /\.[^/.]+$/,
+            ""
+        );
 
-
-    /*
-       Esconde a tela de seleção.
-    */
 
     launcher.style.display = "none";
 
 
     /*
-       CONFIGURAÇÃO DO EMULATORJS
+       Configuração que já comprovamos
+       funcionar no Maceon Play.
     */
 
     window.EJS_player = "#game";
 
     window.EJS_gameName = gameName;
 
-    window.EJS_gameID = "maceon-play-gba";
+    window.EJS_gameID =
+        "maceon-play-gba";
 
-    window.EJS_gameUrl = gameURL;
+    window.EJS_gameUrl =
+        gameURL;
 
-    window.EJS_core = "gba";
+    window.EJS_core =
+        "gba";
 
     window.EJS_pathtodata =
         "https://cdn.emulatorjs.org/stable/data/";
 
-    window.EJS_startOnLoaded = true;
+    window.EJS_startOnLoaded =
+        true;
 
-    window.EJS_language = "pt-BR";
+    window.EJS_language =
+        "pt-BR";
 
-
-    /*
-       Carrega o EmulatorJS.
-    */
 
     const loader =
         document.createElement("script");
+
 
     loader.src =
         "https://cdn.emulatorjs.org/stable/data/loader.js";
@@ -295,17 +546,198 @@ romInput.addEventListener("change", function(event) {
 
     loader.onerror = function() {
 
-        launcher.style.display = "flex";
+        emulatorStarted = false;
 
-        alert(
-            "Não foi possível carregar o emulador. Verifique sua conexão e tente novamente."
-        );
+        launcher.style.display =
+            "flex";
+
+        message.textContent =
+            "Não foi possível carregar o emulador.";
+
+        playButton.style.display =
+            "inline-block";
     };
 
 
     document.body.appendChild(loader);
+}
 
-});
+
+/* =========================================
+   PRIMEIRA SELEÇÃO
+   ========================================= */
+
+romInput.addEventListener(
+    "change",
+    async function(event) {
+
+        const file =
+            event.target.files[0];
+
+
+        if (!file) {
+            return;
+        }
+
+
+        message.textContent =
+            "Guardando jogo neste aparelho...";
+
+
+        selectButton.style.display =
+            "none";
+
+
+        try {
+
+            storedGame =
+                await saveGame(file);
+
+
+            message.textContent =
+                "Jogo armazenado. Iniciando...";
+
+
+            startEmulator(storedGame);
+
+        }
+        catch (error) {
+
+            console.error(error);
+
+
+            message.textContent =
+                "Não foi possível guardar o jogo neste navegador.";
+
+
+            selectButton.style.display =
+                "inline-block";
+        }
+    }
+);
+
+
+/* =========================================
+   BOTÃO JOGAR
+   ========================================= */
+
+playButton.addEventListener(
+    "click",
+    function() {
+
+        if (storedGame) {
+
+            startEmulator(storedGame);
+        }
+    }
+);
+
+
+/* =========================================
+   BOTÃO REMOVER
+   ========================================= */
+
+removeButton.addEventListener(
+    "click",
+    async function() {
+
+        const confirmed =
+            confirm(
+                "Remover o jogo armazenado deste aparelho?"
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        try {
+
+            await deleteStoredGame();
+
+
+            storedGame = null;
+
+
+            message.textContent =
+                "Jogo removido. Selecione novamente quando quiser jogar.";
+
+
+            playButton.style.display =
+                "none";
+
+
+            removeButton.style.display =
+                "none";
+
+
+            selectButton.style.display =
+                "inline-block";
+        }
+        catch (error) {
+
+            console.error(error);
+
+            alert(
+                "Não foi possível remover o jogo armazenado."
+            );
+        }
+    }
+);
+
+
+/* =========================================
+   VERIFICAÇÃO AO ABRIR MACEON PLAY
+   ========================================= */
+
+async function initializeMaceonPlay() {
+
+    try {
+
+        storedGame =
+            await loadStoredGame();
+
+
+        if (storedGame) {
+
+            message.innerHTML =
+                "Jogo encontrado neste aparelho.<br>Pronto para continuar.";
+
+
+            playButton.style.display =
+                "inline-block";
+
+
+            removeButton.style.display =
+                "inline-block";
+        }
+        else {
+
+            message.textContent =
+                "Selecione no seu aparelho um jogo GBA que você possua. Ele ficará armazenado localmente neste navegador.";
+
+
+            selectButton.style.display =
+                "inline-block";
+        }
+    }
+    catch (error) {
+
+        console.error(error);
+
+
+        message.textContent =
+            "O armazenamento local não está disponível. Você ainda pode selecionar o jogo para esta sessão.";
+
+
+        selectButton.style.display =
+            "inline-block";
+    }
+}
+
+
+initializeMaceonPlay();
 
 </script>
 
