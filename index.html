@@ -1,208 +1,239 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#080808">
 
 <title>Maceon Play</title>
 
 <style>
-*{box-sizing:border-box}
 
-html,body{
-    margin:0;
-    width:100%;
-    min-height:100%;
-    background:#080808;
-    color:#fff;
-    font-family:Arial,Helvetica,sans-serif;
+* {
+    box-sizing: border-box;
 }
 
-body{
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
+html,
+body {
+    margin: 0;
+    width: 100%;
+    min-height: 100%;
+    background: #080808;
+    color: #ffffff;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-.container{
-    width:100%;
-    max-width:900px;
-    padding:24px;
-    text-align:center;
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
 }
 
-.logo{
-    font-size:clamp(32px,8vw,64px);
-    font-weight:900;
-    letter-spacing:3px;
-    margin:30px 0 8px;
+.container {
+    width: 100%;
+    max-width: 1000px;
+    padding: 24px;
+    text-align: center;
 }
 
-.play{color:#55d6be}
-
-.subtitle{
-    color:#bbb;
-    margin-bottom:30px;
+.logo {
+    font-size: clamp(32px, 8vw, 64px);
+    font-weight: 900;
+    letter-spacing: 3px;
+    margin: 30px 0 8px;
 }
 
-.start{
-    min-height:420px;
-    background:#000;
-    border-radius:18px;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    padding:25px;
+.play {
+    color: #55d6be;
 }
 
-.start h2{
-    margin:0 0 12px;
+.subtitle {
+    color: #bbbbbb;
+    margin-bottom: 30px;
 }
 
-.start p{
-    color:#bbb;
-    max-width:500px;
+.start {
+    min-height: 420px;
+    background: #000000;
+    border-radius: 18px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    padding: 25px;
 }
 
-input[type=file]{
-    display:none;
+.start h2 {
+    margin: 0 0 12px;
 }
 
-.button{
-    display:inline-block;
-    margin-top:18px;
-    padding:16px 28px;
-    border-radius:12px;
-    background:#55d6be;
-    color:#07110f;
-    font-weight:bold;
-    cursor:pointer;
-    font-size:17px;
+.start p {
+    color: #bbbbbb;
+    max-width: 500px;
 }
 
-#game{
-    width:100%;
-    height:70vh;
-    min-height:500px;
-    position:relative;
-    background:#000;
+input[type="file"] {
+    display: none;
 }
 
-#game canvas{
-    width:100% !important;
-    height:100% !important;
-    object-fit:contain;
-    display:block !important;
+.button {
+    display: inline-block;
+    margin-top: 18px;
+    padding: 16px 28px;
+
+    border-radius: 12px;
+
+    background: #55d6be;
+    color: #07110f;
+
+    font-weight: bold;
+    font-size: 17px;
+
+    cursor: pointer;
 }
 
-@media(max-width:600px){
-    .container{padding:10px}
-    .start{min-height:65vh}
+/*
+   IMPORTANTE:
+   Não forçamos o tamanho do canvas interno.
+   O EmulatorJS controla sua própria área de vídeo.
+*/
+#game {
+    width: 100%;
+    background: #000000;
 }
+
+@media (max-width: 600px) {
+
+    .container {
+        padding: 10px;
+    }
+
+    .start {
+        min-height: 65vh;
+    }
+}
+
 </style>
 </head>
+
 
 <body>
 
 <main class="container">
 
-<div id="header">
-    <div class="logo">
-        MACEON <span class="play">PLAY</span>
+    <div id="header">
+
+        <div class="logo">
+            MACEON <span class="play">PLAY</span>
+        </div>
+
+        <div class="subtitle">
+            Toque. Abra. Jogue.
+        </div>
+
     </div>
 
-    <div class="subtitle">
-        Toque. Abra. Jogue.
+
+    <div id="launcher" class="start">
+
+        <h2>Game Boy Advance</h2>
+
+        <p>
+            Selecione no seu aparelho um jogo GBA que você possua.
+            O arquivo será carregado localmente no navegador.
+        </p>
+
+        <label class="button" for="romFile">
+            SELECIONAR JOGO
+        </label>
+
+        <input
+            id="romFile"
+            type="file"
+            accept=".gba,.zip"
+        >
+
     </div>
-</div>
 
-<div id="launcher" class="start">
 
-    <h2>Game Boy Advance</h2>
-
-    <p>
-        Selecione no seu aparelho um jogo GBA que você possua.
-        O arquivo será carregado localmente no navegador.
-    </p>
-
-    <label class="button" for="romFile">
-        SELECIONAR JOGO
-    </label>
-
-    <input
-        id="romFile"
-        type="file"
-        accept=".gba,.zip"
-    >
-
-</div>
-
-<div id="game"></div>
+    <div id="game"></div>
 
 </main>
 
+
 <script>
-document.getElementById("romFile").addEventListener("change", function(event) {
+
+const romInput = document.getElementById("romFile");
+const launcher = document.getElementById("launcher");
+
+romInput.addEventListener("change", function(event) {
 
     const file = event.target.files[0];
-    if (!file) return;
 
+    if (!file) {
+        return;
+    }
+
+    /*
+       O arquivo permanece no computador/celular.
+       O navegador cria uma URL temporária local.
+    */
     const gameURL = URL.createObjectURL(file);
-    const gameName = file.name.replace(/\.[^/.]+$/, "");
 
-    document.getElementById("launcher").style.display = "none";
+    const gameName =
+        file.name.replace(/\.[^/.]+$/, "");
+
+
+    /*
+       Esconde a tela inicial.
+    */
+    launcher.style.display = "none";
+
+
+    /*
+       CONFIGURAÇÃO DO EMULATORJS
+    */
 
     window.EJS_player = "#game";
 
-    // Identificação
     window.EJS_gameName = gameName;
-    window.EJS_gameID = "maceon-gba-001";
 
-    // Arquivo selecionado pelo usuário
+    window.EJS_gameID = "maceon-play-gba";
+
     window.EJS_gameUrl = gameURL;
 
-    // Game Boy Advance
     window.EJS_core = "gba";
 
-    // Explicitamente sem BIOS externa
-    window.EJS_biosUrl = "";
-
-    // EmulatorJS
     window.EJS_pathtodata =
         "https://cdn.emulatorjs.org/stable/data/";
 
     window.EJS_startOnLoaded = true;
-    window.EJS_threads = false;
 
-    // Evita alguns recursos desnecessários
-    window.EJS_disableDatabases = true;
-    window.EJS_askBeforeExit = false;
-
-    const script = document.createElement("script");
-    script.src =
-        "https://cdn.emulatorjs.org/stable/data/loader.js";
-
-    document.body.appendChild(script);
-});
-</script>
-
-window.EJS_player = "#game";
-window.EJS_core = "gba";
-window.EJS_startOnLoaded = true;
-window.EJS_threads = false;
-
-    window.EJS_pathtodata =
-        "https://cdn.emulatorjs.org/stable/data/";
-
-    window.EJS_startOnLoaded = true;
     window.EJS_language = "pt-BR";
 
-    const loader = document.createElement("script");
+
+    /*
+       Carrega o EmulatorJS somente depois
+       que o usuário selecionar o arquivo.
+    */
+
+    const loader =
+        document.createElement("script");
 
     loader.src =
         "https://cdn.emulatorjs.org/stable/data/loader.js";
+
+    loader.onerror = function() {
+
+        launcher.style.display = "flex";
+
+        alert(
+            "Não foi possível carregar o emulador. Verifique sua conexão e tente novamente."
+        );
+    };
 
     document.body.appendChild(loader);
 
