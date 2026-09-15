@@ -99,6 +99,99 @@ body {
 }
 
 
+
+/* =========================================
+   CAPA VISUAL MACEON PLAY
+   A imagem é apenas apresentação.
+   O botão JOGAR continua sendo HTML real.
+   ========================================= */
+
+.cover-launcher {
+    position: relative;
+    min-height: 0;
+    padding: 0;
+    background: #000000;
+    overflow: hidden;
+    border-radius: 18px;
+}
+
+.cover-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+/*
+   Área clicável posicionada exatamente
+   sobre o botão JOGAR desenhado na capa.
+*/
+.cover-play-button {
+    position: absolute;
+    left: 17.5%;
+    top: 59.0%;
+    width: 65%;
+    height: 10.2%;
+
+    border: 0;
+    border-radius: 18px;
+    background: transparent;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.cover-play-button:focus-visible {
+    outline: 4px solid #ffffff;
+    outline-offset: -5px;
+}
+
+.cover-play-button:active {
+    background: rgba(255,255,255,0.08);
+}
+
+.cover-play-button:disabled {
+    cursor: wait;
+}
+
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+@media (max-width: 600px) {
+    .cover-launcher {
+        min-height: 0;
+        border-radius: 12px;
+    }
+}
+
+.load-error {
+    position: absolute !important;
+    left: 8% !important;
+    right: 8% !important;
+    bottom: 4% !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 10px 12px !important;
+    clip: auto !important;
+    overflow: visible !important;
+    white-space: normal !important;
+    border-radius: 10px;
+    background: rgba(0,0,0,.85);
+    color: #ffffff !important;
+    z-index: 5;
+}
+
 /* =========================================
    PLAYER — CORREÇÃO FUNCIONAL PRESERVADA
    ========================================= */
@@ -158,6 +251,10 @@ body {
         min-height: 65vh;
     }
 
+    .start.cover-launcher {
+        min-height: 0;
+    }
+
     #game,
     #game.ejs_parent {
         height: 70vh !important;
@@ -172,35 +269,26 @@ body {
 
 <main class="container">
 
-    <div id="header">
+    <div id="launcher" class="start cover-launcher">
 
-        <div class="logo">
-            MACEON <span class="play">PLAY</span>
-        </div>
+        <img
+            class="cover-image"
+            src="./maceon-play-cover.png"
+            alt="Maceon Play — Game Boy Advance"
+        >
 
-        <div class="subtitle">
-            Toque. Abra. Jogue.
-        </div>
-
-    </div>
-
-
-    <div id="launcher" class="start">
-
-        <h2>
-            Game Boy Advance
-        </h2>
-
-        <p id="message">
+        <p id="message" class="sr-only">
             Pronto para jogar.
         </p>
 
         <button
             id="playButton"
-            class="button"
+            class="cover-play-button"
             type="button"
+            aria-label="Jogar"
+            title="Jogar"
         >
-            ▶ JOGAR
+            <span class="sr-only">JOGAR</span>
         </button>
 
     </div>
@@ -1155,6 +1243,9 @@ function startEmulator() {
 
             message.textContent =
                 "Não foi possível carregar o emulador.";
+
+            message.classList.remove("sr-only");
+            message.classList.add("load-error");
 
             playButton.disabled =
                 false;
