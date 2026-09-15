@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080808">
+
+<title>Maceon Play</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    width: 100%;
+    min-height: 100%;
+    background: #080808;
+    color: #ffffff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 1000px;
+    padding: 24px;
+    text-align: center;
+}
+
+.logo {
+    font-size: clamp(32px, 8vw, 64px);
+    font-weight: 900;
+    letter-spacing: 3px;
+    margin: 30px 0 8px;
+}
+
+.play {
+    color: #55d6be;
+}
+
+.subtitle {
+    color: #bbbbbb;
+    margin-bottom: 30px;
+}
+
+.start {
+    min-height: 420px;
+    background: #000000;
+    border-radius: 18px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    padding: 25px;
+}
+
+.start h2 {
+    margin: 0 0 12px;
+}
+
+.start p {
+    color: #bbbbbb;
+    max-width: 520px;
+    line-height: 1.45;
+}
+
+.button {
+    display: inline-block;
+    margin-top: 18px;
+    padding: 16px 34px;
+
+    border: 0;
+    border-radius: 12px;
+
+    background: #55d6be;
+    color: #07110f;
+
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 18px;
+
+    cursor: pointer;
+}
+
+.button:hover {
+    filter: brightness(1.08);
+}
+
+
+
+/* =========================================
+   CAPA VISUAL MACEON PLAY
+   A imagem é apenas apresentação.
+   O botão JOGAR continua sendo HTML real.
+   ========================================= */
+
+.cover-launcher {
+    position: relative;
+    min-height: 0;
+    padding: 0;
+    background: #000000;
+    overflow: hidden;
+    border-radius: 18px;
+}
+
+.cover-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+/*
+   Área clicável posicionada exatamente
+   sobre o botão JOGAR desenhado na capa.
+*/
+.cover-play-button {
+    position: absolute;
+    left: 17.5%;
+    top: 59.0%;
+    width: 65%;
+    height: 10.2%;
+
+    border: 0;
+    border-radius: 18px;
+    background: transparent;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.cover-play-button:focus-visible {
+    outline: 4px solid #ffffff;
+    outline-offset: -5px;
+}
+
+.cover-play-button:active {
+    background: rgba(255,255,255,0.08);
+}
+
+.cover-play-button:disabled {
+    cursor: wait;
+}
+
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+@media (max-width: 600px) {
+    .cover-launcher {
+        min-height: 0;
+        border-radius: 12px;
+    }
+}
+
+.load-error {
+    position: absolute !important;
+    left: 8% !important;
+    right: 8% !important;
+    bottom: 4% !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 10px 12px !important;
+    clip: auto !important;
+    overflow: visible !important;
+    white-space: normal !important;
+    border-radius: 10px;
+    background: rgba(0,0,0,.85);
+    color: #ffffff !important;
+    z-index: 5;
+}
+
+/* =========================================
+   PLAYER — CORREÇÃO FUNCIONAL PRESERVADA
+   ========================================= */
+
+#game {
+    width: 100%;
+    height: 600px;
+    max-height: 70vh;
+
+    position: relative;
+    overflow: hidden;
+
+    background: #000000;
+}
+
+#game.ejs_parent {
+    width: 100% !important;
+    height: 600px !important;
+    max-height: 70vh !important;
+
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+#game .ejs_canvas_parent {
+    position: absolute !important;
+
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    overflow: hidden !important;
+}
+
+#game canvas.ejs_canvas {
+    width: 100% !important;
+    height: 100% !important;
+
+    max-width: 100% !important;
+    max-height: 100% !important;
+
+    display: block !important;
+    object-fit: contain !important;
+}
+
+@media (max-width: 600px) {
+
+    .container {
+        padding: 10px;
+    }
+
+    .start {
+        min-height: 65vh;
+    }
+
+    .start.cover-launcher {
+        min-height: 0;
+    }
+
+    #game,
+    #game.ejs_parent {
+        height: 70vh !important;
+        max-height: 70vh !important;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<main class="container">
+
+    <div id="launcher" class="start cover-launcher">
+
+        <img
+            class="cover-image"
+            src="./maceon-play-cover.png"
+            alt="Maceon Play — Game Boy Advance"
+        >
+
+        <p id="message" class="sr-only">
+            Pronto para jogar.
+        </p>
+
+        <button
+            id="playButton"
+            class="cover-play-button"
+            type="button"
+            aria-label="Jogar"
+            title="Jogar"
+        >
+            <span class="sr-only">JOGAR</span>
+        </button>
+
+    </div>
+
+
+    <div id="game"></div>
+
+</main>
+
+
+<script>
+
+/* =========================================
+   MACEON PLAY
+   PLAY DIRETO + SAVE SRM LOCAL AUTOMÁTICO
+   ========================================= */
+
+const GAME_URL =
+    "./games/jogo.gba";
+
+const GAME_NAME =
+    "Maceon Play";
+
+const GAME_ID =
+    1001;
+
+
+/* =========================================
+   BANCO LOCAL
+   ========================================= */
+
+const DB_NAME =
+    "MaceonPlaySaves";
+
+const DB_VERSION =
+    1;
+
+const STORE_NAME =
+    "saves";
+
+const SAVE_KEY =
+    "gba-main-srm";
+
+
+const launcher =
+    document.getElementById("launcher");
+
+const message =
+    document.getElementById("message");
+
+const playButton =
+    document.getElementById("playButton");
+
+
+let emulatorStarted =
+    false;
+
+let automaticSaveTimer =
+    null;
+
+let lastAutomaticSaveSignature =
+    null;
+
+
+/* =========================================
+   ABRIR INDEXEDDB
+   ========================================= */
+
+function openSaveDatabase() {
+
+    return new Promise(
+        function(resolve, reject) {
+
+            const request =
+                indexedDB.open(
+                    DB_NAME,
+                    DB_VERSION
+                );
+
+
+            request.onupgradeneeded =
+                function(event) {
+
+                    const db =
+                        event.target.result;
+
+                    if (
+                        !db.objectStoreNames.contains(
+                            STORE_NAME
+                        )
+                    ) {
+
+                        db.createObjectStore(
+                            STORE_NAME
+                        );
+                    }
+                };
+
+
+            request.onsuccess =
+                function() {
+
+                    resolve(
+                        request.result
+                    );
+                };
+
+
+            request.onerror =
+                function() {
+
+                    reject(
+                        request.error
+                    );
+                };
+        }
+    );
+}
+
+
+/* =========================================
+   GUARDAR SRM
+   ========================================= */
+
+async function storeSaveBuffer(buffer) {
+
+    const bytes =
+        buffer instanceof Uint8Array
+            ? buffer
+            : new Uint8Array(buffer);
+
+    const copy =
+        bytes.slice();
+
+    const db =
+        await openSaveDatabase();
+
+
+    return new Promise(
+        function(resolve, reject) {
+
+            const transaction =
+                db.transaction(
+                    STORE_NAME,
+                    "readwrite"
+                );
+
+            const store =
+                transaction.objectStore(
+                    STORE_NAME
+                );
+
+
+            store.put(
+                {
+                    bytes: copy,
+                    size: copy.byteLength,
+                    savedAt:
+                        new Date().toISOString()
+                },
+                SAVE_KEY
+            );
+
+
+            transaction.oncomplete =
+                function() {
+
+                    db.close();
+
+                    console.log(
+                        "Maceon Play: SRM armazenado no IndexedDB.",
+                        copy.byteLength,
+                        "bytes"
+                    );
+
+                    resolve();
+                };
+
+
+            transaction.onerror =
+                function() {
+
+                    const error =
+                        transaction.error;
+
+                    db.close();
+
+                    reject(error);
+                };
+        }
+    );
+}
+
+
+/* =========================================
+   RECUPERAR SRM
+   ========================================= */
+
+async function getStoredSave() {
+
+    const db =
+        await openSaveDatabase();
+
+
+    return new Promise(
+        function(resolve, reject) {
+
+            const transaction =
+                db.transaction(
+                    STORE_NAME,
+                    "readonly"
+                );
+
+            const store =
+                transaction.objectStore(
+                    STORE_NAME
+                );
+
+            const request =
+                store.get(
+                    SAVE_KEY
+                );
+
+
+            request.onsuccess =
+                function() {
+
+                    const result =
+                        request.result;
+
+                    db.close();
+
+                    resolve(
+                        result || null
+                    );
+                };
+
+
+            request.onerror =
+                function() {
+
+                    const error =
+                        request.error;
+
+                    db.close();
+
+                    reject(error);
+                };
+        }
+    );
+}
+
+
+/* =========================================
+   ASSINATURA SIMPLES DO SRM
+
+   Serve para evitar gravar no IndexedDB
+   repetidamente quando nada mudou.
+   ========================================= */
+
+function makeSaveSignature(bytes) {
+
+    if (
+        !bytes ||
+        !bytes.byteLength
+    ) {
+
+        return null;
+    }
+
+
+    let hash =
+        2166136261;
+
+
+    for (
+        let i = 0;
+        i < bytes.length;
+        i += 64
+    ) {
+
+        hash ^=
+            bytes[i];
+
+        hash =
+            Math.imul(
+                hash,
+                16777619
+            );
+    }
+
+
+    return (
+        bytes.byteLength +
+        ":" +
+        (hash >>> 0)
+    );
+}
+
+
+/* =========================================
+   LOCALIZAR O GAMEMANAGER
+   ========================================= */
+
+function getGameManager() {
+
+    const emulator =
+        window.EJS_emulator;
+
+
+    if (
+        !emulator ||
+        !emulator.gameManager
+    ) {
+
+        return null;
+    }
+
+
+    return emulator.gameManager;
+}
+
+
+/* =========================================
+   OBTER O SAVE ATUAL DIRETAMENTE DO CORE
+   ========================================= */
+
+function readCurrentSRM() {
+
+    try {
+
+        const gameManager =
+            getGameManager();
+
+        if (
+            !gameManager ||
+            typeof gameManager.getSaveFile !== "function"
+        ) {
+            console.log(
+                "Maceon Play: getSaveFile ainda não disponível."
+            );
+            return null;
+        }
+
+        const save =
+            gameManager.getSaveFile();
+
+        if (
+            !save ||
+            !save.byteLength
+        ) {
+            console.log(
+                "Maceon Play: core ainda não forneceu save."
+            );
+            return null;
+        }
+
+        const bytes =
+            save instanceof Uint8Array
+                ? save.slice()
+                : new Uint8Array(save);
+
+        console.log(
+            "Maceon Play: SAVE obtido diretamente do core:",
+            bytes.byteLength,
+            "bytes"
+        );
+
+        return bytes;
+
+    } catch (error) {
+
+        console.error(
+            "Maceon Play: erro ao obter save diretamente do core.",
+            error
+        );
+
+        return null;
+    }
+}
+
+
+/* =========================================
+   CAPTURA AUTOMÁTICA
+   ========================================= */
+
+async function captureCurrentSRM(force = false) {
+
+    try {
+
+        const bytes =
+            readCurrentSRM();
+
+
+        if (!bytes) {
+
+            return false;
+        }
+
+
+        const signature =
+            makeSaveSignature(
+                bytes
+            );
+
+
+        if (
+            !force &&
+            signature ===
+                lastAutomaticSaveSignature
+        ) {
+
+            return false;
+        }
+
+
+        await storeSaveBuffer(
+            bytes
+        );
+
+
+        lastAutomaticSaveSignature =
+            signature;
+
+
+        console.log(
+            "Maceon Play: SAVE AUTOMÁTICO CAPTURADO.",
+            bytes.byteLength,
+            "bytes"
+        );
+
+
+        return true;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Maceon Play: erro no save automático.",
+            error
+        );
+
+        return false;
+    }
+}
+
+
+/* =========================================
+   INICIAR MONITOR DE SAVE
+   ========================================= */
+
+function startAutomaticSaveMonitor() {
+
+    if (automaticSaveTimer) {
+
+        clearInterval(
+            automaticSaveTimer
+        );
+    }
+
+
+    /*
+       Verificação a cada 7 segundos.
+
+       Só grava no IndexedDB quando
+       o conteúdo do SRM mudar.
+    */
+
+    automaticSaveTimer =
+        setInterval(
+            function() {
+
+                captureCurrentSRM(
+                    false
+                );
+
+            },
+            7000
+        );
+
+
+    console.log(
+        "Maceon Play: monitor automático de save iniciado."
+    );
+}
+
+
+/* =========================================
+   RESTAURAR SRM
+   ========================================= */
+
+async function restoreStoredSave() {
+
+    try {
+
+        const stored =
+            await getStoredSave();
+
+
+        if (
+            !stored ||
+            !stored.bytes
+        ) {
+
+            console.log(
+                "Maceon Play: nenhum SRM local encontrado."
+            );
+
+            return false;
+        }
+
+
+        const bytes =
+            stored.bytes instanceof Uint8Array
+                ? stored.bytes
+                : new Uint8Array(
+                    stored.bytes
+                );
+
+
+        console.log(
+            "Maceon Play: SRM encontrado:",
+            bytes.byteLength,
+            "bytes"
+        );
+
+
+        const timeout =
+            Date.now() + 15000;
+
+
+        while (
+            Date.now() < timeout
+        ) {
+
+            const gameManager =
+                getGameManager();
+
+
+            if (
+                gameManager &&
+                gameManager.FS &&
+                typeof gameManager.getSaveFilePath ===
+                    "function"
+            ) {
+
+                console.log(
+                    "Maceon Play: gameManager disponível."
+                );
+
+
+                const FS =
+                    gameManager.FS;
+
+
+                const savePath =
+                    gameManager.getSaveFilePath();
+
+
+                console.log(
+                    "Maceon Play: caminho real do SRM:",
+                    savePath
+                );
+
+
+                if (!savePath) {
+
+                    console.error(
+                        "Maceon Play: caminho do SRM não foi informado."
+                    );
+
+                    return false;
+                }
+
+
+                const parts =
+                    savePath.split("/");
+
+                let currentPath =
+                    "";
+
+
+                for (
+                    let i = 0;
+                    i < parts.length - 1;
+                    i++
+                ) {
+
+                    if (!parts[i]) {
+                        continue;
+                    }
+
+
+                    currentPath +=
+                        "/" + parts[i];
+
+
+                    try {
+
+                        const analysis =
+                            FS.analyzePath(
+                                currentPath
+                            );
+
+
+                        if (
+                            !analysis.exists
+                        ) {
+
+                            FS.mkdir(
+                                currentPath
+                            );
+                        }
+
+                    }
+
+                    catch (error) {
+
+                        try {
+
+                            FS.mkdir(
+                                currentPath
+                            );
+
+                        }
+
+                        catch (ignored) {
+                        }
+                    }
+                }
+
+
+                try {
+
+                    if (
+                        FS.analyzePath(
+                            savePath
+                        ).exists
+                    ) {
+
+                        FS.unlink(
+                            savePath
+                        );
+                    }
+
+                }
+
+                catch (ignored) {
+                }
+
+
+                FS.writeFile(
+                    savePath,
+                    bytes
+                );
+
+
+                console.log(
+                    "Maceon Play: SRM escrito no filesystem.",
+                    bytes.byteLength,
+                    "bytes"
+                );
+
+
+                try {
+
+                    const check =
+                        FS.readFile(
+                            savePath
+                        );
+
+
+                    console.log(
+                        "Maceon Play: SRM confirmado no filesystem:",
+                        check.byteLength,
+                        "bytes"
+                    );
+
+                }
+
+                catch (error) {
+
+                    console.error(
+                        "Maceon Play: não foi possível confirmar o SRM.",
+                        error
+                    );
+                }
+
+
+                if (
+                    typeof gameManager.loadSaveFiles ===
+                    "function"
+                ) {
+
+                    const result =
+                        gameManager.loadSaveFiles();
+
+
+                    if (
+                        result &&
+                        typeof result.then ===
+                            "function"
+                    ) {
+
+                        await result;
+                    }
+
+
+                    console.log(
+                        "Maceon Play: LOAD SAVE EXECUTADO."
+                    );
+
+                }
+
+                else {
+
+                    console.error(
+                        "Maceon Play: loadSaveFiles não disponível."
+                    );
+
+                    return false;
+                }
+
+
+                /*
+                   Como este é o SRM que acabou
+                   de ser restaurado, registramos
+                   sua assinatura para que o
+                   monitor não o grave novamente
+                   sem necessidade.
+                */
+
+                lastAutomaticSaveSignature =
+                    makeSaveSignature(
+                        bytes
+                    );
+
+
+                console.log(
+                    "Maceon Play: SAVE RESTAURADO COM SUCESSO."
+                );
+
+
+                return true;
+            }
+
+
+            await new Promise(
+                function(resolve) {
+
+                    setTimeout(
+                        resolve,
+                        100
+                    );
+                }
+            );
+        }
+
+
+        console.error(
+            "Maceon Play: gameManager não ficou disponível."
+        );
+
+
+        return false;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Maceon Play: erro ao restaurar SRM.",
+            error
+        );
+
+        return false;
+    }
+}
+
+
+/* =========================================
+   INICIAR EMULATORJS
+   ========================================= */
+
+function startEmulator() {
+
+    if (emulatorStarted) {
+        return;
+    }
+
+
+    emulatorStarted =
+        true;
+
+    playButton.disabled =
+        true;
+
+    message.textContent =
+        "Carregando jogo...";
+
+    launcher.style.display =
+        "none";
+
+
+    window.EJS_player =
+        "#game";
+
+    window.EJS_gameName =
+        GAME_NAME;
+
+    window.EJS_gameID =
+        GAME_ID;
+
+    window.EJS_gameUrl =
+        GAME_URL;
+
+    window.EJS_core =
+        "gba";
+
+    window.EJS_pathtodata =
+        "https://cdn.emulatorjs.org/stable/data/";
+
+    window.EJS_startOnLoaded =
+        true;
+
+    window.EJS_language =
+        "pt-BR";
+
+
+    /*
+       Faz o próprio core atualizar
+       periodicamente seu arquivo SRM.
+    */
+
+    window.EJS_fixedSaveInterval =
+        7000;
+
+
+    /* =====================================
+       SALVAMENTO MANUAL DE SEGURANÇA
+       ===================================== */
+
+    window.EJS_onSaveSave =
+        async function(event) {
+
+            if (
+                !event ||
+                !event.save
+            ) {
+
+                console.error(
+                    "Maceon Play: EmulatorJS não forneceu o SRM."
+                );
+
+                return;
+            }
+
+
+            try {
+
+                const bytes =
+                    event.save instanceof Uint8Array
+                        ? event.save
+                        : new Uint8Array(
+                            event.save
+                        );
+
+
+                await storeSaveBuffer(
+                    bytes
+                );
+
+
+                lastAutomaticSaveSignature =
+                    makeSaveSignature(
+                        bytes
+                    );
+
+
+                console.log(
+                    "Maceon Play: SAVE MANUAL ARMAZENADO."
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Maceon Play: erro ao armazenar SRM.",
+                    error
+                );
+            }
+        };
+
+
+    /* =====================================
+       JOGO INICIADO
+       ===================================== */
+
+    window.EJS_onGameStart =
+        async function() {
+
+            console.log(
+                "Maceon Play: jogo iniciado. Procurando save..."
+            );
+
+
+            const restored =
+                await restoreStoredSave();
+
+
+            if (restored) {
+
+                console.log(
+                    "Maceon Play: restauração finalizada."
+                );
+            }
+
+
+            /*
+               Depois da restauração,
+               começamos a observar o SRM.
+            */
+
+            startAutomaticSaveMonitor();
+        };
+
+
+    /* =====================================
+       CARREGAR EMULATORJS
+       ===================================== */
+
+    const loader =
+        document.createElement(
+            "script"
+        );
+
+
+    loader.src =
+        "https://cdn.emulatorjs.org/stable/data/loader.js";
+
+
+    loader.onerror =
+        function() {
+
+            emulatorStarted =
+                false;
+
+            launcher.style.display =
+                "flex";
+
+            message.textContent =
+                "Não foi possível carregar o emulador.";
+
+            message.classList.remove("sr-only");
+            message.classList.add("load-error");
+
+            playButton.disabled =
+                false;
+        };
+
+
+    document.body.appendChild(
+        loader
+    );
+}
+
+
+/* =========================================
+   ÚLTIMA TENTATIVA AO SAIR DA PÁGINA
+   ========================================= */
+
+document.addEventListener(
+    "visibilitychange",
+    function() {
+
+        if (
+            document.visibilityState ===
+            "hidden"
+        ) {
+
+            /*
+               Não dependemos desta gravação,
+               mas fazemos uma última leitura
+               quando a página perde visibilidade.
+            */
+
+            captureCurrentSRM(
+                true
+            );
+        }
+    }
+);
+
+
+/* =========================================
+   BOTÃO JOGAR
+   ========================================= */
+
+playButton.addEventListener(
+    "click",
+    function() {
+
+        startEmulator();
+    }
+);
+
+</script>
+
+</body>
+</html>
