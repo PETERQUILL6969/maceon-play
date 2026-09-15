@@ -258,9 +258,6 @@ const playButton =
 let emulatorStarted =
     false;
 
-let saveBlobUrl =
-    null;
-
 
 /* =========================================
    ABRIR INDEXEDDB
@@ -329,14 +326,8 @@ async function storeSaveBuffer(buffer) {
             ? buffer
             : new Uint8Array(buffer);
 
-
-    /*
-       Faz uma cópia independente dos bytes.
-    */
-
     const copy =
         bytes.slice();
-
 
     const db =
         await openSaveDatabase();
@@ -436,7 +427,9 @@ async function getStoredSave() {
 
                     db.close();
 
-                    resolve(result || null);
+                    resolve(
+                        result || null
+                    );
                 };
 
 
@@ -456,10 +449,10 @@ async function getStoredSave() {
 
 
 /* =========================================
-   PREPARAR SAVE PARA RESTAURAÇÃO
+   RESTAURAR SRM NO EMULATORJS
    ========================================= */
 
-async function prepareStoredSave() {
+async function restoreStoredSave() {
 
     try {
 
@@ -489,58 +482,279 @@ async function prepareStoredSave() {
 
 
         console.log(
-            "Maceon Play: SRM local encontrado:",
+            "Maceon Play: SRM encontrado:",
             bytes.byteLength,
             "bytes"
         );
 
 
         /*
-           Cria uma URL temporária para o arquivo
-           armazenado no IndexedDB.
+           Aguarda o gameManager do EmulatorJS.
         */
 
-        const blob =
-            new Blob(
-                [bytes],
-                {
-                    type:
-                        "application/octet-stream"
+        const timeout =
+            Date.now() + 15000;
+
+
+        while (
+            Date.now() < timeout
+        ) {
+
+            const emulator =
+                window.EJS_emulator;
+
+            const gameManager =
+                emulator &&
+                emulator.gameManager;
+
+
+            if (
+                gameManager &&
+                gameManager.FS &&
+                typeof gameManager.getSaveFilePath ===
+                    "function"
+            ) {
+
+                console.log(
+                    "Maceon Play: gameManager disponível."
+                );
+
+
+                const FS =
+                    gameManager.FS;
+
+
+                /*
+                   O próprio EmulatorJS informa
+                   onde este core espera o save.
+                */
+
+                const savePath =
+                    gameManager.getSaveFilePath();
+
+
+                console.log(
+                    "Maceon Play: caminho real do SRM:",
+                    savePath
+                );
+
+
+                if (!savePath) {
+
+                    console.error(
+                        "Maceon Play: caminho do SRM não foi informado."
+                    );
+
+                    return false;
+                }
+
+
+                /*
+                   Cria os diretórios necessários,
+                   caso ainda não existam.
+                */
+
+                const parts =
+                    savePath.split("/");
+
+                let currentPath =
+                    "";
+
+
+                for (
+                    let i = 0;
+                    i < parts.length - 1;
+                    i++
+                ) {
+
+                    if (!parts[i]) {
+                        continue;
+                    }
+
+
+                    currentPath +=
+                        "/" + parts[i];
+
+
+                    try {
+
+                        const analysis =
+                            FS.analyzePath(
+                                currentPath
+                            );
+
+
+                        if (
+                            !analysis.exists
+                        ) {
+
+                            FS.mkdir(
+                                currentPath
+                            );
+                        }
+
+                    }
+
+                    catch (error) {
+
+                        try {
+
+                            FS.mkdir(
+                                currentPath
+                            );
+
+                        }
+
+                        catch (ignored) {
+                        }
+                    }
+                }
+
+
+                /*
+                   Remove eventual SRM vazio
+                   criado pelo core.
+                */
+
+                try {
+
+                    if (
+                        FS.analyzePath(
+                            savePath
+                        ).exists
+                    ) {
+
+                        FS.unlink(
+                            savePath
+                        );
+                    }
+
+                }
+
+                catch (ignored) {
+                }
+
+
+                /*
+                   Escreve o nosso SRM real.
+                */
+
+                FS.writeFile(
+                    savePath,
+                    bytes
+                );
+
+
+                console.log(
+                    "Maceon Play: SRM escrito no filesystem.",
+                    bytes.byteLength,
+                    "bytes"
+                );
+
+
+                /*
+                   Confirma que o arquivo existe.
+                */
+
+                try {
+
+                    const check =
+                        FS.readFile(
+                            savePath
+                        );
+
+
+                    console.log(
+                        "Maceon Play: SRM confirmado no filesystem:",
+                        check.byteLength,
+                        "bytes"
+                    );
+
+                }
+
+                catch (error) {
+
+                    console.error(
+                        "Maceon Play: não foi possível confirmar o SRM.",
+                        error
+                    );
+                }
+
+
+                /*
+                   Faz o EmulatorJS recarregar
+                   os arquivos de save.
+                */
+
+                if (
+                    typeof gameManager.loadSaveFiles ===
+                    "function"
+                ) {
+
+                    const result =
+                        gameManager.loadSaveFiles();
+
+
+                    if (
+                        result &&
+                        typeof result.then ===
+                            "function"
+                    ) {
+
+                        await result;
+                    }
+
+
+                    console.log(
+                        "Maceon Play: LOAD SAVE EXECUTADO."
+                    );
+
+                }
+
+                else {
+
+                    console.error(
+                        "Maceon Play: loadSaveFiles não disponível."
+                    );
+
+                    return false;
+                }
+
+
+                console.log(
+                    "Maceon Play: SAVE RESTAURADO COM SUCESSO."
+                );
+
+
+                return true;
+            }
+
+
+            await new Promise(
+                function(resolve) {
+
+                    setTimeout(
+                        resolve,
+                        100
+                    );
                 }
             );
+        }
 
 
-        saveBlobUrl =
-            URL.createObjectURL(blob);
-
-
-        /*
-           EJS_externalFiles é uma opção oficial
-           do EmulatorJS.
-
-           Colocamos o SRM no caminho usado
-           pelo core mGBA.
-        */
-
-        window.EJS_externalFiles = {
-            "/data/saves/mGBA/sram.srm":
-                saveBlobUrl
-        };
-
-
-        console.log(
-            "Maceon Play: SRM preparado para restauração."
+        console.error(
+            "Maceon Play: gameManager não ficou disponível."
         );
 
 
-        return true;
+        return false;
 
     }
 
     catch (error) {
 
         console.error(
-            "Maceon Play: erro ao preparar SRM.",
+            "Maceon Play: erro ao restaurar SRM.",
             error
         );
 
@@ -553,7 +767,7 @@ async function prepareStoredSave() {
    INICIAR EMULATORJS
    ========================================= */
 
-async function startEmulator() {
+function startEmulator() {
 
     if (emulatorStarted) {
         return;
@@ -567,22 +781,7 @@ async function startEmulator() {
         true;
 
     message.textContent =
-        "Preparando jogo...";
-
-
-    /*
-       PRIMEIRO procuramos um save existente.
-
-       Isso acontece ANTES de carregar
-       o EmulatorJS.
-    */
-
-    await prepareStoredSave();
-
-
-    message.textContent =
         "Carregando jogo...";
-
 
     launcher.style.display =
         "none";
@@ -616,25 +815,13 @@ async function startEmulator() {
     window.EJS_language =
         "pt-BR";
 
-
-    /*
-       Mantemos a sincronização periódica.
-    */
-
     window.EJS_fixedSaveInterval =
         7000;
 
 
     /* =====================================
-       CAPTURAR O SRM
-       =====================================
-
-       Este callback é acionado pelo comando
-       "Save SAV Files" do EmulatorJS.
-
-       Em vez de baixar jogo.srm,
-       guardaremos os bytes no IndexedDB.
-    */
+       CAPTURAR SRM
+       ===================================== */
 
     window.EJS_onSaveSave =
         async function(event) {
@@ -685,6 +872,32 @@ async function startEmulator() {
                 console.error(
                     "Maceon Play: erro ao armazenar SRM.",
                     error
+                );
+            }
+        };
+
+
+    /* =====================================
+       QUANDO O JOGO ESTIVER PRONTO,
+       RESTAURAR O SRM
+       ===================================== */
+
+    window.EJS_onGameStart =
+        async function() {
+
+            console.log(
+                "Maceon Play: jogo iniciado. Procurando save..."
+            );
+
+
+            const restored =
+                await restoreStoredSave();
+
+
+            if (restored) {
+
+                console.log(
+                    "Maceon Play: restauração finalizada."
                 );
             }
         };
