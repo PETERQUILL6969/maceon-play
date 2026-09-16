@@ -8,17 +8,14 @@
 <title>Maceon Play</title>
 
 <style>
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
-html,
-body {
+html, body {
     margin: 0;
     width: 100%;
     min-height: 100%;
     background: #080808;
-    color: #ffffff;
+    color: #fff;
     font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -35,7 +32,7 @@ body {
     text-align: center;
 }
 
-/* CATÁLOGO INICIAL */
+/* CATÁLOGO */
 
 .catalog {
     display: none;
@@ -51,12 +48,10 @@ body {
     letter-spacing: 2px;
 }
 
-.catalog-logo span {
-    color: #55d6be;
-}
+.catalog-logo span { color: #55d6be; }
 
 .catalog-subtitle {
-    color: #bbbbbb;
+    color: #bbb;
     font-size: 18px;
     margin: 0 0 30px;
 }
@@ -71,14 +66,13 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
     gap: 12px;
     min-width: 0;
-    padding: 22px 14px;
-    border: 1px solid #333333;
+    padding: 16px;
+    border: 1px solid #333;
     border-radius: 18px;
     background: #161616;
-    color: #ffffff;
+    color: #fff;
     text-decoration: none;
 }
 
@@ -87,31 +81,18 @@ body {
     cursor: pointer;
 }
 
-.game-card.available:hover {
-    background: #1c2926;
-}
+.game-card.available:hover { background: #1c2926; }
 
-.game-card.unavailable {
-    opacity: 0.72;
-}
+.game-card.unavailable { opacity: .78; }
 
-.game-symbol {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.game-cover {
+    display: block;
     width: 100%;
-    min-height: 150px;
-    border-radius: 14px;
-    font-size: 64px;
-    font-weight: 900;
-}
-
-.fire-symbol {
-    background: linear-gradient(145deg, #9e271c, #e87a28);
-}
-
-.leaf-symbol {
-    background: linear-gradient(145deg, #165b36, #56a947);
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 12px;
+    background: #222;
 }
 
 .game-card strong {
@@ -119,13 +100,14 @@ body {
 }
 
 .game-card small {
-    color: #bbbbbb;
+    color: #bbb;
     font-size: 14px;
 }
 
 .game-action {
     display: block;
     width: 100%;
+    margin-top: auto;
     padding: 13px 10px;
     border-radius: 11px;
     background: #55d6be;
@@ -135,13 +117,13 @@ body {
 }
 
 .game-card.unavailable .game-action {
-    background: #333333;
-    color: #cccccc;
+    background: #333;
+    color: #ccc;
 }
 
 .catalog-note {
     margin-top: 24px;
-    color: #999999;
+    color: #999;
     font-size: 13px;
     line-height: 1.5;
 }
@@ -153,18 +135,15 @@ body {
     margin-bottom: 14px;
 }
 
-.nav a,
-.pending a {
-    color: #55d6be;
-}
+.nav a, .pending a { color: #55d6be; }
 
-/* CAPA DO JOGO 001 */
+/* CAPA FUNCIONAL DO FIRERED */
 
 .cover-launcher {
     position: relative;
     min-height: 0;
     padding: 0;
-    background: #000000;
+    background: #000;
     overflow: hidden;
     border-radius: 18px;
 }
@@ -177,10 +156,7 @@ body {
     -webkit-user-drag: none;
 }
 
-/*
- * Botão HTML real sobre o JOGAR
- * desenhado na capa existente.
- */
+/* Botão real sobre o JOGAR desenhado na capa */
 
 .cover-play-button {
     position: absolute;
@@ -197,17 +173,15 @@ body {
 }
 
 .cover-play-button:focus-visible {
-    outline: 4px solid #ffffff;
+    outline: 4px solid #fff;
     outline-offset: -5px;
 }
 
 .cover-play-button:active {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255,255,255,.08);
 }
 
-.cover-play-button:disabled {
-    cursor: wait;
-}
+.cover-play-button:disabled { cursor: wait; }
 
 .sr-only {
     position: absolute !important;
@@ -216,7 +190,7 @@ body {
     padding: 0 !important;
     margin: -1px !important;
     overflow: hidden !important;
-    clip: rect(0, 0, 0, 0) !important;
+    clip: rect(0,0,0,0) !important;
     white-space: nowrap !important;
     border: 0 !important;
 }
@@ -234,29 +208,29 @@ body {
     overflow: visible !important;
     white-space: normal !important;
     border-radius: 10px;
-    background: rgba(0, 0, 0, .85);
-    color: #ffffff !important;
+    background: rgba(0,0,0,.85);
+    color: #fff !important;
     z-index: 5;
 }
 
-/* JOGO 002 EM PREPARAÇÃO */
+/* SEGUNDO JOGO */
 
 .pending {
     display: none;
     max-width: 650px;
     margin: 50px auto;
     padding: 28px;
-    border: 1px solid #333333;
+    border: 1px solid #333;
     border-radius: 18px;
     background: #161616;
 }
 
 .pending p {
-    color: #bbbbbb;
+    color: #bbb;
     line-height: 1.5;
 }
 
-/* PLAYER — CONFIGURAÇÃO FUNCIONAL PRESERVADA */
+/* PLAYER — DIMENSÕES FUNCIONAIS PRESERVADAS */
 
 #game {
     width: 100%;
@@ -264,7 +238,7 @@ body {
     max-height: 70vh;
     position: relative;
     overflow: hidden;
-    background: #000000;
+    background: #000;
 }
 
 #game.ejs_parent {
@@ -296,30 +270,17 @@ body {
 }
 
 @media (max-width: 600px) {
-    .container {
-        padding: 10px;
+    .container { padding: 10px; }
+    .cover-launcher { min-height: 0; border-radius: 12px; }
+    .game-grid { gap: 10px; }
+    .game-card { padding: 9px; gap: 9px; }
+
+    .game-action {
+        padding: 12px 5px;
+        font-size: 14px;
     }
 
-    .cover-launcher {
-        min-height: 0;
-        border-radius: 12px;
-    }
-
-    .game-grid {
-        gap: 10px;
-    }
-
-    .game-card {
-        padding: 14px 8px;
-    }
-
-    .game-symbol {
-        min-height: 115px;
-        font-size: 48px;
-    }
-
-    #game,
-    #game.ejs_parent {
+    #game, #game.ejs_parent {
         height: 70vh !important;
         max-height: 70vh !important;
     }
@@ -328,10 +289,9 @@ body {
 </head>
 
 <body>
-
 <main class="container">
 
-    <!-- CATÁLOGO: TELA INICIAL DO NFC -->
+    <!-- TELA INICIAL: ESCOLHA DOS JOGOS -->
 
     <section id="catalog" class="catalog">
 
@@ -345,32 +305,36 @@ body {
 
         <div class="game-grid">
 
+            <!-- JOGO 001 -->
+
             <a
                 class="game-card available"
                 href="?game=001"
                 aria-label="Escolher Pokémon FireRed"
             >
-                <div class="game-symbol fire-symbol">
-                    🔥
-                </div>
+                <img
+                    class="game-cover"
+                    src="./maceon-play-cover.png"
+                    alt="Capa de Pokémon FireRed"
+                >
 
                 <strong>Pokémon FireRed</strong>
-
                 <small>PT-BR · Jogo 001</small>
 
-                <span class="game-action">
-                    JOGAR
-                </span>
+                <span class="game-action">JOGAR</span>
             </a>
+
+            <!-- JOGO 002 -->
 
             <div class="game-card unavailable">
 
-                <div class="game-symbol leaf-symbol">
-                    🌿
-                </div>
+                <img
+                    class="game-cover"
+                    src="./leafgreen-cover.png"
+                    alt="Capa de Pokémon LeafGreen"
+                >
 
                 <strong>Pokémon LeafGreen</strong>
-
                 <small>PT-BR · Jogo 002</small>
 
                 <span class="game-action">
@@ -381,42 +345,33 @@ body {
         </div>
 
         <p class="catalog-note">
-            Seu progresso fica salvo neste navegador.
+            O progresso fica salvo neste navegador.
             Cada jogo terá seu próprio save.
         </p>
 
     </section>
 
-
-    <!-- VOLTAR AO CATÁLOGO -->
+    <!-- NAVEGAÇÃO -->
 
     <nav id="navigation" class="nav" hidden>
-        <a href="?catalog=1">
-            ← Voltar aos jogos
-        </a>
+        <a href="?catalog=1">← Voltar aos jogos</a>
     </nav>
 
-
-    <!-- ESPAÇO RESERVADO AO JOGO 002 -->
+    <!-- LEAFGREEN: ESPAÇO RESERVADO -->
 
     <section id="pending" class="pending">
-
         <h1>Pokémon LeafGreen – PT-BR</h1>
 
         <p>
-            O espaço do segundo jogo está preparado,
-            mas ele ainda não está disponível nesta
-            versão de teste.
+            A capa e o espaço do segundo jogo estão
+            preparados. O jogo ainda não está disponível
+            nesta versão pública.
         </p>
 
         <p>
-            <a href="?catalog=1">
-                Voltar ao catálogo
-            </a>
+            <a href="?catalog=1">Voltar ao catálogo</a>
         </p>
-
     </section>
-
 
     <!-- CAPA ORIGINAL DO FIRERED -->
 
@@ -439,13 +394,10 @@ body {
             aria-label="Jogar Pokémon FireRed"
             title="Jogar"
         >
-            <span class="sr-only">
-                JOGAR
-            </span>
+            <span class="sr-only">JOGAR</span>
         </button>
 
     </div>
-
 
     <!-- EMULADOR -->
 
@@ -453,18 +405,20 @@ body {
 
 </main>
 
-
 <script>
 "use strict";
 
 /*
- * MACEON PLAY — CATÁLOGO MULTIJOGOS
+ * MACEON PLAY — DOIS JOGOS
  *
- * Jogo 001:
- * mantém arquivo, ID e chave de save.
+ * O FireRed mantém exatamente:
+ * arquivo: games/jogo.gba
+ * ID: 1001
+ * banco: MaceonPlaySaves
+ * chave: gba-main-srm
  *
- * Jogo 002:
- * espaço reservado, sem ROM publicada.
+ * O jogo 002 tem ID e chave separados.
+ * Sua ROM não está publicada nesta versão.
  */
 
 const GAMES = {
@@ -485,21 +439,18 @@ const GAMES = {
     }
 };
 
-
 /* ROTEAMENTO */
 
 const params =
     new URLSearchParams(window.location.search);
 
-const selectedId =
-    params.get("game");
+const selectedId = params.get("game");
 
 const selectedGame =
     selectedId ? GAMES[selectedId] : null;
 
 const showCatalog =
     params.get("catalog") === "1" || !selectedId;
-
 
 const launcher =
     document.getElementById("launcher");
@@ -522,35 +473,20 @@ const pending =
 const gameElement =
     document.getElementById("game");
 
-
 let emulatorStarted = false;
-
 let automaticSaveTimer = null;
-
 let lastAutomaticSaveSignature = null;
 
+/* BANCO ORIGINAL */
 
-/* BANCO DE SAVES ORIGINAL */
-
-const DB_NAME =
-    "MaceonPlaySaves";
-
-const DB_VERSION =
-    1;
-
-const STORE_NAME =
-    "saves";
-
+const DB_NAME = "MaceonPlaySaves";
+const DB_VERSION = 1;
+const STORE_NAME = "saves";
 
 /*
- * Sem parâmetro:
- * abre o catálogo.
- *
- * ?game=001:
- * abre a capa do FireRed.
- *
- * ?game=002:
- * mostra a tela de preparação.
+ * Sem parâmetros: catálogo.
+ * ?game=001: FireRed.
+ * ?game=002: espaço reservado.
  */
 
 if (showCatalog) {
@@ -567,323 +503,200 @@ if (showCatalog) {
 } else {
 
     navigation.hidden = false;
-
     launcher.hidden = false;
-
     gameElement.hidden = false;
 }
-
 
 /* ABRIR INDEXEDDB */
 
 function openSaveDatabase() {
 
-    return new Promise(
-        function(resolve, reject) {
+    return new Promise(function(resolve, reject) {
 
-            const request =
-                indexedDB.open(
-                    DB_NAME,
-                    DB_VERSION
-                );
+        const request =
+            indexedDB.open(DB_NAME, DB_VERSION);
 
+        request.onupgradeneeded = function(event) {
 
-            request.onupgradeneeded =
-                function(event) {
+            const db = event.target.result;
 
-                    const db =
-                        event.target.result;
+            if (!db.objectStoreNames.contains(STORE_NAME)) {
+                db.createObjectStore(STORE_NAME);
+            }
+        };
 
-                    if (
-                        !db.objectStoreNames.contains(
-                            STORE_NAME
-                        )
-                    ) {
+        request.onsuccess = function() {
+            resolve(request.result);
+        };
 
-                        db.createObjectStore(
-                            STORE_NAME
-                        );
-                    }
-                };
-
-
-            request.onsuccess =
-                function() {
-
-                    resolve(
-                        request.result
-                    );
-                };
-
-
-            request.onerror =
-                function() {
-
-                    reject(
-                        request.error
-                    );
-                };
-        }
-    );
+        request.onerror = function() {
+            reject(request.error);
+        };
+    });
 }
-
 
 /* GUARDAR SAVE DO JOGO SELECIONADO */
 
 async function storeSaveBuffer(buffer) {
 
-    if (
-        !selectedGame ||
-        !selectedGame.available
-    ) {
+    if (!selectedGame || !selectedGame.available) {
         return;
     }
-
 
     const bytes =
         buffer instanceof Uint8Array
             ? buffer
             : new Uint8Array(buffer);
 
+    const copy = bytes.slice();
 
-    const copy =
-        bytes.slice();
+    const db = await openSaveDatabase();
 
+    return new Promise(function(resolve, reject) {
 
-    const db =
-        await openSaveDatabase();
+        const transaction =
+            db.transaction(STORE_NAME, "readwrite");
 
+        const store =
+            transaction.objectStore(STORE_NAME);
 
-    return new Promise(
-        function(resolve, reject) {
+        store.put(
+            {
+                bytes: copy,
+                size: copy.byteLength,
+                savedAt: new Date().toISOString()
+            },
+            selectedGame.saveKey
+        );
 
-            const transaction =
-                db.transaction(
-                    STORE_NAME,
-                    "readwrite"
-                );
+        transaction.oncomplete = function() {
 
-            const store =
-                transaction.objectStore(
-                    STORE_NAME
-                );
+            db.close();
 
-
-            store.put(
-                {
-                    bytes: copy,
-                    size: copy.byteLength,
-                    savedAt:
-                        new Date().toISOString()
-                },
-                selectedGame.saveKey
+            console.log(
+                "Maceon Play: save armazenado.",
+                selectedId,
+                copy.byteLength,
+                "bytes"
             );
 
+            resolve();
+        };
 
-            transaction.oncomplete =
-                function() {
+        transaction.onerror = function() {
 
-                    db.close();
-
-                    console.log(
-                        "Maceon Play: save armazenado.",
-                        selectedId,
-                        copy.byteLength,
-                        "bytes"
-                    );
-
-                    resolve();
-                };
-
-
-            transaction.onerror =
-                function() {
-
-                    const error =
-                        transaction.error;
-
-                    db.close();
-
-                    reject(error);
-                };
-        }
-    );
+            const error = transaction.error;
+            db.close();
+            reject(error);
+        };
+    });
 }
 
-
-/* RECUPERAR SAVE DO JOGO SELECIONADO */
+/* RECUPERAR SAVE */
 
 async function getStoredSave() {
 
-    if (
-        !selectedGame ||
-        !selectedGame.available
-    ) {
+    if (!selectedGame || !selectedGame.available) {
         return null;
     }
 
+    const db = await openSaveDatabase();
 
-    const db =
-        await openSaveDatabase();
+    return new Promise(function(resolve, reject) {
 
+        const transaction =
+            db.transaction(STORE_NAME, "readonly");
 
-    return new Promise(
-        function(resolve, reject) {
+        const store =
+            transaction.objectStore(STORE_NAME);
 
-            const transaction =
-                db.transaction(
-                    STORE_NAME,
-                    "readonly"
-                );
+        const request =
+            store.get(selectedGame.saveKey);
 
-            const store =
-                transaction.objectStore(
-                    STORE_NAME
-                );
+        request.onsuccess = function() {
 
-            const request =
-                store.get(
-                    selectedGame.saveKey
-                );
+            const result = request.result;
 
+            db.close();
 
-            request.onsuccess =
-                function() {
+            resolve(result || null);
+        };
 
-                    const result =
-                        request.result;
+        request.onerror = function() {
 
-                    db.close();
+            const error = request.error;
 
-                    resolve(
-                        result || null
-                    );
-                };
+            db.close();
 
-
-            request.onerror =
-                function() {
-
-                    const error =
-                        request.error;
-
-                    db.close();
-
-                    reject(error);
-                };
-        }
-    );
+            reject(error);
+        };
+    });
 }
-
 
 /* ASSINATURA DO SAVE */
 
 function makeSaveSignature(bytes) {
 
-    if (
-        !bytes ||
-        !bytes.byteLength
-    ) {
-
+    if (!bytes || !bytes.byteLength) {
         return null;
     }
 
+    let hash = 2166136261;
 
-    let hash =
-        2166136261;
+    for (let i = 0; i < bytes.length; i += 64) {
 
+        hash ^= bytes[i];
 
-    for (
-        let i = 0;
-        i < bytes.length;
-        i += 64
-    ) {
-
-        hash ^=
-            bytes[i];
-
-        hash =
-            Math.imul(
-                hash,
-                16777619
-            );
+        hash = Math.imul(hash, 16777619);
     }
 
-
-    return (
-        bytes.byteLength +
-        ":" +
-        (hash >>> 0)
-    );
+    return bytes.byteLength + ":" + (hash >>> 0);
 }
 
-
-/* LOCALIZAR O GAMEMANAGER */
+/* LOCALIZAR GAMEMANAGER */
 
 function getGameManager() {
 
-    const emulator =
-        window.EJS_emulator;
+    const emulator = window.EJS_emulator;
 
-
-    if (
-        !emulator ||
-        !emulator.gameManager
-    ) {
-
+    if (!emulator || !emulator.gameManager) {
         return null;
     }
-
 
     return emulator.gameManager;
 }
 
-
 /*
- * OBTER O SAVE ATUAL DIRETAMENTE DO CORE.
+ * LER SAVE DIRETAMENTE DO CORE.
  *
- * Não substituir por leitura direta
- * do arquivo no filesystem.
+ * Não trocar por FS.readFile na captura:
+ * a leitura do filesystem pode estar desatualizada.
  */
 
 function readCurrentSRM() {
 
     try {
 
-        const gameManager =
-            getGameManager();
-
+        const gameManager = getGameManager();
 
         if (
             !gameManager ||
-            typeof gameManager.getSaveFile !==
-                "function"
+            typeof gameManager.getSaveFile !== "function"
         ) {
-
             return null;
         }
 
+        const save = gameManager.getSaveFile();
 
-        const save =
-            gameManager.getSaveFile();
-
-
-        if (
-            !save ||
-            !save.byteLength
-        ) {
-
+        if (!save || !save.byteLength) {
             return null;
         }
-
 
         return save instanceof Uint8Array
             ? save.slice()
             : new Uint8Array(save);
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
         console.error(
             "Maceon Play: erro ao obter save.",
@@ -894,7 +707,6 @@ function readCurrentSRM() {
     }
 }
 
-
 /* CAPTURA AUTOMÁTICA */
 
 async function captureCurrentSRM(force = false) {
@@ -903,42 +715,26 @@ async function captureCurrentSRM(force = false) {
         return false;
     }
 
-
     try {
 
-        const bytes =
-            readCurrentSRM();
-
+        const bytes = readCurrentSRM();
 
         if (!bytes) {
             return false;
         }
 
-
-        const signature =
-            makeSaveSignature(
-                bytes
-            );
-
+        const signature = makeSaveSignature(bytes);
 
         if (
             !force &&
-            signature ===
-                lastAutomaticSaveSignature
+            signature === lastAutomaticSaveSignature
         ) {
-
             return false;
         }
 
+        await storeSaveBuffer(bytes);
 
-        await storeSaveBuffer(
-            bytes
-        );
-
-
-        lastAutomaticSaveSignature =
-            signature;
-
+        lastAutomaticSaveSignature = signature;
 
         console.log(
             "Maceon Play: save automático capturado.",
@@ -947,12 +743,9 @@ async function captureCurrentSRM(force = false) {
             "bytes"
         );
 
-
         return true;
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
         console.error(
             "Maceon Play: erro no save automático.",
@@ -963,37 +756,24 @@ async function captureCurrentSRM(force = false) {
     }
 }
 
-
 /* MONITOR AUTOMÁTICO */
 
 function startAutomaticSaveMonitor() {
 
     if (automaticSaveTimer) {
-
-        clearInterval(
-            automaticSaveTimer
-        );
+        clearInterval(automaticSaveTimer);
     }
 
+    automaticSaveTimer = setInterval(function() {
 
-    automaticSaveTimer =
-        setInterval(
-            function() {
+        captureCurrentSRM(false);
 
-                captureCurrentSRM(
-                    false
-                );
-
-            },
-            7000
-        );
-
+    }, 7000);
 
     console.log(
         "Maceon Play: monitor automático iniciado."
     );
 }
-
 
 /* RESTAURAR SAVE */
 
@@ -1001,14 +781,9 @@ async function restoreStoredSave() {
 
     try {
 
-        const stored =
-            await getStoredSave();
+        const stored = await getStoredSave();
 
-
-        if (
-            !stored ||
-            !stored.bytes
-        ) {
+        if (!stored || !stored.bytes) {
 
             console.log(
                 "Maceon Play: nenhum save local encontrado."
@@ -1017,41 +792,27 @@ async function restoreStoredSave() {
             return false;
         }
 
-
         const bytes =
             stored.bytes instanceof Uint8Array
                 ? stored.bytes
-                : new Uint8Array(
-                    stored.bytes
-                );
+                : new Uint8Array(stored.bytes);
 
+        const timeout = Date.now() + 15000;
 
-        const timeout =
-            Date.now() + 15000;
+        while (Date.now() < timeout) {
 
-
-        while (
-            Date.now() < timeout
-        ) {
-
-            const gameManager =
-                getGameManager();
-
+            const gameManager = getGameManager();
 
             if (
                 gameManager &&
                 gameManager.FS &&
-                typeof gameManager.getSaveFilePath ===
-                    "function"
+                typeof gameManager.getSaveFilePath === "function"
             ) {
 
-                const FS =
-                    gameManager.FS;
-
+                const FS = gameManager.FS;
 
                 const savePath =
                     gameManager.getSaveFilePath();
-
 
                 if (!savePath) {
 
@@ -1062,13 +823,9 @@ async function restoreStoredSave() {
                     return false;
                 }
 
+                const parts = savePath.split("/");
 
-                const parts =
-                    savePath.split("/");
-
-                let currentPath =
-                    "";
-
+                let currentPath = "";
 
                 for (
                     let i = 0;
@@ -1080,74 +837,35 @@ async function restoreStoredSave() {
                         continue;
                     }
 
-
-                    currentPath +=
-                        "/" + parts[i];
-
+                    currentPath += "/" + parts[i];
 
                     try {
 
-                        if (
-                            !FS.analyzePath(
-                                currentPath
-                            ).exists
-                        ) {
-
-                            FS.mkdir(
-                                currentPath
-                            );
+                        if (!FS.analyzePath(currentPath).exists) {
+                            FS.mkdir(currentPath);
                         }
 
-                    }
-
-                    catch (error) {
+                    } catch (error) {
 
                         try {
-
-                            FS.mkdir(
-                                currentPath
-                            );
-
-                        }
-
-                        catch (ignored) {
-                        }
+                            FS.mkdir(currentPath);
+                        } catch (ignored) {}
                     }
                 }
 
-
                 try {
 
-                    if (
-                        FS.analyzePath(
-                            savePath
-                        ).exists
-                    ) {
-
-                        FS.unlink(
-                            savePath
-                        );
+                    if (FS.analyzePath(savePath).exists) {
+                        FS.unlink(savePath);
                     }
 
-                }
+                } catch (ignored) {}
 
-                catch (ignored) {
-                }
-
-
-                FS.writeFile(
-                    savePath,
-                    bytes
-                );
-
+                FS.writeFile(savePath, bytes);
 
                 try {
 
-                    const check =
-                        FS.readFile(
-                            savePath
-                        );
-
+                    const check = FS.readFile(savePath);
 
                     console.log(
                         "Maceon Play: save escrito no filesystem.",
@@ -1155,9 +873,7 @@ async function restoreStoredSave() {
                         "bytes"
                     );
 
-                }
-
-                catch (error) {
+                } catch (error) {
 
                     console.error(
                         "Maceon Play: falha ao conferir save.",
@@ -1165,10 +881,8 @@ async function restoreStoredSave() {
                     );
                 }
 
-
                 if (
-                    typeof gameManager.loadSaveFiles !==
-                        "function"
+                    typeof gameManager.loadSaveFiles !== "function"
                 ) {
 
                     console.error(
@@ -1178,59 +892,38 @@ async function restoreStoredSave() {
                     return false;
                 }
 
-
-                const result =
-                    gameManager.loadSaveFiles();
-
+                const result = gameManager.loadSaveFiles();
 
                 if (
                     result &&
-                    typeof result.then ===
-                        "function"
+                    typeof result.then === "function"
                 ) {
-
                     await result;
                 }
 
-
                 lastAutomaticSaveSignature =
-                    makeSaveSignature(
-                        bytes
-                    );
-
+                    makeSaveSignature(bytes);
 
                 console.log(
                     "Maceon Play: save restaurado.",
                     selectedId
                 );
 
-
                 return true;
             }
 
-
-            await new Promise(
-                function(resolve) {
-
-                    setTimeout(
-                        resolve,
-                        100
-                    );
-                }
-            );
+            await new Promise(function(resolve) {
+                setTimeout(resolve, 100);
+            });
         }
-
 
         console.error(
             "Maceon Play: gameManager indisponível."
         );
 
-
         return false;
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
         console.error(
             "Maceon Play: erro na restauração.",
@@ -1241,7 +934,6 @@ async function restoreStoredSave() {
     }
 }
 
-
 /* INICIAR EMULADOR */
 
 function startEmulator() {
@@ -1251,204 +943,135 @@ function startEmulator() {
         !selectedGame ||
         !selectedGame.available
     ) {
-
         return;
     }
 
+    emulatorStarted = true;
 
-    emulatorStarted =
-        true;
+    playButton.disabled = true;
 
+    message.textContent = "Carregando jogo...";
 
-    playButton.disabled =
-        true;
+    launcher.style.display = "none";
 
+    window.EJS_player = "#game";
 
-    message.textContent =
-        "Carregando jogo...";
+    window.EJS_gameName = selectedGame.name;
 
+    window.EJS_gameID = selectedGame.emulatorId;
 
-    launcher.style.display =
-        "none";
+    window.EJS_gameUrl = selectedGame.url;
 
-
-    window.EJS_player =
-        "#game";
-
-    window.EJS_gameName =
-        selectedGame.name;
-
-    window.EJS_gameID =
-        selectedGame.emulatorId;
-
-    window.EJS_gameUrl =
-        selectedGame.url;
-
-    window.EJS_core =
-        "gba";
+    window.EJS_core = "gba";
 
     window.EJS_pathtodata =
         "https://cdn.emulatorjs.org/stable/data/";
 
-    window.EJS_startOnLoaded =
-        true;
+    window.EJS_startOnLoaded = true;
 
-    window.EJS_language =
-        "pt-BR";
+    window.EJS_language = "pt-BR";
 
-    window.EJS_fixedSaveInterval =
-        7000;
-
+    window.EJS_fixedSaveInterval = 7000;
 
     /* SAVE MANUAL DE SEGURANÇA */
 
-    window.EJS_onSaveSave =
-        async function(event) {
+    window.EJS_onSaveSave = async function(event) {
 
-            if (
-                !event ||
-                !event.save
-            ) {
+        if (!event || !event.save) {
 
-                console.error(
-                    "Maceon Play: emulador não forneceu save."
-                );
+            console.error(
+                "Maceon Play: emulador não forneceu save."
+            );
 
-                return;
-            }
+            return;
+        }
 
+        try {
 
-            try {
+            const bytes =
+                event.save instanceof Uint8Array
+                    ? event.save
+                    : new Uint8Array(event.save);
 
-                const bytes =
-                    event.save instanceof Uint8Array
-                        ? event.save
-                        : new Uint8Array(
-                            event.save
-                        );
+            await storeSaveBuffer(bytes);
 
-
-                await storeSaveBuffer(
-                    bytes
-                );
-
-
-                lastAutomaticSaveSignature =
-                    makeSaveSignature(
-                        bytes
-                    );
-
-
-                console.log(
-                    "Maceon Play: save manual armazenado.",
-                    selectedId
-                );
-
-            }
-
-            catch (error) {
-
-                console.error(
-                    "Maceon Play: erro no save manual.",
-                    error
-                );
-            }
-        };
-
-
-    /* RESTAURAR ANTES DE INICIAR MONITOR */
-
-    window.EJS_onGameStart =
-        async function() {
+            lastAutomaticSaveSignature =
+                makeSaveSignature(bytes);
 
             console.log(
-                "Maceon Play: jogo iniciado.",
+                "Maceon Play: save manual armazenado.",
                 selectedId
             );
 
+        } catch (error) {
 
-            await restoreStoredSave();
+            console.error(
+                "Maceon Play: erro no save manual.",
+                error
+            );
+        }
+    };
 
+    /* RESTAURAR ANTES DO MONITOR */
 
-            startAutomaticSaveMonitor();
-        };
+    window.EJS_onGameStart = async function() {
 
+        console.log(
+            "Maceon Play: jogo iniciado.",
+            selectedId
+        );
+
+        await restoreStoredSave();
+
+        startAutomaticSaveMonitor();
+    };
 
     /* CARREGAR EMULATORJS */
 
-    const loader =
-        document.createElement(
-            "script"
-        );
-
+    const loader = document.createElement("script");
 
     loader.src =
         "https://cdn.emulatorjs.org/stable/data/loader.js";
 
+    loader.onerror = function() {
 
-    loader.onerror =
-        function() {
+        emulatorStarted = false;
 
-            emulatorStarted =
-                false;
+        launcher.style.display = "block";
 
+        message.textContent =
+            "Não foi possível carregar o emulador.";
 
-            launcher.style.display =
-                "block";
+        message.classList.remove("sr-only");
 
+        message.classList.add("load-error");
 
-            message.textContent =
-                "Não foi possível carregar o emulador.";
+        playButton.disabled = false;
+    };
 
-
-            message.classList.remove(
-                "sr-only"
-            );
-
-            message.classList.add(
-                "load-error"
-            );
-
-
-            playButton.disabled =
-                false;
-        };
-
-
-    document.body.appendChild(
-        loader
-    );
+    document.body.appendChild(loader);
 }
 
-
-/* ÚLTIMA TENTATIVA AO SAIR DA PÁGINA */
+/* ÚLTIMA TENTATIVA AO SAIR */
 
 document.addEventListener(
     "visibilitychange",
     function() {
 
         if (
-            document.visibilityState ===
-                "hidden" &&
+            document.visibilityState === "hidden" &&
             emulatorStarted
         ) {
 
-            captureCurrentSRM(
-                true
-            );
+            captureCurrentSRM(true);
         }
     }
 );
 
-
 /* BOTÃO JOGAR */
 
-playButton.addEventListener(
-    "click",
-    startEmulator
-);
+playButton.addEventListener("click", startEmulator);
 
 </script>
-
 </body>
 </html>
