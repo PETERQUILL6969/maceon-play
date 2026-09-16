@@ -301,7 +301,7 @@ body {
         <a class="game-card" href="?game=001">
             <img
                 class="game-cover"
-                src="./maceon-play-cover.png"
+                src="./firered-cover.jpg"
                 alt="Capa do FireRed"
             >
             <strong>Pokémon FireRed</strong>
@@ -324,7 +324,6 @@ body {
 
     <p class="catalog-note">
         Os jogos e seus progressos ficam separados.
-        O arquivo local do LeafGreen permanece neste navegador.
     </p>
 </section>
 
@@ -353,52 +352,28 @@ body {
     </button>
 </div>
 
-<!-- LeafGreen local -->
+<!-- Jogo 002 -->
 
 <section id="leafLauncher" class="leaf-launcher">
 
     <img
         class="cover-image"
         src="./leafgreen-cover.png"
-        alt="Maceon Play — Pokémon LeafGreen"
+        alt="Maceon Play — Jogo 002"
     >
 
     <div class="leaf-controls">
 
         <p id="leafStatus" class="status">
-            Verificando se o jogo já está armazenado...
+            Pronto para jogar.
         </p>
-
-        <div id="leafImport" hidden>
-            <p>
-                Selecione seu arquivo .gba uma única vez.
-                Ele será armazenado neste navegador.
-            </p>
-
-            <input
-                id="leafFile"
-                class="file-input"
-                type="file"
-                accept=".gba"
-                aria-label="Selecionar arquivo GBA local"
-            >
-
-            <button
-                id="importButton"
-                class="primary-button"
-                type="button"
-            >
-                GUARDAR JOGO NESTE NAVEGADOR
-            </button>
-        </div>
 
         <button
             id="leafPlayButton"
             class="primary-button"
             type="button"
-            hidden
         >
-            JOGAR LEAFGREEN
+            JOGAR
         </button>
 
     </div>
@@ -412,10 +387,7 @@ body {
 "use strict";
 
 /*
- * FireRed: arquivo público original.
- * LeafGreen: arquivo selecionado pelo usuário,
- * armazenado somente no navegador.
- *
+ * Jogos 001 e 002 carregados por URL.
  * Os saves usam chaves diferentes.
  */
 
@@ -430,7 +402,7 @@ const GAMES = {
 
     "002": {
         name: "Pokémon LeafGreen – PT-BR",
-        url: null,
+        url: "./games2/jogo2.gba",
         emulatorId: 1002,
         saveKey: "gba-game-002-srm",
         available: true
@@ -449,16 +421,12 @@ const message = document.getElementById("message");
 const playButton = document.getElementById("playButton");
 const leafLauncher = document.getElementById("leafLauncher");
 const leafStatus = document.getElementById("leafStatus");
-const leafImport = document.getElementById("leafImport");
-const leafFile = document.getElementById("leafFile");
-const importButton = document.getElementById("importButton");
 const leafPlayButton = document.getElementById("leafPlayButton");
 const gameElement = document.getElementById("game");
 
 let emulatorStarted = false;
 let automaticSaveTimer = null;
 let lastAutomaticSaveSignature = null;
-let localGameUrl = null;
 
 /* Banco de saves original: NÃO ALTERAR */
 
@@ -466,11 +434,6 @@ const DB_NAME = "MaceonPlaySaves";
 const DB_VERSION = 1;
 const STORE_NAME = "saves";
 
-/* Banco separado para o arquivo local */
-
-const ROM_DB_NAME = "MaceonPlayLocalGames";
-const ROM_STORE_NAME = "roms";
-const LEAF_ROM_KEY = "game-002-local-rom";
 
 if (showCatalog) {
     catalog.style.display = "block";
@@ -482,7 +445,6 @@ if (showCatalog) {
     navigation.hidden = false;
     leafLauncher.style.display = "block";
     gameElement.hidden = false;
-    checkLeafGame();
 } else {
     catalog.style.display = "block";
 }
@@ -510,146 +472,6 @@ function openSaveDatabase() {
         };
     });
 }
-
-/* IndexedDB: arquivo local do LeafGreen */
-
-function openRomDatabase() {
-    return new Promise(function(resolve, reject) {
-        const request = indexedDB.open(ROM_DB_NAME, 1);
-
-        request.onupgradeneeded = function(event) {
-            const db = event.target.result;
-
-            if (!db.objectStoreNames.contains(ROM_STORE_NAME)) {
-                db.createObjectStore(ROM_STORE_NAME);
-            }
-        };
-
-        request.onsuccess = function() {
-            resolve(request.result);
-        };
-
-        request.onerror = function() {
-            reject(request.error);
-        };
-    });
-}
-
-async function storeLocalRom(file) {
-    const db = await openRomDatabase();
-
-    return new Promise(function(resolve, reject) {
-        const transaction = db.transaction(
-            ROM_STORE_NAME,
-            "readwrite"
-        );
-
-        transaction.objectStore(ROM_STORE_NAME).put(
-            {
-                blob: file,
-                name: file.name,
-                savedAt: new Date().toISOString()
-            },
-            LEAF_ROM_KEY
-        );
-
-        transaction.oncomplete = function() {
-            db.close();
-            resolve();
-        };
-
-        transaction.onerror = function() {
-            const error = transaction.error;
-            db.close();
-            reject(error);
-        };
-    });
-}
-
-async function getLocalRom() {
-    const db = await openRomDatabase();
-
-    return new Promise(function(resolve, reject) {
-        const transaction = db.transaction(
-            ROM_STORE_NAME,
-            "readonly"
-        );
-
-        const request = transaction
-            .objectStore(ROM_STORE_NAME)
-            .get(LEAF_ROM_KEY);
-
-        request.onsuccess = function() {
-            const result = request.result || null;
-            db.close();
-            resolve(result);
-        };
-
-        request.onerror = function() {
-            const error = request.error;
-            db.close();
-            reject(error);
-        };
-    });
-}
-
-async function checkLeafGame() {
-    try {
-        const stored = await getLocalRom();
-
-        if (stored && stored.blob && stored.blob.size) {
-            leafStatus.textContent =
-                "LeafGreen armazenado neste navegador. Pronto para jogar.";
-
-            leafImport.hidden = true;
-            leafPlayButton.hidden = false;
-        } else {
-            leafStatus.textContent =
-                "O LeafGreen ainda não foi armazenado neste navegador.";
-
-            leafImport.hidden = false;
-            leafPlayButton.hidden = true;
-        }
-    } catch (error) {
-        console.error(error);
-
-        leafStatus.textContent =
-            "Não foi possível acessar o armazenamento local. " +
-            "Verifique se o navegador permite armazenar dados do site.";
-    }
-}
-
-importButton.addEventListener("click", async function() {
-    const file = leafFile.files[0];
-
-    if (!file || !file.name.toLowerCase().endsWith(".gba")) {
-        leafStatus.textContent =
-            "Selecione um arquivo com extensão .gba.";
-        return;
-    }
-
-    importButton.disabled = true;
-    leafStatus.textContent = "Armazenando o jogo...";
-
-    try {
-        await storeLocalRom(file);
-
-        leafStatus.textContent =
-            "Jogo armazenado! Nas próximas visitas, " +
-            "basta clicar em JOGAR.";
-
-        leafImport.hidden = true;
-        leafPlayButton.hidden = false;
-    } catch (error) {
-        console.error(error);
-
-        leafStatus.textContent =
-            "Não foi possível armazenar o arquivo. " +
-            "Verifique o espaço disponível no dispositivo.";
-    } finally {
-        importButton.disabled = false;
-    }
-});
 
 /* Salvar progresso */
 
@@ -1066,40 +888,11 @@ playButton.addEventListener("click", function() {
     }
 });
 
-/* LeafGreen: recuperar arquivo armazenado */
+/* Jogo 002: arquivo hospedado em games2 */
 
-leafPlayButton.addEventListener("click", async function() {
-    if (selectedId !== "002" || emulatorStarted) return;
-
-    leafPlayButton.disabled = true;
-    leafStatus.textContent = "Preparando o jogo...";
-
-    try {
-        const stored = await getLocalRom();
-
-        if (!stored || !stored.blob || !stored.blob.size) {
-            leafStatus.textContent =
-                "Arquivo não encontrado. Selecione-o novamente.";
-            leafImport.hidden = false;
-            leafPlayButton.hidden = true;
-            return;
-        }
-
-        if (localGameUrl) {
-            URL.revokeObjectURL(localGameUrl);
-        }
-
-        localGameUrl = URL.createObjectURL(stored.blob);
-        startEmulator(localGameUrl);
-
-    } catch (error) {
-        console.error(error);
-        leafStatus.textContent =
-            "Não foi possível abrir o arquivo armazenado.";
-    } finally {
-        if (!emulatorStarted) {
-            leafPlayButton.disabled = false;
-        }
+leafPlayButton.addEventListener("click", function() {
+    if (selectedId === "002") {
+        startEmulator(selectedGame.url);
     }
 });
 
