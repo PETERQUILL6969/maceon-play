@@ -6,16 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#080808">
 <title>Maceon Play</title>
-
 <style>
 * { box-sizing: border-box; }
 
 html, body {
     margin: 0;
-    width: 100%;
     min-height: 100%;
     background: #080808;
-    color: #fff;
+    color: white;
     font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -32,12 +30,10 @@ body {
     text-align: center;
 }
 
-/* CATÁLOGO */
-
 .catalog {
     display: none;
     max-width: 780px;
-    margin: 0 auto;
+    margin: auto;
     padding: 20px 0 35px;
 }
 
@@ -53,7 +49,7 @@ body {
 .catalog-subtitle {
     color: #bbb;
     font-size: 18px;
-    margin: 0 0 30px;
+    margin-bottom: 30px;
 }
 
 .game-grid {
@@ -69,28 +65,20 @@ body {
     gap: 12px;
     min-width: 0;
     padding: 16px;
-    border: 1px solid #333;
+    border: 1px solid #55d6be;
     border-radius: 18px;
     background: #161616;
-    color: #fff;
+    color: white;
     text-decoration: none;
 }
 
-.game-card.available {
-    border-color: #55d6be;
-    cursor: pointer;
-}
-
-.game-card.available:hover { background: #1c2926; }
-
-.game-card.unavailable { opacity: .78; }
+.game-card:hover { background: #1c2926; }
 
 .game-cover {
     display: block;
     width: 100%;
     aspect-ratio: 2 / 3;
     object-fit: cover;
-    object-position: center;
     border-radius: 12px;
     background: #222;
 }
@@ -113,12 +101,6 @@ body {
     background: #55d6be;
     color: #07110f;
     font-weight: 800;
-    font-size: 16px;
-}
-
-.game-card.unavailable .game-action {
-    background: #333;
-    color: #ccc;
 }
 
 .catalog-note {
@@ -128,22 +110,17 @@ body {
     line-height: 1.5;
 }
 
-/* NAVEGAÇÃO */
-
 .nav {
     text-align: left;
     margin-bottom: 14px;
 }
 
-.nav a, .pending a { color: #55d6be; }
-
-/* CAPA FUNCIONAL DO FIRERED */
+.nav a { color: #55d6be; }
 
 .cover-launcher {
     position: relative;
-    min-height: 0;
     padding: 0;
-    background: #000;
+    background: black;
     overflow: hidden;
     border-radius: 18px;
 }
@@ -156,7 +133,7 @@ body {
     -webkit-user-drag: none;
 }
 
-/* Botão real sobre o JOGAR desenhado na capa */
+/* Botão original sobre a capa do FireRed */
 
 .cover-play-button {
     position: absolute;
@@ -169,16 +146,11 @@ body {
     background: transparent;
     cursor: pointer;
     touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
 }
 
 .cover-play-button:focus-visible {
-    outline: 4px solid #fff;
+    outline: 4px solid white;
     outline-offset: -5px;
-}
-
-.cover-play-button:active {
-    background: rgba(255,255,255,.08);
 }
 
 .cover-play-button:disabled { cursor: wait; }
@@ -190,7 +162,7 @@ body {
     padding: 0 !important;
     margin: -1px !important;
     overflow: hidden !important;
-    clip: rect(0,0,0,0) !important;
+    clip: rect(0, 0, 0, 0) !important;
     white-space: nowrap !important;
     border: 0 !important;
 }
@@ -209,28 +181,65 @@ body {
     white-space: normal !important;
     border-radius: 10px;
     background: rgba(0,0,0,.85);
-    color: #fff !important;
+    color: white !important;
     z-index: 5;
 }
 
-/* SEGUNDO JOGO */
+/* Tela do LeafGreen */
 
-.pending {
+.leaf-launcher {
     display: none;
     max-width: 650px;
-    margin: 50px auto;
-    padding: 28px;
-    border: 1px solid #333;
-    border-radius: 18px;
-    background: #161616;
+    margin: auto;
 }
 
-.pending p {
+.leaf-launcher .cover-image {
+    border-radius: 18px;
+}
+
+.leaf-controls {
+    padding: 20px;
+    background: #161616;
+    border-radius: 0 0 18px 18px;
+}
+
+.leaf-controls p {
+    color: #ccc;
+    line-height: 1.5;
+}
+
+.primary-button {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    border: 0;
+    border-radius: 12px;
+    background: #55d6be;
+    color: #07110f;
+    font-size: 17px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.primary-button:disabled {
+    opacity: .6;
+    cursor: wait;
+}
+
+.file-input {
+    display: block;
+    width: 100%;
+    margin: 15px 0;
+    color: white;
+}
+
+.status {
+    font-size: 14px;
     color: #bbb;
     line-height: 1.5;
 }
 
-/* PLAYER — DIMENSÕES FUNCIONAIS PRESERVADAS */
+/* Player: dimensões preservadas */
 
 #game {
     width: 100%;
@@ -238,7 +247,7 @@ body {
     max-height: 70vh;
     position: relative;
     overflow: hidden;
-    background: #000;
+    background: black;
 }
 
 #game.ejs_parent {
@@ -251,10 +260,7 @@ body {
 
 #game .ejs_canvas_parent {
     position: absolute !important;
-    top: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    left: 0 !important;
+    inset: 0 !important;
     width: 100% !important;
     height: 100% !important;
     overflow: hidden !important;
@@ -271,14 +277,9 @@ body {
 
 @media (max-width: 600px) {
     .container { padding: 10px; }
-    .cover-launcher { min-height: 0; border-radius: 12px; }
     .game-grid { gap: 10px; }
     .game-card { padding: 9px; gap: 9px; }
-
-    .game-action {
-        padding: 12px 5px;
-        font-size: 14px;
-    }
+    .game-action { padding: 12px 5px; font-size: 14px; }
 
     #game, #game.ejs_parent {
         height: 70vh !important;
@@ -291,117 +292,119 @@ body {
 <body>
 <main class="container">
 
-    <!-- TELA INICIAL: ESCOLHA DOS JOGOS -->
+<section id="catalog" class="catalog">
+    <h1 class="catalog-logo">MACEON <span>PLAY</span></h1>
+    <p class="catalog-subtitle">Escolha seu jogo</p>
 
-    <section id="catalog" class="catalog">
+    <div class="game-grid">
 
-        <h1 class="catalog-logo">
-            MACEON <span>PLAY</span>
-        </h1>
-
-        <p class="catalog-subtitle">
-            Escolha seu jogo
-        </p>
-
-        <div class="game-grid">
-
-            <!-- JOGO 001 -->
-
-            <a
-                class="game-card available"
-                href="?game=001"
-                aria-label="Escolher Pokémon FireRed"
+        <a class="game-card" href="?game=001">
+            <img
+                class="game-cover"
+                src="./maceon-play-cover.png"
+                alt="Capa do FireRed"
             >
-                <img
-                    class="game-cover"
-                    src="./maceon-play-cover.png"
-                    alt="Capa de Pokémon FireRed"
-                >
+            <strong>Pokémon FireRed</strong>
+            <small>PT-BR · Jogo 001</small>
+            <span class="game-action">JOGAR</span>
+        </a>
 
-                <strong>Pokémon FireRed</strong>
-                <small>PT-BR · Jogo 001</small>
-
-                <span class="game-action">JOGAR</span>
-            </a>
-
-            <!-- JOGO 002 -->
-
-            <div class="game-card unavailable">
-
-                <img
-                    class="game-cover"
-                    src="./leafgreen-cover.png"
-                    alt="Capa de Pokémon LeafGreen"
-                >
-
-                <strong>Pokémon LeafGreen</strong>
-                <small>PT-BR · Jogo 002</small>
-
-                <span class="game-action">
-                    EM PREPARAÇÃO
-                </span>
-            </div>
-
-        </div>
-
-        <p class="catalog-note">
-            O progresso fica salvo neste navegador.
-            Cada jogo terá seu próprio save.
-        </p>
-
-    </section>
-
-    <!-- NAVEGAÇÃO -->
-
-    <nav id="navigation" class="nav" hidden>
-        <a href="?catalog=1">← Voltar aos jogos</a>
-    </nav>
-
-    <!-- LEAFGREEN: ESPAÇO RESERVADO -->
-
-    <section id="pending" class="pending">
-        <h1>Pokémon LeafGreen – PT-BR</h1>
-
-        <p>
-            A capa e o espaço do segundo jogo estão
-            preparados. O jogo ainda não está disponível
-            nesta versão pública.
-        </p>
-
-        <p>
-            <a href="?catalog=1">Voltar ao catálogo</a>
-        </p>
-    </section>
-
-    <!-- CAPA ORIGINAL DO FIRERED -->
-
-    <div id="launcher" class="cover-launcher" hidden>
-
-        <img
-            class="cover-image"
-            src="./maceon-play-cover.png"
-            alt="Maceon Play — Pokémon FireRed"
-        >
-
-        <p id="message" class="sr-only">
-            Pronto para jogar.
-        </p>
-
-        <button
-            id="playButton"
-            class="cover-play-button"
-            type="button"
-            aria-label="Jogar Pokémon FireRed"
-            title="Jogar"
-        >
-            <span class="sr-only">JOGAR</span>
-        </button>
+        <a class="game-card" href="?game=002">
+            <img
+                class="game-cover"
+                src="./leafgreen-cover.png"
+                alt="Capa do LeafGreen"
+            >
+            <strong>Pokémon LeafGreen</strong>
+            <small>PT-BR · Jogo 002</small>
+            <span class="game-action">JOGAR</span>
+        </a>
 
     </div>
 
-    <!-- EMULADOR -->
+    <p class="catalog-note">
+        Os jogos e seus progressos ficam separados.
+        O arquivo local do LeafGreen permanece neste navegador.
+    </p>
+</section>
 
-    <div id="game" hidden></div>
+<nav id="navigation" class="nav" hidden>
+    <a href="?catalog=1">← Voltar aos jogos</a>
+</nav>
+
+<!-- FireRed original -->
+
+<div id="launcher" class="cover-launcher" hidden>
+    <img
+        class="cover-image"
+        src="./maceon-play-cover.png"
+        alt="Maceon Play — Pokémon FireRed"
+    >
+
+    <p id="message" class="sr-only">Pronto para jogar.</p>
+
+    <button
+        id="playButton"
+        class="cover-play-button"
+        type="button"
+        aria-label="Jogar Pokémon FireRed"
+    >
+        <span class="sr-only">JOGAR</span>
+    </button>
+</div>
+
+<!-- LeafGreen local -->
+
+<section id="leafLauncher" class="leaf-launcher">
+
+    <img
+        class="cover-image"
+        src="./leafgreen-cover.png"
+        alt="Maceon Play — Pokémon LeafGreen"
+    >
+
+    <div class="leaf-controls">
+
+        <p id="leafStatus" class="status">
+            Verificando se o jogo já está armazenado...
+        </p>
+
+        <div id="leafImport" hidden>
+            <p>
+                Selecione seu arquivo .gba uma única vez.
+                Ele será armazenado neste navegador.
+            </p>
+
+            <input
+                id="leafFile"
+                class="file-input"
+                type="file"
+                accept=".gba"
+                aria-label="Selecionar arquivo GBA local"
+            >
+
+            <button
+                id="importButton"
+                class="primary-button"
+                type="button"
+            >
+                GUARDAR JOGO NESTE NAVEGADOR
+            </button>
+        </div>
+
+        <button
+            id="leafPlayButton"
+            class="primary-button"
+            type="button"
+            hidden
+        >
+            JOGAR LEAFGREEN
+        </button>
+
+    </div>
+</section>
+
+<div id="game" hidden></div>
 
 </main>
 
@@ -409,16 +412,11 @@ body {
 "use strict";
 
 /*
- * MACEON PLAY — DOIS JOGOS
+ * FireRed: arquivo público original.
+ * LeafGreen: arquivo selecionado pelo usuário,
+ * armazenado somente no navegador.
  *
- * O FireRed mantém exatamente:
- * arquivo: games/jogo.gba
- * ID: 1001
- * banco: MaceonPlaySaves
- * chave: gba-main-srm
- *
- * O jogo 002 tem ID e chave separados.
- * Sua ROM não está publicada nesta versão.
+ * Os saves usam chaves diferentes.
  */
 
 const GAMES = {
@@ -435,89 +433,67 @@ const GAMES = {
         url: null,
         emulatorId: 1002,
         saveKey: "gba-game-002-srm",
-        available: false
+        available: true
     }
 };
 
-/* ROTEAMENTO */
-
-const params =
-    new URLSearchParams(window.location.search);
-
+const params = new URLSearchParams(location.search);
 const selectedId = params.get("game");
+const selectedGame = GAMES[selectedId] || null;
+const showCatalog = params.get("catalog") === "1" || !selectedId;
 
-const selectedGame =
-    selectedId ? GAMES[selectedId] : null;
-
-const showCatalog =
-    params.get("catalog") === "1" || !selectedId;
-
-const launcher =
-    document.getElementById("launcher");
-
-const message =
-    document.getElementById("message");
-
-const playButton =
-    document.getElementById("playButton");
-
-const navigation =
-    document.getElementById("navigation");
-
-const catalog =
-    document.getElementById("catalog");
-
-const pending =
-    document.getElementById("pending");
-
-const gameElement =
-    document.getElementById("game");
+const catalog = document.getElementById("catalog");
+const navigation = document.getElementById("navigation");
+const launcher = document.getElementById("launcher");
+const message = document.getElementById("message");
+const playButton = document.getElementById("playButton");
+const leafLauncher = document.getElementById("leafLauncher");
+const leafStatus = document.getElementById("leafStatus");
+const leafImport = document.getElementById("leafImport");
+const leafFile = document.getElementById("leafFile");
+const importButton = document.getElementById("importButton");
+const leafPlayButton = document.getElementById("leafPlayButton");
+const gameElement = document.getElementById("game");
 
 let emulatorStarted = false;
 let automaticSaveTimer = null;
 let lastAutomaticSaveSignature = null;
+let localGameUrl = null;
 
-/* BANCO ORIGINAL */
+/* Banco de saves original: NÃO ALTERAR */
 
 const DB_NAME = "MaceonPlaySaves";
 const DB_VERSION = 1;
 const STORE_NAME = "saves";
 
-/*
- * Sem parâmetros: catálogo.
- * ?game=001: FireRed.
- * ?game=002: espaço reservado.
- */
+/* Banco separado para o arquivo local */
+
+const ROM_DB_NAME = "MaceonPlayLocalGames";
+const ROM_STORE_NAME = "roms";
+const LEAF_ROM_KEY = "game-002-local-rom";
 
 if (showCatalog) {
-
     catalog.style.display = "block";
-
-} else if (
-    !selectedGame ||
-    !selectedGame.available
-) {
-
-    pending.style.display = "block";
-
-} else {
-
+} else if (selectedId === "001") {
     navigation.hidden = false;
     launcher.hidden = false;
     gameElement.hidden = false;
+} else if (selectedId === "002") {
+    navigation.hidden = false;
+    leafLauncher.style.display = "block";
+    gameElement.hidden = false;
+    checkLeafGame();
+} else {
+    catalog.style.display = "block";
 }
 
-/* ABRIR INDEXEDDB */
+/* IndexedDB: saves */
 
 function openSaveDatabase() {
-
     return new Promise(function(resolve, reject) {
-
-        const request =
-            indexedDB.open(DB_NAME, DB_VERSION);
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
 
         request.onupgradeneeded = function(event) {
-
             const db = event.target.result;
 
             if (!db.objectStoreNames.contains(STORE_NAME)) {
@@ -535,32 +511,165 @@ function openSaveDatabase() {
     });
 }
 
-/* GUARDAR SAVE DO JOGO SELECIONADO */
+/* IndexedDB: arquivo local do LeafGreen */
 
-async function storeSaveBuffer(buffer) {
+function openRomDatabase() {
+    return new Promise(function(resolve, reject) {
+        const request = indexedDB.open(ROM_DB_NAME, 1);
 
-    if (!selectedGame || !selectedGame.available) {
+        request.onupgradeneeded = function(event) {
+            const db = event.target.result;
+
+            if (!db.objectStoreNames.contains(ROM_STORE_NAME)) {
+                db.createObjectStore(ROM_STORE_NAME);
+            }
+        };
+
+        request.onsuccess = function() {
+            resolve(request.result);
+        };
+
+        request.onerror = function() {
+            reject(request.error);
+        };
+    });
+}
+
+async function storeLocalRom(file) {
+    const db = await openRomDatabase();
+
+    return new Promise(function(resolve, reject) {
+        const transaction = db.transaction(
+            ROM_STORE_NAME,
+            "readwrite"
+        );
+
+        transaction.objectStore(ROM_STORE_NAME).put(
+            {
+                blob: file,
+                name: file.name,
+                savedAt: new Date().toISOString()
+            },
+            LEAF_ROM_KEY
+        );
+
+        transaction.oncomplete = function() {
+            db.close();
+            resolve();
+        };
+
+        transaction.onerror = function() {
+            const error = transaction.error;
+            db.close();
+            reject(error);
+        };
+    });
+}
+
+async function getLocalRom() {
+    const db = await openRomDatabase();
+
+    return new Promise(function(resolve, reject) {
+        const transaction = db.transaction(
+            ROM_STORE_NAME,
+            "readonly"
+        );
+
+        const request = transaction
+            .objectStore(ROM_STORE_NAME)
+            .get(LEAF_ROM_KEY);
+
+        request.onsuccess = function() {
+            const result = request.result || null;
+            db.close();
+            resolve(result);
+        };
+
+        request.onerror = function() {
+            const error = request.error;
+            db.close();
+            reject(error);
+        };
+    });
+}
+
+async function checkLeafGame() {
+    try {
+        const stored = await getLocalRom();
+
+        if (stored && stored.blob && stored.blob.size) {
+            leafStatus.textContent =
+                "LeafGreen armazenado neste navegador. Pronto para jogar.";
+
+            leafImport.hidden = true;
+            leafPlayButton.hidden = false;
+        } else {
+            leafStatus.textContent =
+                "O LeafGreen ainda não foi armazenado neste navegador.";
+
+            leafImport.hidden = false;
+            leafPlayButton.hidden = true;
+        }
+    } catch (error) {
+        console.error(error);
+
+        leafStatus.textContent =
+            "Não foi possível acessar o armazenamento local. " +
+            "Verifique se o navegador permite armazenar dados do site.";
+    }
+}
+
+importButton.addEventListener("click", async function() {
+    const file = leafFile.files[0];
+
+    if (!file || !file.name.toLowerCase().endsWith(".gba")) {
+        leafStatus.textContent =
+            "Selecione um arquivo com extensão .gba.";
         return;
     }
 
-    const bytes =
-        buffer instanceof Uint8Array
-            ? buffer
-            : new Uint8Array(buffer);
+    importButton.disabled = true;
+    leafStatus.textContent = "Armazenando o jogo...";
+
+    try {
+        await storeLocalRom(file);
+
+        leafStatus.textContent =
+            "Jogo armazenado! Nas próximas visitas, " +
+            "basta clicar em JOGAR.";
+
+        leafImport.hidden = true;
+        leafPlayButton.hidden = false;
+    } catch (error) {
+        console.error(error);
+
+        leafStatus.textContent =
+            "Não foi possível armazenar o arquivo. " +
+            "Verifique o espaço disponível no dispositivo.";
+    } finally {
+        importButton.disabled = false;
+    }
+});
+
+/* Salvar progresso */
+
+async function storeSaveBuffer(buffer) {
+    if (!selectedGame) return;
+
+    const bytes = buffer instanceof Uint8Array
+        ? buffer
+        : new Uint8Array(buffer);
 
     const copy = bytes.slice();
-
     const db = await openSaveDatabase();
 
     return new Promise(function(resolve, reject) {
+        const transaction = db.transaction(
+            STORE_NAME,
+            "readwrite"
+        );
 
-        const transaction =
-            db.transaction(STORE_NAME, "readwrite");
-
-        const store =
-            transaction.objectStore(STORE_NAME);
-
-        store.put(
+        transaction.objectStore(STORE_NAME).put(
             {
                 bytes: copy,
                 size: copy.byteLength,
@@ -570,21 +679,17 @@ async function storeSaveBuffer(buffer) {
         );
 
         transaction.oncomplete = function() {
-
             db.close();
-
             console.log(
                 "Maceon Play: save armazenado.",
                 selectedId,
                 copy.byteLength,
                 "bytes"
             );
-
             resolve();
         };
 
         transaction.onerror = function() {
-
             const error = transaction.error;
             db.close();
             reject(error);
@@ -592,71 +697,49 @@ async function storeSaveBuffer(buffer) {
     });
 }
 
-/* RECUPERAR SAVE */
-
 async function getStoredSave() {
-
-    if (!selectedGame || !selectedGame.available) {
-        return null;
-    }
+    if (!selectedGame) return null;
 
     const db = await openSaveDatabase();
 
     return new Promise(function(resolve, reject) {
+        const transaction = db.transaction(
+            STORE_NAME,
+            "readonly"
+        );
 
-        const transaction =
-            db.transaction(STORE_NAME, "readonly");
-
-        const store =
-            transaction.objectStore(STORE_NAME);
-
-        const request =
-            store.get(selectedGame.saveKey);
+        const request = transaction
+            .objectStore(STORE_NAME)
+            .get(selectedGame.saveKey);
 
         request.onsuccess = function() {
-
             const result = request.result;
-
             db.close();
-
             resolve(result || null);
         };
 
         request.onerror = function() {
-
             const error = request.error;
-
             db.close();
-
             reject(error);
         };
     });
 }
 
-/* ASSINATURA DO SAVE */
-
 function makeSaveSignature(bytes) {
-
-    if (!bytes || !bytes.byteLength) {
-        return null;
-    }
+    if (!bytes || !bytes.byteLength) return null;
 
     let hash = 2166136261;
 
     for (let i = 0; i < bytes.length; i += 64) {
-
         hash ^= bytes[i];
-
         hash = Math.imul(hash, 16777619);
     }
 
     return bytes.byteLength + ":" + (hash >>> 0);
 }
 
-/* LOCALIZAR GAMEMANAGER */
-
 function getGameManager() {
-
     const emulator = window.EJS_emulator;
 
     if (!emulator || !emulator.gameManager) {
@@ -666,17 +749,10 @@ function getGameManager() {
     return emulator.gameManager;
 }
 
-/*
- * LER SAVE DIRETAMENTE DO CORE.
- *
- * Não trocar por FS.readFile na captura:
- * a leitura do filesystem pode estar desatualizada.
- */
+/* Ler save diretamente do core */
 
 function readCurrentSRM() {
-
     try {
-
         const gameManager = getGameManager();
 
         if (
@@ -697,31 +773,20 @@ function readCurrentSRM() {
             : new Uint8Array(save);
 
     } catch (error) {
-
         console.error(
             "Maceon Play: erro ao obter save.",
             error
         );
-
         return null;
     }
 }
 
-/* CAPTURA AUTOMÁTICA */
-
 async function captureCurrentSRM(force = false) {
-
-    if (!emulatorStarted) {
-        return false;
-    }
+    if (!emulatorStarted) return false;
 
     try {
-
         const bytes = readCurrentSRM();
-
-        if (!bytes) {
-            return false;
-        }
+        if (!bytes) return false;
 
         const signature = makeSaveSignature(bytes);
 
@@ -733,7 +798,6 @@ async function captureCurrentSRM(force = false) {
         }
 
         await storeSaveBuffer(bytes);
-
         lastAutomaticSaveSignature = signature;
 
         console.log(
@@ -744,30 +808,22 @@ async function captureCurrentSRM(force = false) {
         );
 
         return true;
-
     } catch (error) {
-
         console.error(
             "Maceon Play: erro no save automático.",
             error
         );
-
         return false;
     }
 }
 
-/* MONITOR AUTOMÁTICO */
-
 function startAutomaticSaveMonitor() {
-
     if (automaticSaveTimer) {
         clearInterval(automaticSaveTimer);
     }
 
     automaticSaveTimer = setInterval(function() {
-
         captureCurrentSRM(false);
-
     }, 7000);
 
     console.log(
@@ -775,32 +831,26 @@ function startAutomaticSaveMonitor() {
     );
 }
 
-/* RESTAURAR SAVE */
+/* Restaurar progresso do jogo selecionado */
 
 async function restoreStoredSave() {
-
     try {
-
         const stored = await getStoredSave();
 
         if (!stored || !stored.bytes) {
-
             console.log(
                 "Maceon Play: nenhum save local encontrado."
             );
-
             return false;
         }
 
-        const bytes =
-            stored.bytes instanceof Uint8Array
-                ? stored.bytes
-                : new Uint8Array(stored.bytes);
+        const bytes = stored.bytes instanceof Uint8Array
+            ? stored.bytes
+            : new Uint8Array(stored.bytes);
 
         const timeout = Date.now() + 15000;
 
         while (Date.now() < timeout) {
-
             const gameManager = getGameManager();
 
             if (
@@ -808,23 +858,17 @@ async function restoreStoredSave() {
                 gameManager.FS &&
                 typeof gameManager.getSaveFilePath === "function"
             ) {
-
                 const FS = gameManager.FS;
-
-                const savePath =
-                    gameManager.getSaveFilePath();
+                const savePath = gameManager.getSaveFilePath();
 
                 if (!savePath) {
-
                     console.error(
                         "Maceon Play: caminho do save ausente."
                     );
-
                     return false;
                 }
 
                 const parts = savePath.split("/");
-
                 let currentPath = "";
 
                 for (
@@ -832,21 +876,15 @@ async function restoreStoredSave() {
                     i < parts.length - 1;
                     i++
                 ) {
-
-                    if (!parts[i]) {
-                        continue;
-                    }
+                    if (!parts[i]) continue;
 
                     currentPath += "/" + parts[i];
 
                     try {
-
                         if (!FS.analyzePath(currentPath).exists) {
                             FS.mkdir(currentPath);
                         }
-
                     } catch (error) {
-
                         try {
                             FS.mkdir(currentPath);
                         } catch (ignored) {}
@@ -854,17 +892,14 @@ async function restoreStoredSave() {
                 }
 
                 try {
-
                     if (FS.analyzePath(savePath).exists) {
                         FS.unlink(savePath);
                     }
-
                 } catch (ignored) {}
 
                 FS.writeFile(savePath, bytes);
 
                 try {
-
                     const check = FS.readFile(savePath);
 
                     console.log(
@@ -872,9 +907,7 @@ async function restoreStoredSave() {
                         check.byteLength,
                         "bytes"
                     );
-
                 } catch (error) {
-
                     console.error(
                         "Maceon Play: falha ao conferir save.",
                         error
@@ -884,11 +917,9 @@ async function restoreStoredSave() {
                 if (
                     typeof gameManager.loadSaveFiles !== "function"
                 ) {
-
                     console.error(
                         "Maceon Play: loadSaveFiles indisponível."
                     );
-
                     return false;
                 }
 
@@ -922,76 +953,57 @@ async function restoreStoredSave() {
         );
 
         return false;
-
     } catch (error) {
-
         console.error(
             "Maceon Play: erro na restauração.",
             error
         );
-
         return false;
     }
 }
 
-/* INICIAR EMULADOR */
+/* Iniciar emulador */
 
-function startEmulator() {
-
-    if (
-        emulatorStarted ||
-        !selectedGame ||
-        !selectedGame.available
-    ) {
+function startEmulator(gameUrl) {
+    if (emulatorStarted || !selectedGame || !gameUrl) {
         return;
     }
 
     emulatorStarted = true;
 
     playButton.disabled = true;
+    leafPlayButton.disabled = true;
 
     message.textContent = "Carregando jogo...";
 
     launcher.style.display = "none";
+    leafLauncher.style.display = "none";
 
     window.EJS_player = "#game";
-
     window.EJS_gameName = selectedGame.name;
-
     window.EJS_gameID = selectedGame.emulatorId;
-
-    window.EJS_gameUrl = selectedGame.url;
-
+    window.EJS_gameUrl = gameUrl;
     window.EJS_core = "gba";
 
     window.EJS_pathtodata =
         "https://cdn.emulatorjs.org/stable/data/";
 
     window.EJS_startOnLoaded = true;
-
     window.EJS_language = "pt-BR";
-
     window.EJS_fixedSaveInterval = 7000;
 
-    /* SAVE MANUAL DE SEGURANÇA */
-
     window.EJS_onSaveSave = async function(event) {
-
         if (!event || !event.save) {
-
             console.error(
                 "Maceon Play: emulador não forneceu save."
             );
-
             return;
         }
 
         try {
-
-            const bytes =
-                event.save instanceof Uint8Array
-                    ? event.save
-                    : new Uint8Array(event.save);
+            const bytes = event.save instanceof Uint8Array
+                ? event.save
+                : new Uint8Array(event.save);
 
             await storeSaveBuffer(bytes);
 
@@ -1002,9 +1014,7 @@ function startEmulator() {
                 "Maceon Play: save manual armazenado.",
                 selectedId
             );
-
         } catch (error) {
-
             console.error(
                 "Maceon Play: erro no save manual.",
                 error
@@ -1012,21 +1022,15 @@ function startEmulator() {
         }
     };
 
-    /* RESTAURAR ANTES DO MONITOR */
-
     window.EJS_onGameStart = async function() {
-
         console.log(
             "Maceon Play: jogo iniciado.",
             selectedId
         );
 
         await restoreStoredSave();
-
         startAutomaticSaveMonitor();
     };
-
-    /* CARREGAR EMULATORJS */
 
     const loader = document.createElement("script");
 
@@ -1034,44 +1038,81 @@ function startEmulator() {
         "https://cdn.emulatorjs.org/stable/data/loader.js";
 
     loader.onerror = function() {
-
         emulatorStarted = false;
 
-        launcher.style.display = "block";
-
-        message.textContent =
-            "Não foi possível carregar o emulador.";
-
-        message.classList.remove("sr-only");
-
-        message.classList.add("load-error");
-
-        playButton.disabled = false;
+        if (selectedId === "001") {
+            launcher.style.display = "block";
+            message.textContent =
+                "Não foi possível carregar o emulador.";
+            message.classList.remove("sr-only");
+            message.classList.add("load-error");
+            playButton.disabled = false;
+        } else {
+            leafLauncher.style.display = "block";
+            leafStatus.textContent =
+                "Não foi possível carregar o emulador.";
+            leafPlayButton.disabled = false;
+        }
     };
 
     document.body.appendChild(loader);
 }
 
-/* ÚLTIMA TENTATIVA AO SAIR */
+/* FireRed: caminho original */
 
-document.addEventListener(
-    "visibilitychange",
-    function() {
+playButton.addEventListener("click", function() {
+    if (selectedId === "001") {
+        startEmulator(selectedGame.url);
+    }
+});
 
-        if (
-            document.visibilityState === "hidden" &&
-            emulatorStarted
-        ) {
+/* LeafGreen: recuperar arquivo armazenado */
 
-            captureCurrentSRM(true);
+leafPlayButton.addEventListener("click", async function() {
+    if (selectedId !== "002" || emulatorStarted) return;
+
+    leafPlayButton.disabled = true;
+    leafStatus.textContent = "Preparando o jogo...";
+
+    try {
+        const stored = await getLocalRom();
+
+        if (!stored || !stored.blob || !stored.blob.size) {
+            leafStatus.textContent =
+                "Arquivo não encontrado. Selecione-o novamente.";
+            leafImport.hidden = false;
+            leafPlayButton.hidden = true;
+            return;
+        }
+
+        if (localGameUrl) {
+            URL.revokeObjectURL(localGameUrl);
+        }
+
+        localGameUrl = URL.createObjectURL(stored.blob);
+        startEmulator(localGameUrl);
+
+    } catch (error) {
+        console.error(error);
+        leafStatus.textContent =
+            "Não foi possível abrir o arquivo armazenado.";
+    } finally {
+        if (!emulatorStarted) {
+            leafPlayButton.disabled = false;
         }
     }
-);
+});
 
-/* BOTÃO JOGAR */
+/* Última tentativa de salvar ao sair */
 
-playButton.addEventListener("click", startEmulator);
-
+document.addEventListener("visibilitychange", function() {
+    if (
+        document.visibilityState === "hidden" &&
+        emulatorStarted
+    ) {
+        captureCurrentSRM(true);
+    }
+});
 </script>
 </body>
 </html>
