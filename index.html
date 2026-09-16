@@ -189,13 +189,36 @@ body {
 
 .leaf-launcher {
     display: none;
+    position: relative;
     max-width: 650px;
     margin: auto;
+    padding: 0;
+    background: black;
+    overflow: hidden;
+    border-radius: 18px;
 }
 
 .leaf-launcher .cover-image {
     border-radius: 18px;
 }
+
+.leaf-play-button {
+    position: absolute;
+    left: 18%;
+    top: 20%;
+    width: 64%;
+    height: 19%;
+    border: 0;
+    border-radius: 18px;
+    background: transparent;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+.leaf-play-button:focus-visible {
+    outline: 4px solid white;
+    outline-offset: -5px;
+}
+.leaf-play-button:disabled { cursor: wait; }
 
 .leaf-controls {
     padding: 20px;
@@ -355,28 +378,11 @@ body {
 <!-- Jogo 002 -->
 
 <section id="leafLauncher" class="leaf-launcher">
-
-    <img
-        class="cover-image"
-        src="./leafgreen-version.jpg"
-        alt="Maceon Play — Jogo 002"
-    >
-
-    <div class="leaf-controls">
-
-        <p id="leafStatus" class="status">
-            Pronto para jogar.
-        </p>
-
-        <button
-            id="leafPlayButton"
-            class="primary-button"
-            type="button"
-        >
-            JOGAR
-        </button>
-
-    </div>
+    <img class="cover-image" src="./leafgreen-version.jpg" alt="Maceon Play — Jogo 002">
+    <p id="leafStatus" class="sr-only">Pronto para jogar.</p>
+    <button id="leafPlayButton" class="leaf-play-button" type="button" aria-label="Jogar Jogo 002">
+        <span class="sr-only">JOGAR</span>
+    </button>
 </section>
 
 <div id="game" hidden></div>
