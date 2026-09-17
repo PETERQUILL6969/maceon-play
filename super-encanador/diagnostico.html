@@ -13,13 +13,24 @@
       text-align: center;
       padding: 20px;
     }
-    main { max-width: 850px; margin: auto; }
+
+    main {
+      max-width: 850px;
+      margin: auto;
+    }
+
     button {
       padding: 14px 28px;
       margin: 12px;
       cursor: pointer;
     }
-    #game { width: 100%; height: 600px; max-height: 70vh; }
+
+    #game {
+      width: 100%;
+      height: 600px;
+      max-height: 70vh;
+    }
+
     pre {
       text-align: left;
       white-space: pre-wrap;
@@ -33,10 +44,13 @@
 <body>
   <main>
     <h1>Diagnóstico do emulador SNES</h1>
+
     <button id="play">JOGAR</button>
     <button id="check" disabled>VERIFICAR SALVAMENTO</button>
+
     <p id="status">Pronto para iniciar.</p>
     <pre id="result">O resultado aparecerá aqui.</pre>
+
     <div id="game"></div>
   </main>
 
@@ -59,42 +73,69 @@
       window.EJS_startOnLoaded = true;
 
       window.EJS_onGameStart = () => {
-        status.textContent = "Jogo iniciado. Clique em VERIFICAR SALVAMENTO.";
+        status.textContent =
+          "Jogo iniciado. Clique em VERIFICAR SALVAMENTO.";
         check.disabled = false;
       };
 
       const script = document.createElement("script");
       script.src =
         "https://cdn.emulatorjs.org/stable/data/loader.js";
+
       script.onerror = () => {
-        status.textContent = "Não foi possível carregar o emulador.";
+        status.textContent =
+          "Não foi possível carregar o emulador.";
         play.disabled = false;
       };
+
       document.body.appendChild(script);
     });
 
-    check.addEventListener("click", () => {
-      const emulator = window.EJS_emulator;
-      const gm = emulator?.gameManager;
+    check.addEventListener("click", async () => {
+      const gm = window.EJS_emulator?.gameManager;
 
-      const functions = [
-        "saveState",
-        "loadState",
-        "getState",
-        "setState",
-        "getSaveFile",
-        "getSaveFilePath",
-        "loadSaveFiles"
-      ];
+      if (!gm || typeof gm.getState !== "function") {
+        result.textContent =
+          "getState() não está disponível.";
+        return;
+      }
 
-      result.textContent = [
-        "Emulador disponível: " + Boolean(emulator),
-        "GameManager disponível: " + Boolean(gm),
-        "",
-        ...functions.map(name =>
-          name + ": " + typeof gm?.[name]
-        )
-      ].join("\n");
+      check.disabled = true;
+      result.textContent =
+        "Consultando o estado do jogo...";
+
+      try {
+        const state = await gm.getState();
+
+        const type =
+          Object.prototype.toString.call(state);
+
+        const byteLength =
+          state?.byteLength ??
+          state?.length ??
+          "não informado";
+
+        result.textContent = [
+          "Tipo retornado: " + type,
+          "Tamanho: " + byteLength,
+          "É ArrayBuffer: " +
+            (state instanceof ArrayBuffer),
+          "É Uint8Array: " +
+            (state instanceof Uint8Array),
+          "É uma lista: " +
+            Array.isArray(state),
+          "É nulo ou indefinido: " +
+            (state == null)
+        ].join("\n");
+
+      } catch (error) {
+        result.textContent =
+          "Erro ao consultar o estado: " +
+          error.message;
+
+      } finally {
+        check.disabled = false;
+      }
     });
   </script>
 </body>
