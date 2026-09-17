@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Maceon Play — Super Encanador</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px;
+      background: #101010;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    main { max-width: 850px; margin: auto; }
+    button {
+      margin: 16px;
+      padding: 14px 32px;
+      border: 0;
+      border-radius: 10px;
+      background: #55d6be;
+      color: #07110f;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:disabled { opacity: .6; cursor: wait; }
+    #game { width: 100%; height: 600px; max-height: 70vh; }
+    #status { color: #ddd; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>MACEON PLAY</h1>
+    <h2>Super Encanador</h2>
+
+    <button id="play">JOGAR</button>
+    <p id="status">Pronto para jogar.</p>
+    <div id="game"></div>
+  </main>
+
+  <script>
+    const playButton = document.getElementById("play");
+    const status = document.getElementById("status");
+    let started = false;
+
+    playButton.addEventListener("click", async () => {
+      if (started) return;
+
+      const gameUrl = "./games/super-encanador.sfc";
+      playButton.disabled = true;
+      status.textContent = "Verificando arquivo do jogo...";
+
+      try {
+        const response = await fetch(gameUrl, { method: "HEAD" });
+        if (!response.ok) {
+          throw new Error("Arquivo não encontrado: " + response.status);
+        }
+      } catch (error) {
+        status.textContent =
+          "Não foi possível acessar o jogo: " + error.message;
+        playButton.disabled = false;
+        return;
+      }
+
+      started = true;
+      status.textContent = "Carregando emulador SNES...";
+
+      window.EJS_player = "#game";
+      window.EJS_gameName = "Super Encanador";
+      window.EJS_gameUrl = gameUrl;
+      window.EJS_core = "snes";
+      window.EJS_pathtodata =
+        "https://cdn.emulatorjs.org/stable/data/";
+      window.EJS_startOnLoaded = true;
+
+      window.EJS_onGameStart = () => {
+        status.textContent = "Jogo iniciado!";
+        playButton.hidden = true;
+      };
+
+      const script = document.createElement("script");
+      script.src =
+        "https://cdn.emulatorjs.org/stable/data/loader.js";
+      script.onerror = () => {
+        started = false;
+        playButton.disabled = false;
+        status.textContent = "Erro ao carregar o emulador.";
+      };
+      document.body.appendChild(script);
+    });
+  </script>
+</body>
+</html>
