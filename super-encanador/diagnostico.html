@@ -20,9 +20,14 @@
     }
 
     button {
-      padding: 14px 28px;
-      margin: 12px;
+      padding: 14px 22px;
+      margin: 8px;
       cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: .5;
+      cursor: wait;
     }
 
     #game {
@@ -47,6 +52,8 @@
 
     <button id="play">JOGAR</button>
     <button id="check" disabled>VERIFICAR SALVAMENTO</button>
+    <button id="save" disabled>GUARDAR NO NAVEGADOR</button>
+    <button id="restore" disabled>RESTAURAR DO NAVEGADOR</button>
 
     <p id="status">Pronto para iniciar.</p>
     <pre id="result">O resultado aparecerá aqui.</pre>
@@ -55,12 +62,115 @@
   </main>
 
   <script>
+    "use strict";
+
     const play = document.getElementById("play");
     const check = document.getElementById("check");
+    const save = document.getElementById("save");
+    const restore = document.getElementById("restore");
     const status = document.getElementById("status");
     const result = document.getElementById("result");
 
+    // Banco exclusivo deste teste. Não utiliza MaceonPlaySaves.
+    const DB_NAME = "SuperEncanadorDiagnostico";
+    const STORE_NAME = "states";
+    const SAVE_KEY = "snes-teste-001";
+
+    let gameStarted = false;
+    let busy = false;
+    let hasStoredState = false;
+
+    function getManager() {
+      return window.EJS_emulator?.gameManager;
+    }
+
+    function updateButtons() {
+      const gm = getManager();
+
+      check.disabled =
+        busy || !gameStarted ||
+        typeof gm?.getState !== "function";
+
+      save.disabled =
+        busy || !gameStarted ||
+        typeof gm?.getState !== "function";
+
+      restore.disabled =
+        busy || !gameStarted ||
+        !hasStoredState ||
+        typeof gm?.loadState !== "function";
+    }
+
+    function openDatabase() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, 1);
+
+        request.onupgradeneeded = () => {
+          const db = request.result;
+
+          if (!db.objectStoreNames.contains(STORE_NAME)) {
+            db.createObjectStore(STORE_NAME);
+          }
+        };
+
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () =>
+          reject(request.error || new Error("Falha no IndexedDB."));
+      });
+    }
+
+    async function writeState(bytes) {
+      const db = await openDatabase();
+
+      try {
+        await new Promise((resolve, reject) => {
+          const tx = db.transaction(STORE_NAME, "readwrite");
+
+          tx.objectStore(STORE_NAME).put(
+            {
+              bytes: bytes.slice(),
+              savedAt: new Date().toISOString()
+            },
+            SAVE_KEY
+          );
+
+          tx.oncomplete = resolve;
+          tx.onerror = () =>
+            reject(tx.error || new Error("Falha ao guardar estado."));
+          tx.onabort = () =>
+            reject(tx.error || new Error("Gravação interrompida."));
+        });
+      } finally {
+        db.close();
+      }
+    }
+
+    async function readState() {
+      const db = await openDatabase();
+
+      try {
+        return await new Promise((resolve, reject) => {
+          const tx = db.transaction(STORE_NAME, "readonly");
+          const request = tx.objectStore(STORE_NAME).get(SAVE_KEY);
+
+          request.onsuccess = () => resolve(request.result || null);
+          request.onerror = () =>
+            reject(request.error || new Error("Falha ao ler estado."));
+        });
+      } finally {
+        db.close();
+      }
+    }
+
+    async function refreshStoredState() {
+      const stored = await readState();
+      hasStoredState = Boolean(stored?.bytes?.byteLength);
+      updateButtons();
+    }
+
     play.addEventListener("click", () => {
+      if (gameStarted || play.disabled) return;
+
       play.disabled = true;
       status.textContent = "Carregando emulador...";
 
@@ -72,10 +182,20 @@
         "https://cdn.emulatorjs.org/stable/data/";
       window.EJS_startOnLoaded = true;
 
-      window.EJS_onGameStart = () => {
-        status.textContent =
-          "Jogo iniciado. Clique em VERIFICAR SALVAMENTO.";
-        check.disabled = false;
+      window.EJS_onGameStart = async () => {
+        gameStarted = true;
+        status.textContent = "Jogo iniciado.";
+        play.hidden = true;
+
+        try {
+          await refreshStoredState();
+        } catch (error) {
+          result.textContent =
+            "Não foi possível consultar o armazenamento: " +
+            error.message;
+        }
+
+        updateButtons();
       };
 
       const script = document.createElement("script");
@@ -92,49 +212,127 @@
     });
 
     check.addEventListener("click", async () => {
-      const gm = window.EJS_emulator?.gameManager;
+      const gm = getManager();
 
-      if (!gm || typeof gm.getState !== "function") {
-        result.textContent =
-          "getState() não está disponível.";
-        return;
-      }
+      if (typeof gm?.getState !== "function") return;
 
-      check.disabled = true;
-      result.textContent =
-        "Consultando o estado do jogo...";
+      busy = true;
+      updateButtons();
+      result.textContent = "Consultando o estado do jogo...";
 
       try {
         const state = await gm.getState();
 
-        const type =
-          Object.prototype.toString.call(state);
-
-        const byteLength =
-          state?.byteLength ??
-          state?.length ??
-          "não informado";
-
         result.textContent = [
-          "Tipo retornado: " + type,
-          "Tamanho: " + byteLength,
-          "É ArrayBuffer: " +
-            (state instanceof ArrayBuffer),
-          "É Uint8Array: " +
-            (state instanceof Uint8Array),
-          "É uma lista: " +
-            Array.isArray(state),
-          "É nulo ou indefinido: " +
-            (state == null)
+          "Tipo retornado: " +
+            Object.prototype.toString.call(state),
+          "Tamanho: " +
+            (state?.byteLength ?? state?.length ?? "não informado"),
+          "É ArrayBuffer: " + (state instanceof ArrayBuffer),
+          "É Uint8Array: " + (state instanceof Uint8Array),
+          "É uma lista: " + Array.isArray(state),
+          "É nulo ou indefinido: " + (state == null)
         ].join("\n");
-
       } catch (error) {
         result.textContent =
-          "Erro ao consultar o estado: " +
-          error.message;
-
+          "Erro ao consultar o estado: " + error.message;
       } finally {
-        check.disabled = false;
+        busy = false;
+        updateButtons();
+      }
+    });
+
+    save.addEventListener("click", async () => {
+      const gm = getManager();
+
+      if (typeof gm?.getState !== "function") return;
+
+      busy = true;
+      updateButtons();
+      status.textContent = "Guardando estado no navegador...";
+
+      try {
+        const state = await gm.getState();
+
+        if (!(state instanceof Uint8Array) || !state.byteLength) {
+          throw new Error(
+            "getState() não retornou um Uint8Array válido."
+          );
+        }
+
+        await writeState(state);
+
+        hasStoredState = true;
+        status.textContent = "Estado guardado no navegador.";
+        result.textContent = [
+          "GRAVAÇÃO CONCLUÍDA",
+          "Tamanho: " + state.byteLength + " bytes",
+          "Banco: " + DB_NAME,
+          "Chave: " + SAVE_KEY,
+          "",
+          "Agora você pode testar a restauração."
+        ].join("\n");
+      } catch (error) {
+        status.textContent = "Falha ao guardar estado.";
+        result.textContent = error.message;
+      } finally {
+        busy = false;
+        updateButtons();
+      }
+    });
+
+    restore.addEventListener("click", async () => {
+      const gm = getManager();
+
+      if (typeof gm?.loadState !== "function") return;
+
+      busy = true;
+      updateButtons();
+      status.textContent = "Tentando restaurar estado...";
+
+      try {
+        const stored = await readState();
+
+        if (!stored?.bytes?.byteLength) {
+          throw new Error("Nenhum estado guardado foi encontrado.");
+        }
+
+        const bytes = new Uint8Array(stored.bytes);
+
+        // Testa se esta versão do EmulatorJS aceita
+        // diretamente o Uint8Array retornado por getState().
+        const response = gm.loadState(bytes);
+
+        if (response && typeof response.then === "function") {
+          await response;
+        }
+
+        status.textContent =
+          "Comando de restauração executado. Confira o jogo.";
+
+        result.textContent = [
+          "TESTE DE RESTAURAÇÃO",
+          "Tamanho enviado: " + bytes.byteLength + " bytes",
+          "Guardado em: " + stored.savedAt,
+          "",
+          "O comando terminou sem lançar erro.",
+          "Confira visualmente se o jogo voltou ao ponto salvo.",
+          "Isso ainda não confirma que a restauração funcionou."
+        ].join("\n");
+      } catch (error) {
+        status.textContent =
+          "A restauração não foi confirmada.";
+
+        result.textContent = [
+          "ERRO AO RESTAURAR",
+          error.name + ": " + error.message,
+          "",
+          "O estado guardado no navegador foi preservado.",
+          "Não tente sobrescrevê-lo por enquanto."
+        ].join("\n");
+      } finally {
+        busy = false;
+        updateButtons();
       }
     });
   </script>
