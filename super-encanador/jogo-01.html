@@ -22,18 +22,40 @@
       margin: auto;
     }
 
-    button {
-      padding: 14px 32px;
+    .capa-jogo {
+      position: relative;
+      width: 100%;
+      max-width: 360px;
+      margin: 24px auto;
+    }
+
+    .capa-jogo img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+    }
+
+    /* Área clicável sobre o JOGAR desenhado na imagem */
+    #play {
+      position: absolute;
+      left: 18%;
+      top: 46%;
+      width: 64%;
+      height: 9%;
+      padding: 0;
       border: 0;
-      border-radius: 10px;
-      background: #55d6be;
-      font-size: 18px;
-      font-weight: bold;
+      border-radius: 12px;
+      background: transparent;
       cursor: pointer;
     }
 
-    button:disabled {
-      opacity: .6;
+    #play:focus-visible {
+      outline: 3px solid white;
+      outline-offset: 3px;
+    }
+
+    #play:disabled {
       cursor: wait;
     }
 
@@ -51,13 +73,20 @@
     <h1>MACEON PLAY</h1>
     <h2>Super Encanador — Jogo 01</h2>
 
-<img
-  src="games/super-encanador-jogo.jpg"
-  alt="Arte do Super Encanador — Jogo 01"
-  style="display:block; width:100%; max-width:360px; height:auto; margin:24px auto; border-radius:12px;"
->
+    <div class="capa-jogo" id="capa-jogo">
+      <img
+        src="games/super-encanador-jogo.jpg"
+        alt="Arte do Super Encanador — Jogo 01"
+      >
 
-<button id="play">JOGAR</button>
+      <button
+        id="play"
+        type="button"
+        aria-label="Jogar Super Encanador"
+        title="Jogar Super Encanador"
+      ></button>
+    </div>
+
     <p id="status">Pronto para jogar!</p>
 
     <div id="game"></div>
@@ -68,6 +97,7 @@
 
     const play = document.getElementById("play");
     const status = document.getElementById("status");
+    const capaJogo = document.getElementById("capa-jogo");
 
     let started = false;
 
@@ -114,7 +144,7 @@
 
       window.EJS_onGameStart = () => {
         status.textContent = "Jogo iniciado!";
-        play.hidden = true;
+        capaJogo.hidden = true;
       };
 
       const script = document.createElement("script");
