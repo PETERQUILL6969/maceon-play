@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Maceon Play — Teste BSNES</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      background: #101010;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    main { max-width: 850px; margin: auto; }
+    input, button { margin: 12px; font-size: 16px; }
+    button { padding: 12px 24px; cursor: pointer; }
+    #game { width: 100%; height: 600px; max-height: 70vh; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Teste isolado — BSNES</h1>
+    <p>Escolha um homebrew SNES diferente, autorizado para uso.</p>
+
+    <input id="arquivo" type="file" accept=".sfc,.smc">
+    <button id="jogar">JOGAR</button>
+    <p id="status">Nenhum jogo iniciado.</p>
+    <div id="game"></div>
+  </main>
+
+  <script>
+    const botao = document.getElementById("jogar");
+    const arquivo = document.getElementById("arquivo");
+    const status = document.getElementById("status");
+
+    botao.addEventListener("click", () => {
+      const jogo = arquivo.files[0];
+
+      if (!jogo) {
+        status.textContent = "Escolha um arquivo .sfc ou .smc.";
+        return;
+      }
+
+      botao.disabled = true;
+      arquivo.disabled = true;
+      status.textContent = "Carregando BSNES...";
+
+      window.EJS_player = "#game";
+      window.EJS_core = "bsnes";
+      window.EJS_gameName = "Teste Isolado BSNES";
+      window.EJS_gameID = 93002;
+      window.EJS_gameUrl = URL.createObjectURL(jogo);
+      window.EJS_pathtodata =
+        "https://cdn.emulatorjs.org/stable/data/";
+      window.EJS_startOnLoaded = true;
+
+      const script = document.createElement("script");
+      script.src =
+        "https://cdn.emulatorjs.org/stable/data/loader.js";
+
+      script.onerror = () => {
+        status.textContent = "Erro ao carregar o emulador.";
+      };
+
+      document.body.appendChild(script);
+    }, { once: true });
+  </script>
+</body>
+</html>
