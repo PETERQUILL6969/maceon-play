@@ -4,127 +4,103 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Maceon Play — Teste de Save SNES</title>
+  <title>Super Encanador | Maceon Play</title>
   <style>
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      padding: 24px;
+      padding: 24px 16px 48px;
       background: #101010;
-      color: white;
+      color: #fff;
       font-family: Arial, sans-serif;
       text-align: center;
     }
 
-    main {
-      max-width: 850px;
-      margin: auto;
+    header { margin-bottom: 30px; }
+
+    h1 {
+      margin-bottom: 8px;
+      font-size: clamp(28px, 5vw, 42px);
     }
 
-    button {
-      padding: 14px 32px;
-      border: 0;
-      border-radius: 10px;
-      background: #55d6be;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
+    .subtitulo { color: #c9c9c9; }
+
+    .catalogo {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 340px));
+      justify-content: center;
+      gap: 24px;
+      max-width: 1100px;
+      margin: 0 auto;
     }
 
-    button:disabled {
-      opacity: .6;
-      cursor: wait;
+    .jogo {
+      padding: 16px;
+      background: #1c1c1c;
+      border: 1px solid #55d6be;
+      border-radius: 20px;
     }
 
-    #game {
+    .capa {
+      display: block;
       width: 100%;
-      height: 600px;
-      max-height: 70vh;
+      aspect-ratio: 2 / 3;
+      object-fit: cover;
+      border-radius: 14px;
     }
 
-    #status { color: #ddd; }
+    .jogo h2 {
+      margin: 18px 0 8px;
+      font-size: 24px;
+    }
+
+    .detalhes {
+      margin-bottom: 18px;
+      color: #c9c9c9;
+    }
+
+    .jogar {
+      display: block;
+      padding: 16px;
+      background: #55d6be;
+      color: #101010;
+      border-radius: 12px;
+      font-size: 20px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .jogar:hover { background: #78e5d1; }
+
+    footer {
+      margin-top: 36px;
+      color: #aaa;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
-  <main>
+  <header>
     <h1>MACEON PLAY</h1>
-    <h2>Teste limpo de salvamento SNES</h2>
+    <p class="subtitulo">Catálogo Super Encanador</p>
+  </header>
 
-    <button id="play">JOGAR</button>
-    <p id="status">Pronto para iniciar o teste.</p>
+  <main class="catalogo">
+    <article class="jogo">
+      <img
+        class="capa"
+        src="games/super-encanador-catalogo.jpg"
+        alt="Capa do Super Encanador — Jogo 01"
+      >
 
-    <div id="game"></div>
+      <h2>Super Encanador</h2>
+      <p class="detalhes">Jogo 01 • Super Nintendo</p>
+
+      <a class="jogar" href="jogo-01.html">JOGAR</a>
+    </article>
   </main>
 
-  <script>
-    "use strict";
-
-    const play = document.getElementById("play");
-    const status = document.getElementById("status");
-
-    let started = false;
-
-    play.addEventListener("click", async () => {
-      if (started) return;
-
-      play.disabled = true;
-      status.textContent = "Verificando jogo...";
-
-      const gameUrl = "./games/homebrew-autorizado.sfc";
-
-      try {
-        const response = await fetch(gameUrl, {
-          method: "HEAD"
-        });
-
-        if (!response.ok) {
-          throw new Error("Arquivo não encontrado.");
-        }
-      } catch (error) {
-        status.textContent = error.message;
-        play.disabled = false;
-        return;
-      }
-
-      started = true;
-      status.textContent = "Carregando emulador...";
-
-      window.EJS_player = "#game";
-      window.EJS_gameName = "Teste Save Novo";
-      window.EJS_gameID = 93003;
-      window.EJS_gameUrl = gameUrl;
-      window.EJS_core = "snes";
-
-      window.EJS_pathtodata =
-        "https://cdn.emulatorjs.org/stable/data/";
-
-      window.EJS_startOnLoaded = true;
-      window.EJS_language = "pt-BR";
-
-      window.EJS_defaultOptions = {
-        "save-state-location": "browser"
-      };
-
-      window.EJS_onGameStart = () => {
-        status.textContent = "Jogo iniciado!";
-        play.hidden = true;
-      };
-
-      const script = document.createElement("script");
-
-      script.src =
-        "https://cdn.emulatorjs.org/stable/data/loader.js";
-
-      script.onerror = () => {
-        started = false;
-        play.disabled = false;
-        status.textContent =
-          "Não foi possível carregar o emulador.";
-      };
-
-      document.body.appendChild(script);
-    });
-  </script>
+  <footer>Novos jogos em breve!</footer>
 </body>
 </html>
