@@ -1,0 +1,112 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Maceon Play — Backup dos saves</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      text-align: center;
+      padding: 30px;
+    }
+    button {
+      display: block;
+      margin: 16px auto;
+      padding: 15px;
+      max-width: 350px;
+      width: 100%;
+      border: 0;
+      border-radius: 10px;
+      background: #55d6be;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #status { line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <h1>Maceon Play</h1>
+  <h2>Backup dos saves SNES</h2>
+  <p>Esta página apenas lê os saves existentes.</p>
+
+  <button onclick="baixar('Super Encanador.state',
+    'backup-super-encanador.state')">
+    Baixar save do Super Encanador
+  </button>
+
+  <button onclick="baixar('Teste Save SNES.state',
+    'backup-teste-snes.state')">
+    Baixar save do teste
+  </button>
+
+  <p id="status">Escolha um backup para baixar.</p>
+
+  <script>
+    function baixar(chave, nomeArquivo) {
+      const status = document.getElementById("status");
+      status.textContent = "Procurando o save...";
+
+      const pedido = indexedDB.open("EmulatorJS-states");
+
+      pedido.onerror = () => {
+        status.textContent = "Erro ao abrir o banco de saves.";
+      };
+
+      pedido.onsuccess = () => {
+        const banco = pedido.result;
+
+        if (!banco.objectStoreNames.contains("states")) {
+          status.textContent = "Tabela de saves não encontrada.";
+          banco.close();
+          return;
+        }
+
+        const transacao = banco.transaction("states", "readonly");
+        const consulta = transacao.objectStore("states").get(chave);
+
+        consulta.onerror = () => {
+          status.textContent = "Erro ao ler o save.";
+          banco.close();
+        };
+
+        consulta.onsuccess = () => {
+          const dados = consulta.result;
+
+          if (!(dados instanceof Uint8Array) &&
+              !(dados instanceof ArrayBuffer)) {
+            status.textContent = "Save não encontrado ou formato inesperado.";
+            banco.close();
+            return;
+          }
+
+          const blob = new Blob([dados], {
+            type: "application/octet-stream"
+          });
+
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+
+          link.href = url;
+          link.download = nomeArquivo;
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+
+          status.textContent =
+            "Download solicitado: " + nomeArquivo +
+            " (" + blob.size + " bytes).";
+
+          banco.close();
+
+          setTimeout(() => URL.revokeObjectURL(url), 60000);
+        };
+      };
+    }
+  </script>
+</body>
+</html>
