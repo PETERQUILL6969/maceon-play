@@ -1237,5 +1237,26 @@ document.addEventListener(
 
 </script>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyCEODc2z5Rw-cOF3yyGDMaN12ZXFzngxQc",
+    authDomain: "maceon-online-14634.firebaseapp.com",
+    databaseURL: "https://maceon-online-14634-default-rtdb.firebaseio.com",
+    projectId: "maceon-online-14634",
+    storageBucket: "maceon-online-14634.firebasestorage.app",
+    messagingSenderId: "318725187398",
+    appId: "1:318725187398:web:b838938a9b94a3bd34e747"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const onlineDatabase = firebase.database();
+
+console.log("MACEON ONLINE: Firebase carregado.");
+</script>
+    
 </body>
 </html>
