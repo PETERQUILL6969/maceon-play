@@ -55,6 +55,29 @@ body {
     line-height: 1.5;
 }
 
+#player-name {
+    width: 100%;
+    min-height: 52px;
+    margin-bottom: 12px;
+    padding: 0 16px;
+
+    border: 1px solid #30363d;
+    border-radius: 12px;
+
+    background: #0d1117;
+    color: white;
+
+    font-size: 16px;
+    text-align: center;
+    text-transform: uppercase;
+
+    outline: none;
+}
+
+#player-name:focus {
+    border-color: #58a6ff;
+}
+
 #play-button {
     width: 100%;
     min-height: 58px;
@@ -135,6 +158,14 @@ body {
         <p>
             FireRed Online
         </p>
+
+        <input
+            id="player-name"
+            type="text"
+            maxlength="16"
+            placeholder="DIGITE SEU NOME"
+            autocomplete="off"
+        >
 
         <button id="play-button">
             JOGAR FIRE RED
@@ -221,10 +252,32 @@ const playButton =
         "play-button"
     );
 
+const playerNameInput =
+    document.getElementById(
+        "player-name"
+    );
+
 const statusElement =
     document.getElementById(
         "status"
     );
+
+
+/* =====================================================
+   NOME SALVO NO NAVEGADOR
+===================================================== */
+
+const savedPlayerName =
+    localStorage.getItem(
+        "maceonPlayerName"
+    );
+
+if (savedPlayerName) {
+
+    playerNameInput.value =
+        savedPlayerName;
+
+}
 
 
 /* =====================================================
@@ -958,6 +1011,61 @@ function startGame() {
     }
 
 
+    /* ================================================
+       NOME DO JOGADOR
+    ================================================= */
+
+    const playerName =
+        playerNameInput
+            .value
+            .trim()
+            .toUpperCase()
+            .slice(
+                0,
+                16
+            );
+
+
+    if (!playerName) {
+
+        statusElement.textContent =
+            "Digite seu nome para entrar.";
+
+        statusElement.className =
+            "error";
+
+        playerNameInput.focus();
+
+        return;
+
+    }
+
+
+    localStorage.setItem(
+        "maceonPlayerName",
+        playerName
+    );
+
+
+    /*
+    Se o Firebase já estiver conectado,
+    atualiza imediatamente o nome.
+    */
+
+    if (
+        window.maceonPlayerRef
+    ) {
+
+        window.maceonPlayerRef.update(
+            {
+                name:
+                    playerName
+            }
+        );
+
+    }
+
+
     emulatorStarted =
         true;
 
@@ -968,6 +1076,10 @@ function startGame() {
 
     statusElement.textContent =
         "Carregando FireRed...";
+
+
+    statusElement.className =
+        "";
 
 
     startScreen.style.display =
@@ -1152,6 +1264,28 @@ playButton.addEventListener(
 );
 
 
+/*
+Também permite iniciar pressionando ENTER
+no campo de nome.
+*/
+
+playerNameInput.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key ===
+            "Enter"
+        ) {
+
+            startGame();
+
+        }
+
+    }
+);
+
+
 /* =====================================================
    ÚLTIMA TENTATIVA DE SALVAR AO SAIR
 ===================================================== */
@@ -1228,15 +1362,8 @@ console.log(
 
 
 /* =====================================================
-   PRESENÇA DO JOGADOR
+   IDENTIFICADOR ÚNICO DO JOGADOR
 ===================================================== */
-
-/*
-Cada navegador recebe um identificador próprio.
-
-Esse identificador permanece no navegador
-através do localStorage.
-*/
 
 let playerId =
     localStorage.getItem(
@@ -1257,11 +1384,6 @@ if (!playerId) {
 
     } else {
 
-        /*
-        Alternativa para navegadores que
-        não disponibilizem randomUUID.
-        */
-
         playerId =
             "player-" +
             Date.now() +
@@ -1281,10 +1403,9 @@ if (!playerId) {
 }
 
 
-/*
-Referência deste jogador no
-Realtime Database.
-*/
+/* =====================================================
+   REFERÊNCIA DO JOGADOR
+===================================================== */
 
 const playerRef =
     onlineDatabase.ref(
@@ -1294,12 +1415,17 @@ const playerRef =
 
 
 /*
-Firebase possui um nó especial chamado
-.info/connected.
-
-Ele informa quando este navegador está
-realmente conectado ao Realtime Database.
+Permite que a parte responsável por
+iniciar o jogo atualize o nome.
 */
+
+window.maceonPlayerRef =
+    playerRef;
+
+
+/* =====================================================
+   CONEXÃO FIREBASE
+===================================================== */
 
 const connectedRef =
     onlineDatabase.ref(
@@ -1332,36 +1458,53 @@ connectedRef.on(
 
 
         /*
-        Se a conexão cair, o Firebase
-        removerá automaticamente este jogador.
+        Se este aparelho perder a conexão,
+        o Firebase remove o jogador.
         */
 
         playerRef
             .onDisconnect()
             .remove()
+
             .then(
                 function() {
 
                     /*
-                    Somente depois de preparar
-                    o onDisconnect registramos
-                    o jogador como online.
+                    Verifica se já existe um nome
+                    salvo neste navegador.
                     */
 
-                    return playerRef.set({
+                    const savedName =
+                        localStorage.getItem(
+                            "maceonPlayerName"
+                        );
 
-                        online:
-                            true,
 
-                        lastSeen:
-                            firebase.database
-                                .ServerValue
-                                .TIMESTAMP
+                    /*
+                    Registra este aparelho no Firebase.
+                    */
 
-                    });
+                    return playerRef.set(
+                        {
+
+                            name:
+                                savedName ||
+                                "JOGADOR",
+
+                            online:
+                                true,
+
+                            lastSeen:
+                                firebase.database
+                                    .ServerValue
+                                    .TIMESTAMP
+
+                        }
+                    );
 
                 }
             )
+
             .then(
                 function() {
 
@@ -1372,6 +1515,7 @@ connectedRef.on(
 
                 }
             )
+
             .catch(
                 function(error) {
 
