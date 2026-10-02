@@ -1,273 +1,574 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-    <title>Maceon Online</title>
+<title>Maceon Online - Multiplayer Test</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<style>
+* {
+    box-sizing: border-box;
+}
 
-        body {
-            margin: 0;
-            min-height: 100vh;
-            background: #0d1117;
-            color: #ffffff;
-            font-family: Arial, Helvetica, sans-serif;
-        }
+body {
+    margin: 0;
+    background: #0d1117;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+}
 
-        .page {
-            width: min(92%, 650px);
-            margin: 0 auto;
-            padding: 50px 0;
-        }
+.page {
+    width: min(94%, 900px);
+    margin: 0 auto;
+    padding: 25px 0 40px;
+}
 
-        .logo {
-            text-align: center;
-            margin-bottom: 35px;
-        }
+header {
+    text-align: center;
+    margin-bottom: 18px;
+}
 
-        .logo h1 {
-            margin: 0;
-            font-size: 38px;
-            letter-spacing: 2px;
-        }
+header h1 {
+    margin: 0;
+    font-size: 32px;
+    letter-spacing: 2px;
+}
 
-        .logo p {
-            color: #9ca7b8;
-            margin-top: 8px;
-        }
+header p {
+    margin: 7px 0 0;
+    color: #8b949e;
+}
 
-        .card {
-            background: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 20px;
-        }
+.connection {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 15px 0;
+    font-weight: bold;
+}
 
-        .connection {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 25px;
-            font-weight: bold;
-        }
+.connection-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #f1c40f;
+}
 
-        .dot {
-            width: 11px;
-            height: 11px;
-            border-radius: 50%;
-            background: #f1c40f;
-        }
+.connection-dot.connected {
+    background: #2ecc71;
+}
 
-        .dot.connected {
-            background: #2ecc71;
-        }
+.connection-dot.disconnected {
+    background: #e74c3c;
+}
 
-        .dot.disconnected {
-            background: #e74c3c;
-        }
+.panel {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 15px;
+    padding: 18px;
+    margin-bottom: 16px;
+}
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
+.login label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
 
-        input {
-            width: 100%;
-            height: 48px;
-            border: 1px solid #3b4553;
-            border-radius: 10px;
-            background: #0d1117;
-            color: white;
-            padding: 0 14px;
-            font-size: 16px;
-            outline: none;
-        }
+.login-row {
+    display: flex;
+    gap: 10px;
+}
 
-        input:focus {
-            border-color: #58a6ff;
-        }
+input {
+    flex: 1;
+    min-width: 0;
+    height: 48px;
+    border: 1px solid #3b4553;
+    border-radius: 9px;
+    background: #0d1117;
+    color: white;
+    padding: 0 13px;
+    font-size: 16px;
+}
 
-        button {
-            width: 100%;
-            height: 50px;
-            margin-top: 14px;
-            border: 0;
-            border-radius: 10px;
-            background: #238636;
-            color: white;
-            font-size: 17px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+button {
+    border: 0;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    touch-action: manipulation;
+}
 
-        button:hover {
-            background: #2ea043;
-        }
+#enterButton {
+    min-width: 150px;
+    padding: 0 20px;
+    background: #238636;
+    color: white;
+}
 
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
+#enterButton:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
 
-        .online-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 18px;
-        }
+.message {
+    min-height: 18px;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 14px;
+    color: #8b949e;
+}
 
-        .online-header h2 {
-            margin: 0;
-            font-size: 20px;
-        }
+.message.success {
+    color: #3fb950;
+}
 
-        .counter {
-            background: #238636;
-            padding: 7px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-            white-space: nowrap;
-        }
+.message.error {
+    color: #ff7b72;
+}
 
-        #playersList {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+/* ================================
+   MUNDO
+================================ */
 
-        .player {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #0d1117;
-            border: 1px solid #30363d;
-            padding: 13px 15px;
-            border-radius: 10px;
-        }
+.world-panel {
+    padding: 12px;
+}
 
-        .player-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            min-width: 0;
-        }
+.world-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
 
-        .player-name {
-            font-weight: bold;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
+.world-header strong {
+    font-size: 17px;
+}
 
-        .online-dot {
-            width: 10px;
-            height: 10px;
-            background: #2ecc71;
-            border-radius: 50%;
-            flex: 0 0 auto;
-        }
+.online-count {
+    background: #238636;
+    border-radius: 20px;
+    padding: 7px 12px;
+    font-size: 13px;
+    font-weight: bold;
+}
 
-        .you {
-            color: #58a6ff;
-            font-size: 12px;
-            font-weight: bold;
-        }
+#world {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    min-height: 320px;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 4px solid #263238;
 
-        .empty {
-            text-align: center;
-            color: #8b949e;
-            padding: 18px;
-        }
+    background:
+        linear-gradient(
+            rgba(255,255,255,.04) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,.04) 1px,
+            transparent 1px
+        ),
+        #477d3b;
 
-        .message {
-            margin-top: 12px;
-            min-height: 20px;
-            text-align: center;
-            font-size: 14px;
-            color: #9ca7b8;
-        }
+    background-size: 32px 32px;
+}
 
-        .error {
-            color: #ff7b72;
-        }
+/* caminhos */
+.path-horizontal {
+    position: absolute;
+    left: 0;
+    top: 44%;
+    width: 100%;
+    height: 24%;
+    background: #c8ad75;
+}
 
-        .success {
-            color: #3fb950;
-        }
+.path-vertical {
+    position: absolute;
+    left: 42%;
+    top: 0;
+    width: 16%;
+    height: 100%;
+    background: #c8ad75;
+}
 
-        @media (max-width: 500px) {
-            .page {
-                padding: 28px 0;
-            }
+/* lago */
+.lake {
+    position: absolute;
+    right: 4%;
+    top: 6%;
+    width: 23%;
+    height: 25%;
+    background: #4799c7;
+    border: 5px solid #87c7df;
+    border-radius: 16px;
+}
 
-            .logo h1 {
-                font-size: 29px;
-            }
+/* árvores */
+.tree {
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #174c2a;
+    border: 5px solid #286b38;
+}
 
-            .card {
-                padding: 18px;
-            }
-        }
-    </style>
+/* ================================
+   JOGADORES
+================================ */
+
+.player {
+    position: absolute;
+    width: 42px;
+    height: 54px;
+
+    transform: translate(-50%, -50%);
+
+    transition:
+        left 90ms linear,
+        top 90ms linear;
+
+    z-index: 20;
+    pointer-events: none;
+}
+
+.player-body {
+    position: absolute;
+    left: 8px;
+    top: 13px;
+    width: 26px;
+    height: 34px;
+    background: #e53935;
+    border: 3px solid #17202a;
+    border-radius: 7px;
+}
+
+.player-head {
+    position: absolute;
+    left: 10px;
+    top: 0;
+    width: 22px;
+    height: 22px;
+    background: #f0c39b;
+    border: 3px solid #17202a;
+    border-radius: 50%;
+    z-index: 2;
+}
+
+.player-cap {
+    position: absolute;
+    left: 7px;
+    top: -3px;
+    width: 28px;
+    height: 11px;
+    background: #d32f2f;
+    border: 3px solid #17202a;
+    border-radius: 10px 10px 3px 3px;
+    z-index: 3;
+}
+
+.player.me .player-body {
+    background: #1976d2;
+}
+
+.player-name {
+    position: absolute;
+    left: 50%;
+    bottom: 100%;
+    transform: translateX(-50%);
+    margin-bottom: 4px;
+
+    max-width: 120px;
+    padding: 3px 7px;
+
+    background: rgba(0,0,0,.72);
+    border-radius: 6px;
+
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.player.me .player-name {
+    color: #69b7ff;
+}
+
+/* direção */
+.player[data-direction="left"] .player-body {
+    transform: rotate(-3deg);
+}
+
+.player[data-direction="right"] .player-body {
+    transform: rotate(3deg);
+}
+
+/* ================================
+   CONTROLES
+================================ */
+
+.controls-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    align-items: center;
+}
+
+.instructions {
+    color: #aeb8c4;
+    line-height: 1.5;
+}
+
+.instructions strong {
+    color: white;
+}
+
+.dpad {
+    width: 190px;
+    margin: auto;
+
+    display: grid;
+
+    grid-template-columns:
+        58px 58px 58px;
+
+    grid-template-rows:
+        58px 58px 58px;
+
+    gap: 5px;
+
+    justify-content: center;
+}
+
+.move {
+    width: 58px;
+    height: 58px;
+
+    background: #30363d;
+    color: white;
+
+    font-size: 25px;
+
+    border: 1px solid #4b5563;
+
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.move:active {
+    background: #238636;
+}
+
+.up {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.left {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+.center {
+    grid-column: 2;
+    grid-row: 2;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #0d1117;
+    border-radius: 50%;
+
+    color: #8b949e;
+    font-size: 12px;
+}
+
+.right {
+    grid-column: 3;
+    grid-row: 2;
+}
+
+.down {
+    grid-column: 2;
+    grid-row: 3;
+}
+
+.players-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+#playersList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.player-chip {
+    padding: 7px 10px;
+    border-radius: 15px;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    font-size: 13px;
+}
+
+.player-chip.me {
+    color: #58a6ff;
+}
+
+@media(max-width: 650px) {
+
+    .page {
+        width: 96%;
+        padding-top: 18px;
+    }
+
+    header h1 {
+        font-size: 26px;
+    }
+
+    .login-row {
+        flex-direction: column;
+    }
+
+    #enterButton {
+        height: 48px;
+    }
+
+    #world {
+        min-height: 360px;
+        aspect-ratio: auto;
+        height: 430px;
+    }
+
+    .controls-panel {
+        grid-template-columns: 1fr;
+    }
+
+    .instructions {
+        text-align: center;
+    }
+}
+</style>
 </head>
 
 <body>
 
 <div class="page">
 
-    <div class="logo">
-        <h1>MACEON ONLINE</h1>
-        <p>Teste de conexão multiplayer</p>
-    </div>
+<header>
+    <h1>MACEON ONLINE</h1>
+    <p>Sala multiplayer em tempo real</p>
+</header>
 
-    <div class="connection">
-        <span id="connectionDot" class="dot"></span>
-        <span id="connectionText">Conectando ao servidor...</span>
-    </div>
+<div class="connection">
+    <span id="connectionDot"
+          class="connection-dot"></span>
 
-    <div class="card">
+    <span id="connectionText">
+        Conectando ao servidor...
+    </span>
+</div>
 
-        <label for="playerName">Nome do jogador</label>
+
+<div class="panel login">
+
+    <label for="playerName">
+        Nome do jogador
+    </label>
+
+    <div class="login-row">
 
         <input
             id="playerName"
-            type="text"
             maxlength="20"
             autocomplete="off"
             placeholder="Digite seu nome"
         >
 
-        <button id="enterButton" type="button" disabled>
-            ENTRAR ONLINE
+        <button
+            id="enterButton"
+            disabled
+        >
+            ENTRAR
         </button>
-
-        <div id="message" class="message"></div>
 
     </div>
 
-    <div class="card">
+    <div
+        id="message"
+        class="message"
+    ></div>
 
-        <div class="online-header">
-            <h2>Jogadores online</h2>
-            <div id="counter" class="counter">
-                0 ONLINE
-            </div>
+</div>
+
+
+<div class="panel world-panel">
+
+    <div class="world-header">
+
+        <strong>
+            MAPA DE TESTE
+        </strong>
+
+        <span
+            id="onlineCount"
+            class="online-count"
+        >
+            0 ONLINE
+        </span>
+
+    </div>
+
+
+    <div id="world">
+
+        <div class="path-horizontal"></div>
+        <div class="path-vertical"></div>
+
+        <div class="lake"></div>
+
+        <div class="tree"
+             style="left:5%;top:8%;">
         </div>
 
-        <div id="playersList">
-            <div class="empty">
-                Nenhum jogador conectado.
-            </div>
+        <div class="tree"
+             style="left:12%;top:16%;">
+        </div>
+
+        <div class="tree"
+             style="left:20%;top:8%;">
+        </div>
+
+        <div class="tree"
+             style="left:6%;bottom:8%;">
+        </div>
+
+        <div class="tree"
+             style="left:15%;bottom:15%;">
+        </div>
+
+        <div class="tree"
+             style="right:7%;bottom:9%;">
+        </div>
+
+        <div class="tree"
+             style="right:15%;bottom:17%;">
         </div>
 
     </div>
@@ -275,148 +576,233 @@
 </div>
 
 
+<div class="panel controls-panel">
+
+    <div class="instructions">
+
+        <strong>Movimente seu personagem</strong>
+
+        <br><br>
+
+        Computador:
+        use as teclas
+        <strong>↑ ↓ ← →</strong>
+        ou
+        <strong>W A S D</strong>.
+
+        <br><br>
+
+        Celular:
+        use os botões ao lado.
+
+    </div>
+
+
+    <div class="dpad">
+
+        <button
+            class="move up"
+            data-direction="up"
+        >
+            ▲
+        </button>
+
+        <button
+            class="move left"
+            data-direction="left"
+        >
+            ◀
+        </button>
+
+        <div class="center">
+            MOVE
+        </div>
+
+        <button
+            class="move right"
+            data-direction="right"
+        >
+            ▶
+        </button>
+
+        <button
+            class="move down"
+            data-direction="down"
+        >
+            ▼
+        </button>
+
+    </div>
+
+</div>
+
+
+<div class="panel">
+
+    <div class="players-title">
+        Jogadores conectados
+    </div>
+
+    <div id="playersList">
+        Nenhum jogador conectado.
+    </div>
+
+</div>
+
+</div>
+
+
 <script type="module">
 
-    import { initializeApp }
-    from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-
-    import {
-        getDatabase,
-        ref,
-        set,
-        onValue,
-        onDisconnect,
-        remove,
-        serverTimestamp
-    }
-    from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+import {
+    initializeApp
+}
+from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 
 
-    /*
-    ==========================================================
-    FIREBASE
-    ==========================================================
-    */
-
-    const firebaseConfig = {
-
-        apiKey: "AIzaSyCEODc2z5Rw-cOF3yyGDMaN12ZXFzngXQc",
-
-        authDomain:
-            "maceon-online-14634.firebaseapp.com",
-
-        databaseURL:
-            "https://maceon-online-14634-default-rtdb.firebaseio.com",
-
-        projectId:
-            "maceon-online-14634",
-
-        storageBucket:
-            "maceon-online-14634.firebasestorage.app",
-
-        messagingSenderId:
-            "318725187398",
-
-        appId:
-            "1:318725187398:web:b838938a9b94a3bd34e747"
-
-    };
+import {
+    getDatabase,
+    ref,
+    set,
+    update,
+    onValue,
+    onDisconnect,
+    remove,
+    serverTimestamp
+}
+from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
 
 
-    /*
-    ==========================================================
-    INICIALIZAÇÃO
-    ==========================================================
-    */
+/* ========================================
+   FIREBASE
+======================================== */
 
-    const app = initializeApp(firebaseConfig);
+const firebaseConfig = {
 
-    const database = getDatabase(app);
+    apiKey:
+        "AIzaSyCEODc2z5Rw-cOF3yyGDMaN12ZXFzngXQc",
 
+    authDomain:
+        "maceon-online-14634.firebaseapp.com",
 
-    /*
-    ==========================================================
-    ELEMENTOS DA TELA
-    ==========================================================
-    */
+    databaseURL:
+        "https://maceon-online-14634-default-rtdb.firebaseio.com",
 
-    const playerNameInput =
-        document.getElementById("playerName");
+    projectId:
+        "maceon-online-14634",
 
-    const enterButton =
-        document.getElementById("enterButton");
+    storageBucket:
+        "maceon-online-14634.firebasestorage.app",
 
-    const playersList =
-        document.getElementById("playersList");
+    messagingSenderId:
+        "318725187398",
 
-    const counter =
-        document.getElementById("counter");
-
-    const message =
-        document.getElementById("message");
-
-    const connectionDot =
-        document.getElementById("connectionDot");
-
-    const connectionText =
-        document.getElementById("connectionText");
+    appId:
+        "1:318725187398:web:b838938a9b94a3bd34e747"
+};
 
 
-    /*
-    ==========================================================
-    IDENTIFICAÇÃO DESTA ABA
-    ==========================================================
-    */
+const app =
+    initializeApp(firebaseConfig);
 
-    let playerId =
-        sessionStorage.getItem("maceonOnlinePlayerId");
+const database =
+    getDatabase(app);
 
-    if (!playerId) {
 
-        if (crypto.randomUUID) {
+/* ========================================
+   ELEMENTOS
+======================================== */
 
-            playerId = crypto.randomUUID();
+const world =
+    document.getElementById("world");
 
-        } else {
+const playerNameInput =
+    document.getElementById("playerName");
 
-            playerId =
-                "player-" +
-                Date.now() +
-                "-" +
-                Math.random()
-                    .toString(36)
-                    .substring(2, 10);
+const enterButton =
+    document.getElementById("enterButton");
 
-        }
+const message =
+    document.getElementById("message");
 
-        sessionStorage.setItem(
-            "maceonOnlinePlayerId",
-            playerId
-        );
+const onlineCount =
+    document.getElementById("onlineCount");
+
+const playersList =
+    document.getElementById("playersList");
+
+const connectionDot =
+    document.getElementById("connectionDot");
+
+const connectionText =
+    document.getElementById("connectionText");
+
+
+/* ========================================
+   ID DESTA ABA
+======================================== */
+
+let playerId =
+    sessionStorage.getItem(
+        "maceonOnlinePlayerId"
+    );
+
+if (!playerId) {
+
+    if (crypto.randomUUID) {
+
+        playerId =
+            crypto.randomUUID();
+
+    } else {
+
+        playerId =
+            "player-" +
+            Date.now() +
+            "-" +
+            Math.random()
+                .toString(36)
+                .substring(2,10);
+
     }
 
-
-    /*
-    ==========================================================
-    ESTADO
-    ==========================================================
-    */
-
-    let joined = false;
-
-    let currentPlayerRef = null;
+    sessionStorage.setItem(
+        "maceonOnlinePlayerId",
+        playerId
+    );
+}
 
 
-    /*
-    ==========================================================
-    CONEXÃO COM FIREBASE
-    ==========================================================
-    */
+/* ========================================
+   ESTADO LOCAL
+======================================== */
 
-    const connectedRef =
-        ref(database, ".info/connected");
+let joined = false;
 
-    onValue(connectedRef, (snapshot) => {
+let currentPlayerRef = null;
+
+let myX = 50;
+let myY = 60;
+
+let myDirection = "down";
+
+let moving = false;
+
+
+/* ========================================
+   CONEXÃO
+======================================== */
+
+const connectedRef =
+    ref(
+        database,
+        ".info/connected"
+    );
+
+
+onValue(
+    connectedRef,
+    async snapshot => {
 
         const connected =
             snapshot.val() === true;
@@ -424,17 +810,58 @@
         if (connected) {
 
             connectionDot.className =
-                "dot connected";
+                "connection-dot connected";
 
             connectionText.textContent =
                 "Servidor conectado";
 
-            enterButton.disabled = joined;
+            if (!joined) {
+                enterButton.disabled = false;
+            }
+
+            /*
+            Se o jogador já estava na sala e
+            perdeu/reestabeleceu conexão,
+            registramos novamente o onDisconnect.
+            */
+
+            if (
+                joined &&
+                currentPlayerRef
+            ) {
+
+                await onDisconnect(
+                    currentPlayerRef
+                ).remove();
+
+                await set(
+                    currentPlayerRef,
+                    {
+                        name:
+                            playerNameInput.value.trim(),
+
+                        x: myX,
+                        y: myY,
+
+                        direction:
+                            myDirection,
+
+                        map:
+                            "test-room",
+
+                        online: true,
+
+                        joinedAt:
+                            serverTimestamp()
+                    }
+                );
+
+            }
 
         } else {
 
             connectionDot.className =
-                "dot disconnected";
+                "connection-dot disconnected";
 
             connectionText.textContent =
                 "Servidor desconectado";
@@ -443,306 +870,759 @@
 
         }
 
+    }
+);
+
+
+/* ========================================
+   ENTRAR NA SALA
+======================================== */
+
+async function enterOnline() {
+
+    const name =
+        playerNameInput
+            .value
+            .trim();
+
+    if (!name) {
+
+        showMessage(
+            "Digite seu nome.",
+            "error"
+        );
+
+        return;
+    }
+
+    if (joined) return;
+
+
+    enterButton.disabled = true;
+
+    enterButton.textContent =
+        "ENTRANDO...";
+
+
+    /*
+    posição inicial ligeiramente
+    diferente para cada jogador
+    */
+
+    myX =
+        35 +
+        Math.random() * 30;
+
+    myY =
+        40 +
+        Math.random() * 25;
+
+
+    currentPlayerRef =
+        ref(
+            database,
+            "players/" + playerId
+        );
+
+
+    try {
+
+        await onDisconnect(
+            currentPlayerRef
+        ).remove();
+
+
+        await set(
+            currentPlayerRef,
+            {
+
+                name: name,
+
+                x: myX,
+
+                y: myY,
+
+                direction:
+                    "down",
+
+                map:
+                    "test-room",
+
+                online:
+                    true,
+
+                joinedAt:
+                    serverTimestamp()
+
+            }
+        );
+
+
+        joined = true;
+
+        playerNameInput.disabled =
+            true;
+
+        enterButton.textContent =
+            "VOCÊ ESTÁ NA SALA";
+
+        enterButton.disabled =
+            true;
+
+
+        showMessage(
+            "Você entrou no mapa multiplayer.",
+            "success"
+        );
+
+
+    } catch(error) {
+
+        console.error(error);
+
+        enterButton.disabled =
+            false;
+
+        enterButton.textContent =
+            "ENTRAR";
+
+        showMessage(
+            "Erro ao entrar na sala.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* ========================================
+   MOVIMENTO
+======================================== */
+
+async function movePlayer(direction) {
+
+    if (
+        !joined ||
+        !currentPlayerRef
+    ) {
+        return;
+    }
+
+
+    const step = 2.4;
+
+    myDirection =
+        direction;
+
+
+    if (direction === "up") {
+        myY -= step;
+    }
+
+    if (direction === "down") {
+        myY += step;
+    }
+
+    if (direction === "left") {
+        myX -= step;
+    }
+
+    if (direction === "right") {
+        myX += step;
+    }
+
+
+    /*
+    limites do mapa
+    */
+
+    myX =
+        Math.max(
+            4,
+            Math.min(
+                96,
+                myX
+            )
+        );
+
+    myY =
+        Math.max(
+            7,
+            Math.min(
+                93,
+                myY
+            )
+        );
+
+
+    try {
+
+        await update(
+            currentPlayerRef,
+            {
+
+                x: myX,
+
+                y: myY,
+
+                direction:
+                    myDirection,
+
+                lastMove:
+                    serverTimestamp()
+
+            }
+        );
+
+    } catch(error) {
+
+        console.error(
+            "Erro no movimento:",
+            error
+        );
+
+    }
+
+}
+
+
+/* ========================================
+   TECLADO
+======================================== */
+
+const keys = new Set();
+
+
+function keyToDirection(key) {
+
+    key =
+        key.toLowerCase();
+
+    if (
+        key === "arrowup" ||
+        key === "w"
+    ) return "up";
+
+    if (
+        key === "arrowdown" ||
+        key === "s"
+    ) return "down";
+
+    if (
+        key === "arrowleft" ||
+        key === "a"
+    ) return "left";
+
+    if (
+        key === "arrowright" ||
+        key === "d"
+    ) return "right";
+
+    return null;
+}
+
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            document.activeElement ===
+            playerNameInput
+        ) {
+            return;
+        }
+
+        const direction =
+            keyToDirection(
+                event.key
+            );
+
+        if (!direction) return;
+
+        event.preventDefault();
+
+        keys.add(direction);
+
+    }
+);
+
+
+document.addEventListener(
+    "keyup",
+    event => {
+
+        const direction =
+            keyToDirection(
+                event.key
+            );
+
+        if (!direction) return;
+
+        keys.delete(direction);
+
+    }
+);
+
+
+/*
+loop do teclado
+*/
+
+setInterval(
+    () => {
+
+        if (!joined) return;
+
+        const direction =
+            Array
+                .from(keys)
+                .at(-1);
+
+        if (direction) {
+
+            movePlayer(
+                direction
+            );
+
+        }
+
+    },
+    85
+);
+
+
+/* ========================================
+   CONTROLES TOUCH
+======================================== */
+
+document
+    .querySelectorAll(".move")
+    .forEach(button => {
+
+        let interval = null;
+
+        const direction =
+            button.dataset.direction;
+
+
+        function startMove(event) {
+
+            event.preventDefault();
+
+            movePlayer(
+                direction
+            );
+
+            clearInterval(
+                interval
+            );
+
+            interval =
+                setInterval(
+                    () => {
+
+                        movePlayer(
+                            direction
+                        );
+
+                    },
+                    100
+                );
+
+        }
+
+
+        function stopMove() {
+
+            clearInterval(
+                interval
+            );
+
+            interval = null;
+
+        }
+
+
+        button.addEventListener(
+            "pointerdown",
+            startMove
+        );
+
+        button.addEventListener(
+            "pointerup",
+            stopMove
+        );
+
+        button.addEventListener(
+            "pointercancel",
+            stopMove
+        );
+
+        button.addEventListener(
+            "pointerleave",
+            stopMove
+        );
+
     });
 
 
-    /*
-    ==========================================================
-    ENTRAR ONLINE
-    ==========================================================
-    */
+/* ========================================
+   RECEBER JOGADORES
+======================================== */
 
-    async function enterOnline() {
+const playersRef =
+    ref(
+        database,
+        "players"
+    );
 
-        const playerName =
-            playerNameInput.value.trim();
 
-        if (!playerName) {
+onValue(
+    playersRef,
+    snapshot => {
 
-            showMessage(
-                "Digite um nome para entrar.",
-                "error"
+        const players =
+            snapshot.val() || {};
+
+        renderPlayers(
+            players
+        );
+
+    }
+);
+
+
+/* ========================================
+   DESENHAR JOGADORES
+======================================== */
+
+function renderPlayers(players) {
+
+    const entries =
+        Object.entries(players)
+            .filter(
+                ([id, player]) =>
+                    player.map ===
+                    "test-room"
             );
 
-            playerNameInput.focus();
 
-            return;
-        }
-
-
-        if (joined) {
-            return;
-        }
+    onlineCount.textContent =
+        entries.length +
+        " ONLINE";
 
 
-        enterButton.disabled = true;
+    /*
+    Remove personagens que
+    não estão mais conectados.
+    */
 
-        enterButton.textContent =
-            "ENTRANDO...";
+    world
+        .querySelectorAll(
+            ".player"
+        )
+        .forEach(element => {
+
+            const id =
+                element.dataset.id;
+
+            if (!players[id]) {
+
+                element.remove();
+
+            }
+
+        });
 
 
-        try {
+    /*
+    cria ou atualiza
+    personagens
+    */
 
-            currentPlayerRef =
-                ref(
-                    database,
-                    "players/" + playerId
+    entries.forEach(
+        ([id, player]) => {
+
+            let element =
+                world.querySelector(
+                    `.player[data-id="${id}"]`
                 );
 
 
-            /*
-            Se este navegador perder a conexão,
-            o Firebase removerá o jogador.
-            */
+            if (!element) {
 
-            await onDisconnect(
+                element =
+                    createPlayerElement(
+                        id,
+                        player
+                    );
+
+                world.appendChild(
+                    element
+                );
+
+            }
+
+
+            element.style.left =
+                Number(player.x || 50) +
+                "%";
+
+            element.style.top =
+                Number(player.y || 50) +
+                "%";
+
+
+            element.dataset.direction =
+                player.direction ||
+                "down";
+
+
+            const name =
+                element.querySelector(
+                    ".player-name"
+                );
+
+            name.textContent =
+                player.name ||
+                "Jogador";
+
+
+            if (id === playerId) {
+
+                element.classList.add(
+                    "me"
+                );
+
+            } else {
+
+                element.classList.remove(
+                    "me"
+                );
+
+            }
+
+        }
+    );
+
+
+    /*
+    lista inferior
+    */
+
+    playersList.innerHTML =
+        "";
+
+
+    if (entries.length === 0) {
+
+        playersList.textContent =
+            "Nenhum jogador conectado.";
+
+        return;
+
+    }
+
+
+    entries.forEach(
+        ([id, player]) => {
+
+            const chip =
+                document.createElement(
+                    "div"
+                );
+
+            chip.className =
+                "player-chip";
+
+
+            if (id === playerId) {
+
+                chip.classList.add(
+                    "me"
+                );
+
+                chip.textContent =
+                    "● " +
+                    player.name +
+                    " (VOCÊ)";
+
+            } else {
+
+                chip.textContent =
+                    "● " +
+                    player.name;
+
+            }
+
+
+            playersList.appendChild(
+                chip
+            );
+
+        }
+    );
+
+}
+
+
+/* ========================================
+   CRIAR PERSONAGEM
+======================================== */
+
+function createPlayerElement(
+    id,
+    player
+) {
+
+    const element =
+        document.createElement(
+            "div"
+        );
+
+    element.className =
+        "player";
+
+    element.dataset.id =
+        id;
+
+    element.dataset.direction =
+        player.direction ||
+        "down";
+
+
+    const name =
+        document.createElement(
+            "div"
+        );
+
+    name.className =
+        "player-name";
+
+    name.textContent =
+        player.name ||
+        "Jogador";
+
+
+    const head =
+        document.createElement(
+            "div"
+        );
+
+    head.className =
+        "player-head";
+
+
+    const cap =
+        document.createElement(
+            "div"
+        );
+
+    cap.className =
+        "player-cap";
+
+
+    const body =
+        document.createElement(
+            "div"
+        );
+
+    body.className =
+        "player-body";
+
+
+    element.appendChild(
+        name
+    );
+
+    element.appendChild(
+        body
+    );
+
+    element.appendChild(
+        head
+    );
+
+    element.appendChild(
+        cap
+    );
+
+
+    return element;
+
+}
+
+
+/* ========================================
+   MENSAGEM
+======================================== */
+
+function showMessage(
+    text,
+    type = ""
+) {
+
+    message.textContent =
+        text;
+
+    message.className =
+        "message " + type;
+
+}
+
+
+/* ========================================
+   BOTÃO ENTRAR
+======================================== */
+
+enterButton.addEventListener(
+    "click",
+    enterOnline
+);
+
+
+playerNameInput.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key ===
+            "Enter"
+        ) {
+
+            enterOnline();
+
+        }
+
+    }
+);
+
+
+/* ========================================
+   SAÍDA
+======================================== */
+
+window.addEventListener(
+    "pagehide",
+    () => {
+
+        if (
+            joined &&
+            currentPlayerRef
+        ) {
+
+            remove(
                 currentPlayerRef
-            ).remove();
-
-
-            /*
-            Agora registramos o jogador.
-            */
-
-            await set(
-                currentPlayerRef,
-                {
-
-                    name: playerName,
-
-                    online: true,
-
-                    joinedAt:
-                        serverTimestamp()
-
-                }
-            );
-
-
-            joined = true;
-
-            playerNameInput.disabled = true;
-
-            enterButton.textContent =
-                "VOCÊ ESTÁ ONLINE";
-
-            enterButton.disabled = true;
-
-
-            showMessage(
-                "Você entrou no Maceon Online.",
-                "success"
-            );
-
-
-        } catch (error) {
-
-            console.error(error);
-
-            enterButton.disabled = false;
-
-            enterButton.textContent =
-                "ENTRAR ONLINE";
-
-            showMessage(
-                "Não foi possível entrar. Verifique a conexão com o Firebase.",
-                "error"
+            ).catch(
+                () => {}
             );
 
         }
 
     }
-
-
-    /*
-    ==========================================================
-    LISTA DE JOGADORES
-    ==========================================================
-    */
-
-    const playersRef =
-        ref(database, "players");
-
-
-    onValue(
-        playersRef,
-
-        (snapshot) => {
-
-            const players =
-                snapshot.val() || {};
-
-            const entries =
-                Object.entries(players);
-
-            counter.textContent =
-                entries.length +
-                (entries.length === 1
-                    ? " ONLINE"
-                    : " ONLINE");
-
-
-            playersList.innerHTML = "";
-
-
-            if (entries.length === 0) {
-
-                playersList.innerHTML =
-                    '<div class="empty">' +
-                    'Nenhum jogador conectado.' +
-                    '</div>';
-
-                return;
-            }
-
-
-            entries.forEach(
-                ([id, player]) => {
-
-                    const item =
-                        document.createElement("div");
-
-                    item.className =
-                        "player";
-
-
-                    const left =
-                        document.createElement("div");
-
-                    left.className =
-                        "player-left";
-
-
-                    const dot =
-                        document.createElement("span");
-
-                    dot.className =
-                        "online-dot";
-
-
-                    const name =
-                        document.createElement("span");
-
-                    name.className =
-                        "player-name";
-
-                    name.textContent =
-                        player.name ||
-                        "Jogador";
-
-
-                    left.appendChild(dot);
-
-                    left.appendChild(name);
-
-                    item.appendChild(left);
-
-
-                    if (id === playerId) {
-
-                        const you =
-                            document.createElement("span");
-
-                        you.className =
-                            "you";
-
-                        you.textContent =
-                            "VOCÊ";
-
-                        item.appendChild(you);
-
-                    }
-
-
-                    playersList.appendChild(item);
-
-                }
-            );
-
-        },
-
-        (error) => {
-
-            console.error(error);
-
-            showMessage(
-                "Erro ao acessar a lista de jogadores.",
-                "error"
-            );
-
-        }
-    );
-
-
-    /*
-    ==========================================================
-    MENSAGENS
-    ==========================================================
-    */
-
-    function showMessage(
-        text,
-        type = ""
-    ) {
-
-        message.textContent = text;
-
-        message.className =
-            "message " + type;
-
-    }
-
-
-    /*
-    ==========================================================
-    EVENTOS
-    ==========================================================
-    */
-
-    enterButton.addEventListener(
-        "click",
-        enterOnline
-    );
-
-
-    playerNameInput.addEventListener(
-        "keydown",
-        (event) => {
-
-            if (event.key === "Enter") {
-
-                enterOnline();
-
-            }
-
-        }
-    );
-
-
-    /*
-    Tentativa adicional de limpeza quando
-    a página for encerrada normalmente.
-    O onDisconnect continua sendo a proteção
-    principal.
-    */
-
-    window.addEventListener(
-        "pagehide",
-        () => {
-
-            if (
-                joined &&
-                currentPlayerRef
-            ) {
-
-                remove(
-                    currentPlayerRef
-                ).catch(() => {});
-
-            }
-
-        }
-    );
+);
 
 </script>
 
