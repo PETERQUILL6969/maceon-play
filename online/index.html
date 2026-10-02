@@ -1,262 +1,1241 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    >
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+>
 
-    <title>Maceon Online - FireRed</title>
+<title>Maceon Online - FireRed</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<style>
 
-        html,
-        body {
-            margin: 0;
-            width: 100%;
-            min-height: 100%;
-            background: #080b10;
-            color: white;
-            font-family: Arial, Helvetica, sans-serif;
-        }
+* {
+    box-sizing: border-box;
+}
 
-        body {
-            min-height: 100vh;
-        }
+html,
+body {
+    margin: 0;
+    width: 100%;
+    min-height: 100%;
+    background: #080b10;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+}
 
-        #start-screen {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-        }
+#start-screen {
+    min-height: 100vh;
 
-        .start-card {
-            width: min(92vw, 520px);
-            padding: 32px 24px;
-            border-radius: 20px;
-            border: 1px solid #30363d;
-            background: #161b22;
-            text-align: center;
-        }
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-        .start-card h1 {
-            margin: 0 0 8px;
-            font-size: 32px;
-            letter-spacing: 2px;
-        }
+    padding: 24px;
+}
 
-        .start-card p {
-            margin: 0 0 26px;
-            color: #9ba7b4;
-            line-height: 1.5;
-        }
+.start-card {
+    width: min(92vw, 520px);
 
-        #play-button {
-            width: 100%;
-            min-height: 58px;
-            border: 0;
-            border-radius: 12px;
-            background: #238636;
-            color: white;
-            font-size: 18px;
-            font-weight: 800;
-            cursor: pointer;
-        }
+    padding: 32px 24px;
 
-        #play-button:active {
-            transform: scale(0.98);
-        }
+    border-radius: 20px;
 
-        .test-note {
-            margin-top: 18px;
-            color: #8b949e;
-            font-size: 13px;
-        }
+    border: 1px solid #30363d;
 
-        #game-screen {
-            display: none;
-            width: 100%;
-            min-height: 100vh;
-            background: #000;
-        }
+    background: #161b22;
 
-        #game {
-            width: 100%;
-            height: 100vh;
-            min-height: 520px;
-            background: #000;
-        }
+    text-align: center;
+}
 
-        @media (max-width: 600px) {
-            #start-screen {
-                padding: 16px;
-            }
+.start-card h1 {
+    margin: 0 0 8px;
 
-            .start-card {
-                padding: 26px 18px;
-            }
+    font-size: 32px;
 
-            .start-card h1 {
-                font-size: 27px;
-            }
+    letter-spacing: 2px;
+}
 
-            #game {
-                height: 100dvh;
-                min-height: 100dvh;
-            }
-        }
-    </style>
+.start-card p {
+    margin: 0 0 26px;
+
+    color: #9ba7b4;
+
+    line-height: 1.5;
+}
+
+#play-button {
+    width: 100%;
+
+    min-height: 58px;
+
+    border: 0;
+
+    border-radius: 12px;
+
+    background: #238636;
+
+    color: white;
+
+    font-size: 18px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+#play-button:disabled {
+    opacity: .6;
+}
+
+#status {
+    min-height: 20px;
+
+    margin-top: 18px;
+
+    color: #8b949e;
+
+    font-size: 14px;
+}
+
+#status.success {
+    color: #3fb950;
+}
+
+#status.error {
+    color: #ff7b72;
+}
+
+#game-screen {
+    display: none;
+
+    width: 100%;
+
+    min-height: 100vh;
+
+    background: #000;
+}
+
+#game {
+    width: 100%;
+
+    height: 100vh;
+
+    min-height: 520px;
+
+    background: #000;
+}
+
+@media(max-width:600px) {
+
+    #start-screen {
+        padding: 16px;
+    }
+
+    .start-card {
+        padding: 26px 18px;
+    }
+
+    .start-card h1 {
+        font-size: 27px;
+    }
+
+    #game {
+        height: 100dvh;
+        min-height: 100dvh;
+    }
+}
+
+</style>
 </head>
 
 <body>
 
-    <div id="start-screen">
 
-        <div class="start-card">
+<div id="start-screen">
 
-            <h1>MACEON ONLINE</h1>
+    <div class="start-card">
 
-            <p>
-                Teste de integração do Pokémon FireRed
-                com o novo projeto online.
-            </p>
+        <h1>MACEON ONLINE</h1>
 
-            <button id="play-button">
-                JOGAR FIRE RED
-            </button>
+        <p>
+            FireRed Online
+        </p>
 
-            <div class="test-note">
-                Etapa atual: verificar somente se o jogo abre corretamente.
-            </div>
+        <button id="play-button">
+            JOGAR FIRE RED
+        </button>
 
+        <div id="status">
+            Save Online separado do jogo original.
         </div>
 
     </div>
 
-
-    <div id="game-screen">
-
-        <div id="game"></div>
-
-    </div>
+</div>
 
 
-    <script>
-        /*
-        =========================================
-        MACEON ONLINE - TESTE DO FIRE RED
-        =========================================
+<div id="game-screen">
 
-        ROM:
-        /online/games/jogo.gba
+    <div id="game"></div>
 
-        Nesta etapa NÃO estamos ativando
-        o multiplayer ainda.
-        =========================================
-        */
-
-        const GAME_URL = "./games/jogo.gba";
-
-        let gameStarted = false;
+</div>
 
 
-        document
-            .getElementById("play-button")
-            .addEventListener("click", startGame);
+<script>
+
+"use strict";
 
 
-        function startGame() {
+/* =====================================================
+   CONFIGURAÇÃO DO JOGO
+===================================================== */
 
-            if (gameStarted) {
-                return;
-            }
+const GAME_URL =
+    "./games/jogo.gba";
 
-            gameStarted = true;
+const GAME_NAME =
+    "Maceon Online - FireRed";
 
-            const startScreen =
-                document.getElementById("start-screen");
+/*
+ID diferente do FireRed original.
+*/
 
-            const gameScreen =
-                document.getElementById("game-screen");
-
-
-            startScreen.style.display = "none";
-            gameScreen.style.display = "block";
-
-
-            /*
-            =====================================
-            CONFIGURAÇÃO DO EMULATORJS
-            =====================================
-            */
-
-            window.EJS_player = "#game";
-
-            window.EJS_core = "gba";
-
-            window.EJS_gameName =
-                "Maceon Online - FireRed";
-
-            window.EJS_gameUrl =
-                GAME_URL;
-
-            window.EJS_pathtodata =
-                "https://cdn.emulatorjs.org/stable/data/";
-
-            window.EJS_startOnLoaded =
-                true;
-
-            window.EJS_disableDatabases =
-                false;
-
-            window.EJS_threads =
-                false;
+const GAME_ID =
+    2001;
 
 
-            /*
-            Carrega o EmulatorJS somente
-            depois que o jogador toca em JOGAR.
-            */
+/*
+Banco EXCLUSIVO do projeto Online.
 
-            const loader =
-                document.createElement("script");
+Não utiliza MaceonPlaySaves.
+*/
 
-            loader.src =
-                "https://cdn.emulatorjs.org/stable/data/loader.js";
+const DB_NAME =
+    "MaceonOnlineSaves";
 
-            loader.async =
-                true;
+const DB_VERSION =
+    1;
+
+const STORE_NAME =
+    "saves";
+
+const SAVE_KEY =
+    "firered-online-srm";
 
 
-            loader.onerror =
-                function () {
+let emulatorStarted =
+    false;
 
-                    gameStarted = false;
+let automaticSaveTimer =
+    null;
 
-                    gameScreen.style.display =
-                        "none";
+let lastAutomaticSaveSignature =
+    null;
 
-                    startScreen.style.display =
-                        "flex";
 
-                    alert(
-                        "Não foi possível carregar o emulador."
+/* =====================================================
+   ELEMENTOS
+===================================================== */
+
+const startScreen =
+    document.getElementById(
+        "start-screen"
+    );
+
+const gameScreen =
+    document.getElementById(
+        "game-screen"
+    );
+
+const playButton =
+    document.getElementById(
+        "play-button"
+    );
+
+const statusElement =
+    document.getElementById(
+        "status"
+    );
+
+
+/* =====================================================
+   BANCO DE SAVE
+===================================================== */
+
+function openSaveDatabase() {
+
+    return new Promise(
+        function(resolve, reject) {
+
+            const request =
+                indexedDB.open(
+                    DB_NAME,
+                    DB_VERSION
+                );
+
+
+            request.onupgradeneeded =
+                function(event) {
+
+                    const db =
+                        event.target.result;
+
+
+                    if (
+                        !db.objectStoreNames.contains(
+                            STORE_NAME
+                        )
+                    ) {
+
+                        db.createObjectStore(
+                            STORE_NAME
+                        );
+
+                    }
+
+                };
+
+
+            request.onsuccess =
+                function() {
+
+                    resolve(
+                        request.result
                     );
 
                 };
 
 
-            document.body.appendChild(loader);
+            request.onerror =
+                function() {
+
+                    reject(
+                        request.error
+                    );
+
+                };
 
         }
-    </script>
+    );
+
+}
+
+
+/* =====================================================
+   GUARDAR SAVE
+===================================================== */
+
+async function storeSaveBuffer(
+    buffer
+) {
+
+    if (!buffer) {
+        return;
+    }
+
+
+    const bytes =
+        buffer instanceof Uint8Array
+            ? buffer
+            : new Uint8Array(buffer);
+
+
+    if (!bytes.byteLength) {
+        return;
+    }
+
+
+    const copy =
+        bytes.slice();
+
+
+    const db =
+        await openSaveDatabase();
+
+
+    return new Promise(
+        function(resolve, reject) {
+
+            const transaction =
+                db.transaction(
+                    STORE_NAME,
+                    "readwrite"
+                );
+
+
+            transaction
+                .objectStore(
+                    STORE_NAME
+                )
+                .put(
+                    {
+                        bytes:
+                            copy,
+
+                        size:
+                            copy.byteLength,
+
+                        savedAt:
+                            new Date()
+                                .toISOString()
+                    },
+
+                    SAVE_KEY
+                );
+
+
+            transaction.oncomplete =
+                function() {
+
+                    db.close();
+
+                    console.log(
+                        "Maceon Online: save armazenado.",
+                        copy.byteLength,
+                        "bytes"
+                    );
+
+                    resolve();
+
+                };
+
+
+            transaction.onerror =
+                function() {
+
+                    const error =
+                        transaction.error;
+
+                    db.close();
+
+                    reject(error);
+
+                };
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   BUSCAR SAVE
+===================================================== */
+
+async function getStoredSave() {
+
+    const db =
+        await openSaveDatabase();
+
+
+    return new Promise(
+        function(resolve, reject) {
+
+            const transaction =
+                db.transaction(
+                    STORE_NAME,
+                    "readonly"
+                );
+
+
+            const request =
+                transaction
+                    .objectStore(
+                        STORE_NAME
+                    )
+                    .get(
+                        SAVE_KEY
+                    );
+
+
+            request.onsuccess =
+                function() {
+
+                    const result =
+                        request.result;
+
+                    db.close();
+
+                    resolve(
+                        result || null
+                    );
+
+                };
+
+
+            request.onerror =
+                function() {
+
+                    const error =
+                        request.error;
+
+                    db.close();
+
+                    reject(error);
+
+                };
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   ASSINATURA DO SAVE
+===================================================== */
+
+function makeSaveSignature(
+    bytes
+) {
+
+    if (
+        !bytes ||
+        !bytes.byteLength
+    ) {
+
+        return null;
+
+    }
+
+
+    let hash =
+        2166136261;
+
+
+    for (
+        let i = 0;
+        i < bytes.length;
+        i += 64
+    ) {
+
+        hash ^=
+            bytes[i];
+
+        hash =
+            Math.imul(
+                hash,
+                16777619
+            );
+
+    }
+
+
+    return (
+        bytes.byteLength +
+        ":" +
+        (hash >>> 0)
+    );
+
+}
+
+
+/* =====================================================
+   ACESSO AO EMULADOR
+===================================================== */
+
+function getGameManager() {
+
+    const emulator =
+        window.EJS_emulator;
+
+
+    if (
+        !emulator ||
+        !emulator.gameManager
+    ) {
+
+        return null;
+
+    }
+
+
+    return emulator.gameManager;
+
+}
+
+
+/* =====================================================
+   LER SAVE ATUAL DO FIRE RED
+===================================================== */
+
+function readCurrentSRM() {
+
+    try {
+
+        const gameManager =
+            getGameManager();
+
+
+        if (
+            !gameManager ||
+            typeof gameManager.getSaveFile
+                !== "function"
+        ) {
+
+            return null;
+
+        }
+
+
+        const save =
+            gameManager.getSaveFile();
+
+
+        if (
+            !save ||
+            !save.byteLength
+        ) {
+
+            return null;
+
+        }
+
+
+        return (
+            save instanceof Uint8Array
+                ? save.slice()
+                : new Uint8Array(save)
+        );
+
+
+    } catch(error) {
+
+        console.error(
+            "Maceon Online: erro ao ler save.",
+            error
+        );
+
+        return null;
+
+    }
+
+}
+
+
+/* =====================================================
+   CAPTURAR SAVE
+===================================================== */
+
+async function captureCurrentSRM(
+    force = false
+) {
+
+    if (!emulatorStarted) {
+        return false;
+    }
+
+
+    try {
+
+        const bytes =
+            readCurrentSRM();
+
+
+        if (!bytes) {
+            return false;
+        }
+
+
+        const signature =
+            makeSaveSignature(
+                bytes
+            );
+
+
+        if (
+            !force &&
+            signature ===
+                lastAutomaticSaveSignature
+        ) {
+
+            return false;
+
+        }
+
+
+        await storeSaveBuffer(
+            bytes
+        );
+
+
+        lastAutomaticSaveSignature =
+            signature;
+
+
+        console.log(
+            "Maceon Online: save automático capturado."
+        );
+
+
+        return true;
+
+
+    } catch(error) {
+
+        console.error(
+            "Maceon Online: erro no save automático.",
+            error
+        );
+
+        return false;
+
+    }
+
+}
+
+
+/* =====================================================
+   SAVE AUTOMÁTICO
+===================================================== */
+
+function startAutomaticSaveMonitor() {
+
+    if (
+        automaticSaveTimer
+    ) {
+
+        clearInterval(
+            automaticSaveTimer
+        );
+
+    }
+
+
+    automaticSaveTimer =
+        setInterval(
+            function() {
+
+                captureCurrentSRM(
+                    false
+                );
+
+            },
+
+            7000
+        );
+
+
+    console.log(
+        "Maceon Online: monitor de save iniciado."
+    );
+
+}
+
+
+/* =====================================================
+   RESTAURAR SAVE
+===================================================== */
+
+async function restoreStoredSave() {
+
+    try {
+
+        const stored =
+            await getStoredSave();
+
+
+        if (
+            !stored ||
+            !stored.bytes
+        ) {
+
+            console.log(
+                "Maceon Online: nenhum save encontrado."
+            );
+
+            return false;
+
+        }
+
+
+        const bytes =
+            stored.bytes instanceof Uint8Array
+                ? stored.bytes
+                : new Uint8Array(
+                    stored.bytes
+                );
+
+
+        /*
+        Espera o filesystem do
+        EmulatorJS ficar disponível.
+        */
+
+        const timeout =
+            Date.now() +
+            15000;
+
+
+        while (
+            Date.now() <
+            timeout
+        ) {
+
+            const gameManager =
+                getGameManager();
+
+
+            if (
+                gameManager &&
+                gameManager.FS &&
+                typeof gameManager
+                    .getSaveFilePath
+                    === "function"
+            ) {
+
+                const FS =
+                    gameManager.FS;
+
+
+                const savePath =
+                    gameManager
+                        .getSaveFilePath();
+
+
+                if (!savePath) {
+
+                    console.error(
+                        "Maceon Online: caminho do save ausente."
+                    );
+
+                    return false;
+
+                }
+
+
+                /*
+                Cria as pastas necessárias.
+                */
+
+                const parts =
+                    savePath.split("/");
+
+
+                let currentPath =
+                    "";
+
+
+                for (
+                    let i = 0;
+                    i <
+                    parts.length - 1;
+                    i++
+                ) {
+
+                    if (
+                        !parts[i]
+                    ) {
+
+                        continue;
+
+                    }
+
+
+                    currentPath +=
+                        "/" +
+                        parts[i];
+
+
+                    try {
+
+                        if (
+                            !FS
+                                .analyzePath(
+                                    currentPath
+                                )
+                                .exists
+                        ) {
+
+                            FS.mkdir(
+                                currentPath
+                            );
+
+                        }
+
+                    } catch(error) {
+
+                        try {
+
+                            FS.mkdir(
+                                currentPath
+                            );
+
+                        } catch(
+                            ignored
+                        ) {}
+
+                    }
+
+                }
+
+
+                /*
+                Remove save anterior do
+                filesystem, se existir.
+                */
+
+                try {
+
+                    if (
+                        FS
+                            .analyzePath(
+                                savePath
+                            )
+                            .exists
+                    ) {
+
+                        FS.unlink(
+                            savePath
+                        );
+
+                    }
+
+                } catch(
+                    ignored
+                ) {}
+
+
+                /*
+                Escreve nosso save.
+                */
+
+                FS.writeFile(
+                    savePath,
+                    bytes
+                );
+
+
+                console.log(
+                    "Maceon Online: save escrito no filesystem.",
+                    bytes.byteLength,
+                    "bytes"
+                );
+
+
+                if (
+                    typeof gameManager
+                        .loadSaveFiles
+                        !== "function"
+                ) {
+
+                    console.error(
+                        "Maceon Online: loadSaveFiles indisponível."
+                    );
+
+                    return false;
+
+                }
+
+
+                const result =
+                    gameManager
+                        .loadSaveFiles();
+
+
+                if (
+                    result &&
+                    typeof result.then
+                        === "function"
+                ) {
+
+                    await result;
+
+                }
+
+
+                lastAutomaticSaveSignature =
+                    makeSaveSignature(
+                        bytes
+                    );
+
+
+                console.log(
+                    "Maceon Online: SAVE RESTAURADO."
+                );
+
+
+                return true;
+
+            }
+
+
+            await new Promise(
+                function(resolve) {
+
+                    setTimeout(
+                        resolve,
+                        100
+                    );
+
+                }
+            );
+
+        }
+
+
+        console.error(
+            "Maceon Online: gameManager não ficou disponível."
+        );
+
+
+        return false;
+
+
+    } catch(error) {
+
+        console.error(
+            "Maceon Online: erro na restauração.",
+            error
+        );
+
+        return false;
+
+    }
+
+}
+
+
+/* =====================================================
+   INICIAR FIRE RED
+===================================================== */
+
+function startGame() {
+
+    if (emulatorStarted) {
+        return;
+    }
+
+
+    emulatorStarted =
+        true;
+
+
+    playButton.disabled =
+        true;
+
+
+    statusElement.textContent =
+        "Carregando FireRed...";
+
+
+    startScreen.style.display =
+        "none";
+
+
+    gameScreen.style.display =
+        "block";
+
+
+    /*
+    Configuração baseada no
+    Maceon Play original.
+    */
+
+    window.EJS_player =
+        "#game";
+
+    window.EJS_gameName =
+        GAME_NAME;
+
+    window.EJS_gameID =
+        GAME_ID;
+
+    window.EJS_gameUrl =
+        GAME_URL;
+
+    window.EJS_core =
+        "gba";
+
+
+    window.EJS_pathtodata =
+        "https://cdn.emulatorjs.org/stable/data/";
+
+
+    window.EJS_startOnLoaded =
+        true;
+
+
+    window.EJS_language =
+        "pt-BR";
+
+
+    window.EJS_fixedSaveInterval =
+        7000;
+
+
+    /*
+    SAVE MANUAL DO EMULATORJS
+    */
+
+    window.EJS_onSaveSave =
+        async function(event) {
+
+            if (
+                !event ||
+                !event.save
+            ) {
+
+                console.error(
+                    "Maceon Online: emulador não forneceu save."
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                const bytes =
+                    event.save
+                        instanceof Uint8Array
+
+                        ? event.save
+
+                        : new Uint8Array(
+                            event.save
+                        );
+
+
+                await storeSaveBuffer(
+                    bytes
+                );
+
+
+                lastAutomaticSaveSignature =
+                    makeSaveSignature(
+                        bytes
+                    );
+
+
+                console.log(
+                    "Maceon Online: save manual armazenado."
+                );
+
+
+            } catch(error) {
+
+                console.error(
+                    "Maceon Online: erro no save manual.",
+                    error
+                );
+
+            }
+
+        };
+
+
+    /*
+    QUANDO O FIRE RED INICIAR:
+    1. procura nosso save;
+    2. restaura;
+    3. liga autosave.
+    */
+
+    window.EJS_onGameStart =
+        async function() {
+
+            console.log(
+                "Maceon Online: FireRed iniciado."
+            );
+
+
+            await restoreStoredSave();
+
+
+            startAutomaticSaveMonitor();
+
+        };
+
+
+    /*
+    CARREGAR EMULATORJS
+    */
+
+    const loader =
+        document.createElement(
+            "script"
+        );
+
+
+    loader.src =
+        "https://cdn.emulatorjs.org/stable/data/loader.js";
+
+
+    loader.onerror =
+        function() {
+
+            emulatorStarted =
+                false;
+
+
+            gameScreen.style.display =
+                "none";
+
+
+            startScreen.style.display =
+                "flex";
+
+
+            playButton.disabled =
+                false;
+
+
+            statusElement.textContent =
+                "Não foi possível carregar o emulador.";
+
+
+            statusElement.className =
+                "error";
+
+        };
+
+
+    document.body.appendChild(
+        loader
+    );
+
+}
+
+
+/* =====================================================
+   BOTÃO JOGAR
+===================================================== */
+
+playButton.addEventListener(
+    "click",
+    startGame
+);
+
+
+/* =====================================================
+   ÚLTIMA TENTATIVA DE SALVAR AO SAIR
+===================================================== */
+
+document.addEventListener(
+    "visibilitychange",
+    function() {
+
+        if (
+            document.visibilityState ===
+                "hidden" &&
+            emulatorStarted
+        ) {
+
+            captureCurrentSRM(
+                true
+            );
+
+        }
+
+    }
+);
+
+</script>
 
 </body>
 </html>
