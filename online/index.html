@@ -28,61 +28,42 @@ body {
 
 #start-screen {
     min-height: 100vh;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     padding: 24px;
 }
 
 .start-card {
     width: min(92vw, 520px);
-
     padding: 32px 24px;
-
     border-radius: 20px;
-
     border: 1px solid #30363d;
-
     background: #161b22;
-
     text-align: center;
 }
 
 .start-card h1 {
     margin: 0 0 8px;
-
     font-size: 32px;
-
     letter-spacing: 2px;
 }
 
 .start-card p {
     margin: 0 0 26px;
-
     color: #9ba7b4;
-
     line-height: 1.5;
 }
 
 #play-button {
     width: 100%;
-
     min-height: 58px;
-
     border: 0;
-
     border-radius: 12px;
-
     background: #238636;
-
     color: white;
-
     font-size: 18px;
-
     font-weight: 800;
-
     cursor: pointer;
 }
 
@@ -92,11 +73,8 @@ body {
 
 #status {
     min-height: 20px;
-
     margin-top: 18px;
-
     color: #8b949e;
-
     font-size: 14px;
 }
 
@@ -110,21 +88,15 @@ body {
 
 #game-screen {
     display: none;
-
     width: 100%;
-
     min-height: 100vh;
-
     background: #000;
 }
 
 #game {
     width: 100%;
-
     height: 100vh;
-
     min-height: 520px;
-
     background: #000;
 }
 
@@ -199,19 +171,13 @@ const GAME_URL =
 const GAME_NAME =
     "Maceon Online - FireRed";
 
-/*
-ID diferente do FireRed original.
-*/
-
 const GAME_ID =
     2001;
 
 
-/*
-Banco EXCLUSIVO do projeto Online.
-
-Não utiliza MaceonPlaySaves.
-*/
+/* =====================================================
+   BANCO EXCLUSIVO DO MACEON ONLINE
+===================================================== */
 
 const DB_NAME =
     "MaceonOnlineSaves";
@@ -760,11 +726,6 @@ async function restoreStoredSave() {
                 );
 
 
-        /*
-        Espera o filesystem do
-        EmulatorJS ficar disponível.
-        */
-
         const timeout =
             Date.now() +
             15000;
@@ -806,10 +767,6 @@ async function restoreStoredSave() {
 
                 }
 
-
-                /*
-                Cria as pastas necessárias.
-                */
 
                 const parts =
                     savePath.split("/");
@@ -873,11 +830,6 @@ async function restoreStoredSave() {
                 }
 
 
-                /*
-                Remove save anterior do
-                filesystem, se existir.
-                */
-
                 try {
 
                     if (
@@ -898,10 +850,6 @@ async function restoreStoredSave() {
                     ignored
                 ) {}
 
-
-                /*
-                Escreve nosso save.
-                */
 
                 FS.writeFile(
                     savePath,
@@ -1030,11 +978,6 @@ function startGame() {
         "block";
 
 
-    /*
-    Configuração baseada no
-    Maceon Play original.
-    */
-
     window.EJS_player =
         "#game";
 
@@ -1067,9 +1010,9 @@ function startGame() {
         7000;
 
 
-    /*
-    SAVE MANUAL DO EMULATORJS
-    */
+    /* =================================================
+       SAVE MANUAL DO EMULATORJS
+    ================================================= */
 
     window.EJS_onSaveSave =
         async function(event) {
@@ -1129,12 +1072,9 @@ function startGame() {
         };
 
 
-    /*
-    QUANDO O FIRE RED INICIAR:
-    1. procura nosso save;
-    2. restaura;
-    3. liga autosave.
-    */
+    /* =================================================
+       JOGO INICIADO
+    ================================================= */
 
     window.EJS_onGameStart =
         async function() {
@@ -1152,9 +1092,9 @@ function startGame() {
         };
 
 
-    /*
-    CARREGAR EMULATORJS
-    */
+    /* =================================================
+       CARREGAR EMULATORJS
+    ================================================= */
 
     const loader =
         document.createElement(
@@ -1237,26 +1177,217 @@ document.addEventListener(
 
 </script>
 
+
+<!-- ===================================================
+     FIREBASE
+=================================================== -->
+
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
 
 <script>
+
 const firebaseConfig = {
-    apiKey: "AIzaSyCEODc2z5Rw-cOF3yyGDMaN12ZXFzngxQc",
-    authDomain: "maceon-online-14634.firebaseapp.com",
-    databaseURL: "https://maceon-online-14634-default-rtdb.firebaseio.com",
-    projectId: "maceon-online-14634",
-    storageBucket: "maceon-online-14634.firebasestorage.app",
-    messagingSenderId: "318725187398",
-    appId: "1:318725187398:web:b838938a9b94a3bd34e747"
+
+    apiKey:
+        "AIzaSyCEODc2z5Rw-cOF3yyGDMaN12ZXFzngxQc",
+
+    authDomain:
+        "maceon-online-14634.firebaseapp.com",
+
+    databaseURL:
+        "https://maceon-online-14634-default-rtdb.firebaseio.com",
+
+    projectId:
+        "maceon-online-14634",
+
+    storageBucket:
+        "maceon-online-14634.firebasestorage.app",
+
+    messagingSenderId:
+        "318725187398",
+
+    appId:
+        "1:318725187398:web:b838938a9b94a3bd34e747"
+
 };
 
-firebase.initializeApp(firebaseConfig);
 
-const onlineDatabase = firebase.database();
+firebase.initializeApp(
+    firebaseConfig
+);
 
-console.log("MACEON ONLINE: Firebase carregado.");
+
+const onlineDatabase =
+    firebase.database();
+
+
+console.log(
+    "MACEON ONLINE: Firebase carregado."
+);
+
+
+/* =====================================================
+   PRESENÇA DO JOGADOR
+===================================================== */
+
+/*
+Cada navegador recebe um identificador próprio.
+
+Esse identificador permanece no navegador
+através do localStorage.
+*/
+
+let playerId =
+    localStorage.getItem(
+        "maceonPlayerId"
+    );
+
+
+if (!playerId) {
+
+    if (
+        window.crypto &&
+        typeof crypto.randomUUID ===
+            "function"
+    ) {
+
+        playerId =
+            crypto.randomUUID();
+
+    } else {
+
+        /*
+        Alternativa para navegadores que
+        não disponibilizem randomUUID.
+        */
+
+        playerId =
+            "player-" +
+            Date.now() +
+            "-" +
+            Math.random()
+                .toString(36)
+                .slice(2);
+
+    }
+
+
+    localStorage.setItem(
+        "maceonPlayerId",
+        playerId
+    );
+
+}
+
+
+/*
+Referência deste jogador no
+Realtime Database.
+*/
+
+const playerRef =
+    onlineDatabase.ref(
+        "players/" +
+        playerId
+    );
+
+
+/*
+Firebase possui um nó especial chamado
+.info/connected.
+
+Ele informa quando este navegador está
+realmente conectado ao Realtime Database.
+*/
+
+const connectedRef =
+    onlineDatabase.ref(
+        ".info/connected"
+    );
+
+
+connectedRef.on(
+    "value",
+
+    function(snapshot) {
+
+        if (
+            snapshot.val() !==
+            true
+        ) {
+
+            console.log(
+                "MACEON ONLINE: aguardando conexão Firebase..."
+            );
+
+            return;
+
+        }
+
+
+        console.log(
+            "MACEON ONLINE: conectado ao Realtime Database."
+        );
+
+
+        /*
+        Se a conexão cair, o Firebase
+        removerá automaticamente este jogador.
+        */
+
+        playerRef
+            .onDisconnect()
+            .remove()
+            .then(
+                function() {
+
+                    /*
+                    Somente depois de preparar
+                    o onDisconnect registramos
+                    o jogador como online.
+                    */
+
+                    return playerRef.set({
+
+                        online:
+                            true,
+
+                        lastSeen:
+                            firebase.database
+                                .ServerValue
+                                .TIMESTAMP
+
+                    });
+
+                }
+            )
+            .then(
+                function() {
+
+                    console.log(
+                        "MACEON ONLINE: jogador conectado:",
+                        playerId
+                    );
+
+                }
+            )
+            .catch(
+                function(error) {
+
+                    console.error(
+                        "MACEON ONLINE: erro ao registrar jogador.",
+                        error
+                    );
+
+                }
+            );
+
+    }
+);
+
 </script>
-    
+
+
 </body>
 </html>
