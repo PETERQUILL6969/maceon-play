@@ -1,1 +1,750 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>Maceon Online</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #0d1117;
+            color: #ffffff;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .page {
+            width: min(92%, 650px);
+            margin: 0 auto;
+            padding: 50px 0;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .logo h1 {
+            margin: 0;
+            font-size: 38px;
+            letter-spacing: 2px;
+        }
+
+        .logo p {
+            color: #9ca7b8;
+            margin-top: 8px;
+        }
+
+        .card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .connection {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        .dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: #f1c40f;
+        }
+
+        .dot.connected {
+            background: #2ecc71;
+        }
+
+        .dot.disconnected {
+            background: #e74c3c;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            height: 48px;
+            border: 1px solid #3b4553;
+            border-radius: 10px;
+            background: #0d1117;
+            color: white;
+            padding: 0 14px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #58a6ff;
+        }
+
+        button {
+            width: 100%;
+            height: 50px;
+            margin-top: 14px;
+            border: 0;
+            border-radius: 10px;
+            background: #238636;
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #2ea043;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .online-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+
+        .online-header h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .counter {
+            background: #238636;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        #playersList {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .player {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            padding: 13px 15px;
+            border-radius: 10px;
+        }
+
+        .player-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .player-name {
+            font-weight: bold;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .online-dot {
+            width: 10px;
+            height: 10px;
+            background: #2ecc71;
+            border-radius: 50%;
+            flex: 0 0 auto;
+        }
+
+        .you {
+            color: #58a6ff;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .empty {
+            text-align: center;
+            color: #8b949e;
+            padding: 18px;
+        }
+
+        .message {
+            margin-top: 12px;
+            min-height: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #9ca7b8;
+        }
+
+        .error {
+            color: #ff7b72;
+        }
+
+        .success {
+            color: #3fb950;
+        }
+
+        @media (max-width: 500px) {
+            .page {
+                padding: 28px 0;
+            }
+
+            .logo h1 {
+                font-size: 29px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <div class="logo">
+        <h1>MACEON ONLINE</h1>
+        <p>Teste de conexão multiplayer</p>
+    </div>
+
+    <div class="connection">
+        <span id="connectionDot" class="dot"></span>
+        <span id="connectionText">Conectando ao servidor...</span>
+    </div>
+
+    <div class="card">
+
+        <label for="playerName">Nome do jogador</label>
+
+        <input
+            id="playerName"
+            type="text"
+            maxlength="20"
+            autocomplete="off"
+            placeholder="Digite seu nome"
+        >
+
+        <button id="enterButton" type="button" disabled>
+            ENTRAR ONLINE
+        </button>
+
+        <div id="message" class="message"></div>
+
+    </div>
+
+    <div class="card">
+
+        <div class="online-header">
+            <h2>Jogadores online</h2>
+            <div id="counter" class="counter">
+                0 ONLINE
+            </div>
+        </div>
+
+        <div id="playersList">
+            <div class="empty">
+                Nenhum jogador conectado.
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script type="module">
+
+    import { initializeApp }
+    from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+
+    import {
+        getDatabase,
+        ref,
+        set,
+        onValue,
+        onDisconnect,
+        remove,
+        serverTimestamp
+    }
+    from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+
+
+    /*
+    ==========================================================
+    FIREBASE
+    ==========================================================
+    */
+
+    const firebaseConfig = {
+
+        apiKey: "AIzaSyCEODc2z5Rw-cOF3yyGDMaN12ZXFzngXQc",
+
+        authDomain:
+            "maceon-online-14634.firebaseapp.com",
+
+        databaseURL:
+            "https://maceon-online-14634-default-rtdb.firebaseio.com",
+
+        projectId:
+            "maceon-online-14634",
+
+        storageBucket:
+            "maceon-online-14634.firebasestorage.app",
+
+        messagingSenderId:
+            "318725187398",
+
+        appId:
+            "1:318725187398:web:b838938a9b94a3bd34e747"
+
+    };
+
+
+    /*
+    ==========================================================
+    INICIALIZAÇÃO
+    ==========================================================
+    */
+
+    const app = initializeApp(firebaseConfig);
+
+    const database = getDatabase(app);
+
+
+    /*
+    ==========================================================
+    ELEMENTOS DA TELA
+    ==========================================================
+    */
+
+    const playerNameInput =
+        document.getElementById("playerName");
+
+    const enterButton =
+        document.getElementById("enterButton");
+
+    const playersList =
+        document.getElementById("playersList");
+
+    const counter =
+        document.getElementById("counter");
+
+    const message =
+        document.getElementById("message");
+
+    const connectionDot =
+        document.getElementById("connectionDot");
+
+    const connectionText =
+        document.getElementById("connectionText");
+
+
+    /*
+    ==========================================================
+    IDENTIFICAÇÃO DESTA ABA
+    ==========================================================
+    */
+
+    let playerId =
+        sessionStorage.getItem("maceonOnlinePlayerId");
+
+    if (!playerId) {
+
+        if (crypto.randomUUID) {
+
+            playerId = crypto.randomUUID();
+
+        } else {
+
+            playerId =
+                "player-" +
+                Date.now() +
+                "-" +
+                Math.random()
+                    .toString(36)
+                    .substring(2, 10);
+
+        }
+
+        sessionStorage.setItem(
+            "maceonOnlinePlayerId",
+            playerId
+        );
+    }
+
+
+    /*
+    ==========================================================
+    ESTADO
+    ==========================================================
+    */
+
+    let joined = false;
+
+    let currentPlayerRef = null;
+
+
+    /*
+    ==========================================================
+    CONEXÃO COM FIREBASE
+    ==========================================================
+    */
+
+    const connectedRef =
+        ref(database, ".info/connected");
+
+    onValue(connectedRef, (snapshot) => {
+
+        const connected =
+            snapshot.val() === true;
+
+        if (connected) {
+
+            connectionDot.className =
+                "dot connected";
+
+            connectionText.textContent =
+                "Servidor conectado";
+
+            enterButton.disabled = joined;
+
+        } else {
+
+            connectionDot.className =
+                "dot disconnected";
+
+            connectionText.textContent =
+                "Servidor desconectado";
+
+            enterButton.disabled = true;
+
+        }
+
+    });
+
+
+    /*
+    ==========================================================
+    ENTRAR ONLINE
+    ==========================================================
+    */
+
+    async function enterOnline() {
+
+        const playerName =
+            playerNameInput.value.trim();
+
+        if (!playerName) {
+
+            showMessage(
+                "Digite um nome para entrar.",
+                "error"
+            );
+
+            playerNameInput.focus();
+
+            return;
+        }
+
+
+        if (joined) {
+            return;
+        }
+
+
+        enterButton.disabled = true;
+
+        enterButton.textContent =
+            "ENTRANDO...";
+
+
+        try {
+
+            currentPlayerRef =
+                ref(
+                    database,
+                    "players/" + playerId
+                );
+
+
+            /*
+            Se este navegador perder a conexão,
+            o Firebase removerá o jogador.
+            */
+
+            await onDisconnect(
+                currentPlayerRef
+            ).remove();
+
+
+            /*
+            Agora registramos o jogador.
+            */
+
+            await set(
+                currentPlayerRef,
+                {
+
+                    name: playerName,
+
+                    online: true,
+
+                    joinedAt:
+                        serverTimestamp()
+
+                }
+            );
+
+
+            joined = true;
+
+            playerNameInput.disabled = true;
+
+            enterButton.textContent =
+                "VOCÊ ESTÁ ONLINE";
+
+            enterButton.disabled = true;
+
+
+            showMessage(
+                "Você entrou no Maceon Online.",
+                "success"
+            );
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            enterButton.disabled = false;
+
+            enterButton.textContent =
+                "ENTRAR ONLINE";
+
+            showMessage(
+                "Não foi possível entrar. Verifique a conexão com o Firebase.",
+                "error"
+            );
+
+        }
+
+    }
+
+
+    /*
+    ==========================================================
+    LISTA DE JOGADORES
+    ==========================================================
+    */
+
+    const playersRef =
+        ref(database, "players");
+
+
+    onValue(
+        playersRef,
+
+        (snapshot) => {
+
+            const players =
+                snapshot.val() || {};
+
+            const entries =
+                Object.entries(players);
+
+            counter.textContent =
+                entries.length +
+                (entries.length === 1
+                    ? " ONLINE"
+                    : " ONLINE");
+
+
+            playersList.innerHTML = "";
+
+
+            if (entries.length === 0) {
+
+                playersList.innerHTML =
+                    '<div class="empty">' +
+                    'Nenhum jogador conectado.' +
+                    '</div>';
+
+                return;
+            }
+
+
+            entries.forEach(
+                ([id, player]) => {
+
+                    const item =
+                        document.createElement("div");
+
+                    item.className =
+                        "player";
+
+
+                    const left =
+                        document.createElement("div");
+
+                    left.className =
+                        "player-left";
+
+
+                    const dot =
+                        document.createElement("span");
+
+                    dot.className =
+                        "online-dot";
+
+
+                    const name =
+                        document.createElement("span");
+
+                    name.className =
+                        "player-name";
+
+                    name.textContent =
+                        player.name ||
+                        "Jogador";
+
+
+                    left.appendChild(dot);
+
+                    left.appendChild(name);
+
+                    item.appendChild(left);
+
+
+                    if (id === playerId) {
+
+                        const you =
+                            document.createElement("span");
+
+                        you.className =
+                            "you";
+
+                        you.textContent =
+                            "VOCÊ";
+
+                        item.appendChild(you);
+
+                    }
+
+
+                    playersList.appendChild(item);
+
+                }
+            );
+
+        },
+
+        (error) => {
+
+            console.error(error);
+
+            showMessage(
+                "Erro ao acessar a lista de jogadores.",
+                "error"
+            );
+
+        }
+    );
+
+
+    /*
+    ==========================================================
+    MENSAGENS
+    ==========================================================
+    */
+
+    function showMessage(
+        text,
+        type = ""
+    ) {
+
+        message.textContent = text;
+
+        message.className =
+            "message " + type;
+
+    }
+
+
+    /*
+    ==========================================================
+    EVENTOS
+    ==========================================================
+    */
+
+    enterButton.addEventListener(
+        "click",
+        enterOnline
+    );
+
+
+    playerNameInput.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (event.key === "Enter") {
+
+                enterOnline();
+
+            }
+
+        }
+    );
+
+
+    /*
+    Tentativa adicional de limpeza quando
+    a página for encerrada normalmente.
+    O onDisconnect continua sendo a proteção
+    principal.
+    */
+
+    window.addEventListener(
+        "pagehide",
+        () => {
+
+            if (
+                joined &&
+                currentPlayerRef
+            ) {
+
+                remove(
+                    currentPlayerRef
+                ).catch(() => {});
+
+            }
+
+        }
+    );
+
+</script>
+
+</body>
+</html>
