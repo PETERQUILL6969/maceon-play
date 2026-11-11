@@ -390,11 +390,15 @@ Below is the complete resolution key so that Nicolas can check his answers and u
 | **Q4** | **C** | Formas Contraídas | A contração $I'm$ é a junção do pronome $I$ com a forma verbal $am$. |
 | **Q5** | **C** | Forma Negativa Correta | *"She's not taking out the trash"* segue exatamente o modelo do quadro explicativo da página 90. |
 | **Q6** | **B** | Concordância com *We* | Para o sujeito plural $We$, usa-se a forma verbal $are$ + *talking*. |
-| **Q7** | **C** | Regra do *-e* Final | Verbos terminados em *-e* perdem o *-e* antes de receber o *-ing* ($write ightarrow writing$). |
+| **Q7** | **C** | Regra do *-e* Final | Verbos terminados em *-e* perdem o *-e* antes de receber o *-ing* ($write 
+ightarrow writing$). |
 | **Q8** | **B** | Aplicação da Regra do *-e* | O verbo *dance* perde o *-e* e vira *dancing*. |
-| **Q9** | **B** | Regra do *-ie* Final | Verbos terminados em *-ie* trocam essa terminação por *-y* e ganham *-ing* ($lie ightarrow lying$). |
-| **Q10** | **A** | Regra do CVC (1 Sílaba) | Verbos de 1 sílaba em Consonante+Vogal+Consonante dobram a última consoante ($stop ightarrow stopping$). |
-| **Q11** | **B** | Exceção em *-w* e *-x* | Verbos terminados em *-w* e *-x* NÃO dobram a consoante final ($mix ightarrow mixing$). |
+| **Q9** | **B** | Regra do *-ie* Final | Verbos terminados em *-ie* trocam essa terminação por *-y* e ganham *-ing* ($lie 
+ightarrow lying$). |
+| **Q10** | **A** | Regra do CVC (1 Sílaba) | Verbos de 1 sílaba em Consonante+Vogal+Consonante dobram a última consoante ($stop 
+ightarrow stopping$). |
+| **Q11** | **B** | Exceção em *-w* e *-x* | Verbos terminados em *-w* e *-x* NÃO dobram a consoante final ($mix 
+ightarrow mixing$). |
 | **Q12** | **B** | Regra Geral de Adição | Verbos comuns apenas recebem *-ing*: *listening, playing, cleaning, drawing*. |
 | **Q13** | **B** | Análise Conjunta de Regras | A sequência correta obedece a todas as 4 regras: *stopping, dancing, mixing, lying, playing*. |
 | **Q14** | **B** | Negativa com *He/She/It* | A negação para a 3ª pessoa do singular é formada por *is not / 's not / isn't*. |
