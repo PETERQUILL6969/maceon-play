@@ -36,7 +36,8 @@ Qual opção completa a frase corretamente no **Present Continuous**?
 > 📝 **Explicação detalhada:**
 > - **Sujeito:** *Nicolas* equivale ao pronome **He** (Ele).
 > - **Verbo Auxiliar:** Para o sujeito *He*, a forma correta do verbo *to be* é **is**.
-> - **Verbo Principal:** Acrescentamos o sufixo **-ing** ao verbo *watch* $ightarrow$ **watching**.
+> - **Verbo Principal:** Acrescentamos o sufixo **-ing** ao verbo *watch* $
+ightarrow$ **watching**.
 > - **Forma Completa:** *Nicolas is watching a movie right now.*
 </details>
 
@@ -62,7 +63,8 @@ Assinale a alternativa que preenche a lacuna corretamente:
 > 📝 **Explicação detalhada:**
 > - **Sujeito:** *"My friends and I"* significa *"Meus amigos e eu"*, o que equivale ao pronome **We** (Nós).
 > - **Verbo Auxiliar:** Para **We**, utilizamos a forma **are**.
-> - **Verbo Principal:** O verbo *study* apenas recebe **-ing** $ightarrow$ **studying**. (Atenção: verbos terminados em *y* precedido de consoante mantêm o *y* antes de *-ing*!).
+> - **Verbo Principal:** O verbo *study* apenas recebe **-ing** $
+ightarrow$ **studying**. (Atenção: verbos terminados em *y* precedido de consoante mantêm o *y* antes de *-ing*!).
 </details>
 
 ---
@@ -83,7 +85,8 @@ Se você quer dizer *"Eu estou fazendo minha lição de casa neste momento"*, qu
 >
 > 📝 **Explicação detalhada:**
 > - **Sujeito:** O pronome **I** (Eu) combina exclusivamente com o verbo *to be* **am**.
-> - **Verbo Principal:** O verbo *do* ganha **-ing** $ightarrow$ **doing**.
+> - **Verbo Principal:** O verbo *do* ganha **-ing** $
+ightarrow$ **doing**.
 > - **Erro das outras:** Em A usa-se *is* errado; em B usa-se *are* errado; em C faltou o *-ing*; em E faltou o verbo auxiliar *am*.
 </details>
 
@@ -174,8 +177,12 @@ Regra do **-E silencioso**: Verbos terminados em **-e** (precedido de consoante)
 >
 > 📝 **Explicação detalhada:**
 > - **Regra 1:** Remove-se a letra **-e** final e adiciona-se **-ing**.
-> - *Dance* $ightarrow$ corta o *e* $ightarrow$ *danc* + *ing* = **dancing**.
-> - Exemplos do livro: *make* $ightarrow$ *making*, *write* $ightarrow$ *writing*, *tidy* (termina com y, não é e!).
+> - *Dance* $
+ightarrow$ corta o *e* $
+ightarrow$ *danc* + *ing* = **dancing**.
+> - Exemplos do livro: *make* $
+ightarrow$ *making*, *write* $
+ightarrow$ *writing*, *tidy* (termina com y, não é e!).
 </details>
 
 ---
@@ -199,7 +206,8 @@ Regra do **CVC (Consoante-Vogal-Consoante)**: Verbos curtos de 1 sílaba termina
 >   - **r** (consoante)
 >   - **u** (vogal)
 >   - **n** (consoante)
-> - Como é uma palavra de 1 sílaba com final CVC, dobrase o **n** final $ightarrow$ **running**.
+> - Como é uma palavra de 1 sílaba com final CVC, dobrase o **n** final $
+ightarrow$ **running**.
 </details>
 
 ---
@@ -220,8 +228,10 @@ Atenção às **exceções do CVC**: As letras **W** e **X** não são dobradas 
 >
 > 📝 **Explicação detalhada:**
 > - As consoantes finais **W** e **X** são exceções à regra do CVC.
-> - Portanto, não dobramos a letra *x*. Apenas acrescentamos o **-ing** $ightarrow$ **mixing**.
-> - Outro exemplo clássico: *snow* $ightarrow$ *snowing*.
+> - Portanto, não dobramos a letra *x*. Apenas acrescentamos o **-ing** $
+ightarrow$ **mixing**.
+> - Outro exemplo clássico: *snow* $
+ightarrow$ *snowing*.
 </details>
 
 ---
@@ -242,8 +252,12 @@ Regra do **-IE**: O livro didático destaca uma regra especial para verbos como 
 >
 > 📝 **Explicação detalhada:**
 > - **Regra Especial:** Verbos terminados na junção **-ie** trocam esse encontro vocálico pela consoante **y** antes de colocar **-ing**.
-> - *Lie* $ightarrow$ troca *ie* por *y* $ightarrow$ *ly* + *ing* = **lying**.
-> - *Die* $ightarrow$ troca *ie* por *y* $ightarrow$ *dy* + *ing* = **dying**.
+> - *Lie* $
+ightarrow$ troca *ie* por *y* $
+ightarrow$ *ly* + *ing* = **lying**.
+> - *Die* $
+ightarrow$ troca *ie* por *y* $
+ightarrow$ *dy* + *ing* = **dying**.
 </details>
 
 ---
@@ -263,7 +277,8 @@ Qual dos verbos abaixo **DOBRA** a consoante final ao receber o sufixo **-ing**?
 > 🟢 **Resposta Correta:** **B) swim (nadar)**
 >
 > 📝 **Explicação detalhada:**
-> - *Swim* é CVC de 1 sílaba: **s-w** (encontro) - **i** (vogal) - **m** (consoante). Dobramos o *m* $ightarrow$ **swimming**.
+> - *Swim* é CVC de 1 sílaba: **s-w** (encontro) - **i** (vogal) - **m** (consoante). Dobramos o *m* $
+ightarrow$ **swimming**.
 > - **Por que os outros não dobram?**
 >   - *Play*: termina em **y** (não dobra).
 >   - *Wash*: termina em duas consoantes (**sh**).
@@ -288,8 +303,12 @@ Assinale a alternativa que apresenta a grafia **INCORRETA** de um verbo no Prese
 > 🟢 **Resposta Correta:** **C) puting (de put)**
 >
 > 📝 **Explicação detalhada:**
-> - O verbo *put* é CVC de 1 sílaba (**p-u-t**). A grafia correta exige a dobradinha do **t** $ightarrow$ **putting**. A forma *puting* está incorreta!
-> - As demais estão corretas: *make* $ightarrow$ *making* (perde e); *get* $ightarrow$ *getting* (dobra t); *write* $ightarrow$ *writing* (perde e).
+> - O verbo *put* é CVC de 1 sílaba (**p-u-t**). A grafia correta exige a dobradinha do **t** $
+ightarrow$ **putting**. A forma *puting* está incorreta!
+> - As demais estão corretas: *make* $
+ightarrow$ *making* (perde e); *get* $
+ightarrow$ *getting* (dobra t); *write* $
+ightarrow$ *writing* (perde e).
 </details>
 
 ---
@@ -383,9 +402,12 @@ Assinale a alternativa que traz uma frase negativa com **erro gramatical**:
 
 ### ❓ Questão 17
 Na fala do dia a dia, usamos muito as contrações do verbo *to be* com os pronomes. Relacione os pares abaixo:
-1. *He is* $ightarrow$ **He's**
-2. *We are* $ightarrow$ **We're**
-3. *I am* $ightarrow$ **I'm**
+1. *He is* $
+ightarrow$ **He's**
+2. *We are* $
+ightarrow$ **We're**
+3. *I am* $
+ightarrow$ **I'm**
 
 Assinale a opção que traz todas as 3 contrações afirmativas corretas:
 
@@ -402,9 +424,12 @@ Assinale a opção que traz todas as 3 contrações afirmativas corretas:
 >
 > 📝 **Explicação detalhada:**
 > - O apóstrofo (') substitui a vogal que foi omitida do verbo *to be*:
->   - *He i s* $ightarrow$ **He's**
->   - *We a re* $ightarrow$ **We're**
->   - *I a m* $ightarrow$ **I'm**
+>   - *He i s* $
+ightarrow$ **He's**
+>   - *We a re* $
+ightarrow$ **We're**
+>   - *I a m* $
+ightarrow$ **I'm**
 </details>
 
 ---
@@ -542,16 +567,22 @@ O que significa o verbo composto **"tidying up"** na frase *"She is tidying up h
 ### ❓ Questão 24
 Qual das alternativas associa **corretamente** a imagem/ação ao verbo em inglês?
 
-- [ ] **A)** Lavar pratos $ightarrow$ *Making the dishes*
-- [ ] **B)** Levar o cachorro para passear $ightarrow$ *Walking the dog*
-- [ ] **C)** Arrumar a cama $ightarrow$ *Doing the bed*
-- [ ] **D)** Lavar roupa $ightarrow$ *Making the laundry*
-- [ ] **E)** Levar o lixo fora $ightarrow$ *Cleaning out the trash*
+- [ ] **A)** Lavar pratos $
+ightarrow$ *Making the dishes*
+- [ ] **B)** Levar o cachorro para passear $
+ightarrow$ *Walking the dog*
+- [ ] **C)** Arrumar a cama $
+ightarrow$ *Doing the bed*
+- [ ] **D)** Lavar roupa $
+ightarrow$ *Making the laundry*
+- [ ] **E)** Levar o lixo fora $
+ightarrow$ *Cleaning out the trash*
 
 <details>
 <summary><b>💡 Clique aqui para ver a Resposta e Explicação</b></summary>
 
-> 🟢 **Resposta Correta:** **B) Levar o cachorro para passear $ightarrow$ Walking the dog**
+> 🟢 **Resposta Correta:** **B) Levar o cachorro para passear $
+ightarrow$ Walking the dog**
 >
 > 📝 **Explicação detalhada:**
 > - *Walk the dog* é a expressão correta ("passear com o cão").
@@ -701,9 +732,12 @@ Qual das alternativas preenche **todas as 3 lacunas** da frase abaixo com perfei
 > 🟢 **Resposta Correta:** **B) am listening / are writing / is walking**
 >
 > 📝 **Explicação detalhada:**
-> - **Lacuna 1:** Sujeito *I* $ightarrow$ **am listening**.
-> - **Lacuna 2:** Sujeito *my classmates* (meus colegas = They) $ightarrow$ **are writing** (note que *write* perde o *e*!).
-> - **Lacuna 3:** Sujeito *the principal* (o diretor = He/She) $ightarrow$ **is walking**.
+> - **Lacuna 1:** Sujeito *I* $
+ightarrow$ **am listening**.
+> - **Lacuna 2:** Sujeito *my classmates* (meus colegas = They) $
+ightarrow$ **are writing** (note que *write* perde o *e*!).
+> - **Lacuna 3:** Sujeito *the principal* (o diretor = He/She) $
+ightarrow$ **is walking**.
 </details>
 
 ---
