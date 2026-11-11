@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Interativo de Inglês — Present Continuous (para o Nicolas)</title>
+    <style>
+        :root {
+            --primary-color: #4A90E2;
+            --primary-hover: #357ABD;
+            --bg-color: #F4F7F6;
+            --card-bg: #FFFFFF;
+            --text-color: #2C3E50;
+            --accent-color: #FF9F43;
+            --correct-color: #2ECC71;
+            --correct-bg: #E8F8F5;
+            --wrong-color: #E74C3C;
+            --wrong-bg: #FDEDEC;
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 750px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 15px;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 1rem;
+            color: #7F8C8D;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background-color: #E0E0E0;
+            height: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            transition: width 0.3s ease;
+        }
+
+        .quiz-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .question-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background-color: #F8F9FA;
+            border: 2px solid #E9ECEF;
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 1rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            color: var(--text-color);
+        }
+
+        .option-btn:hover:not([disabled]) {
+            border-color: var(--primary-color);
+            background-color: #EBF3FA;
+            transform: translateY(-2px);
+        }
+
+        .option-btn.selected-correct {
+            background-color: var(--correct-bg);
+            border-color: var(--correct-color);
+            color: #196F3D;
+            font-weight: bold;
+        }
+
+        .option-btn.selected-wrong {
+            background-color: var(--wrong-bg);
+            border-color: var(--wrong-color);
+            color: #943126;
+            font-weight: bold;
+        }
+
+        .option-btn[disabled] {
+            cursor: default;
+        }
+
+        .feedback-box {
+            display: none;
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .feedback-box.correct {
+            background-color: var(--correct-bg);
+            border-left: 6px solid var(--correct-color);
+            color: #196F3D;
+        }
+
+        .feedback-box.wrong {
+            background-color: var(--wrong-bg);
+            border-left: 6px solid var(--wrong-color);
+            color: #943126;
+        }
+
+        .feedback-box h4 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feedback-box p {
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .action-container {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .next-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.1s ease;
+            display: none;
+        }
+
+        .next-btn:hover {
+            background-color: var(--primary-hover);
+            transform: scale(1.03);
+        }
+
+        .results-screen {
+            text-align: center;
+            display: none;
+            padding: 20px 10px;
+        }
+
+        .results-screen h2 {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .score-badge {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin: 20px 0;
+        }
+
+        .restart-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .restart-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div class="header">
+        <h1>📚 Quiz: Present Continuous</h1>
+        <p>Especial para o aluno <strong>Nicolas</strong> (6º Ano)</p>
+    </div>
+
+    <div id="quiz-body">
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <div class="quiz-stats">
+            <span id="question-number">Questão 1 de 30</span>
+            <span id="score-counter">Pontuação: 0</span>
+        </div>
+
+        <div class="question-title" id="question-text">Carregando pergunta...</div>
+
+        <div class="options-container" id="options-container"></div>
+
+        <div class="feedback-box" id="feedback-box">
+            <h4 id="feedback-title"></h4>
+            <p id="feedback-text"></p>
+        </div>
+
+        <div class="action-container">
+            <button class="next-btn" id="next-btn" onclick="nextQuestion()">Próxima Questão ➡️</button>
+        </div>
+    </div>
+
+    <div class="results-screen" id="results-screen">
+        <h2>🎉 Quiz Concluído!</h2>
+        <p>Excelente trabalho nos estudos, Nicolas!</p>
+        <div class="score-badge" id="final-score">0 / 30</div>
+        <p id="final-message"></p>
+        <button class="restart-btn" onclick="restartQuiz()">🔄 Tentar Novamente</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        {
+            q: "1. Qual é a função principal do tempo verbal Present Continuous (ou Present Progressive)?",
+            options: [
+                "Falar de hábitos passados da infância.",
+                "Descrever ações que estão acontecendo exatamente agora, neste momento.",
+                "Falar sobre planos para o ano que vem.",
+                "Descrever verdades universais e fatos científicos.",
+                "Dar ordens e instruções de receitas."
+            ],
+            answer: 1,
+            explanation: "O Present Continuous serve para falar de ações em andamento no momento em que se fala (right now)."
+        },
+        {
+            q: "2. Qual é a estrutura correta para formar uma frase no Present Continuous?",
+            options: [
+                "Sujeito + Verbo com -ed.",
+                "Sujeito + Verbo to be (am/is/are) + Verbo principal com -ing.",
+                "Sujeito + Will + Verbo principal.",
+                "Sujeito + Do/Does + Verbo principal.",
+                "Apenas o verbo principal com -ing."
+            ],
+            answer: 1,
+            explanation: "A fórmula mágica do Present Continuous é: Sujeito + Verbo to be + Verbo com -ing (ex: I am studying)."
+        },
+        {
+            q: "3. Qual é a forma correta do verbo to be para o pronome 'I' (Eu)?",
+            options: ["is", "are", "am", "be", "are not"],
+            answer: 2,
+            explanation: "Com o pronome I, sempre usamos a forma am (I am...)."
+        },
+        {
+            q: "4. Quais pronomes usam a forma 'is' do verbo to be?",
+            options: ["You, We, They", "I, You, We", "He, She, It", "They, He, You", "I, He, They"],
+            answer: 2,
+            explanation: "Os pronomes de 3ª pessoa do singular (He, She, It) usam o verbo is."
+        },
+        {
+            q: "5. Nicolas quer dizer: 'Eles estão jogando videogame agora.' Como fica essa frase em inglês?",
+            options: [
+                "They is playing video games now.",
+                "They am playing video games now.",
+                "They are playing video games now.",
+                "They play video games now.",
+                "They are play video games now."
+            ],
+            answer: 2,
+            explanation: "Para o pronome They (Eles), usamos a forma are + verbo com -ing (are playing)."
+        },
+        {
+            q: "6. Qual é a regra geral para a maioria dos verbos ao passar para o Present Continuous?",
+            options: [
+                "Dobrar a última letra e colocar -ed.",
+                "Adicionar apenas o sufixo -ing ao final do verbo.",
+                "Retirar a primeira letra do verbo.",
+                "Adicionar -s ou -es no final.",
+                "Trocar a palavra inteira."
+            ],
+            answer: 1,
+            explanation: "Na regra geral em inglês, basta acrescentar -ing ao final do verbo (walk -> walking, read -> reading)."
+        },
+        {
+            q: "7. O que acontece com verbos terminados em -e mudo (como make, write, take)?",
+            options: [
+                "Mantém o -e e acrescenta -ing.",
+                "Remove o -e e acrescenta -ing.",
+                "Dobra a letra -e e acrescenta -ing.",
+                "Troca o -e por -y e acrescenta -ing.",
+                "Não sofre nenhuma alteração."
+            ],
+            answer: 1,
+            explanation: "Verbos terminados em -e mudo perdem essa letra antes de receber o -ing (make -> making, write -> writing)."
+        },
+        {
+            q: "8. Como fica a grafia correta do verbo 'make' no Present Continuous?",
+            options: ["makeing", "makking", "making", "makesing", "makey"],
+            answer: 2,
+            explanation: "Remove-se a letra 'e' final e adiciona-se -ing: make -> making."
+        },
+        {
+            q: "9. O que manda a regra do CVC (Consoante-Vogal-Consoante) em verbos de 1 sílaba?",
+            options: [
+                "Remove todas as vogais antes do -ing.",
+                "Dobra a última consoante e acrescenta -ing.",
+                "Adiciona a letra -z no final.",
+                "Não altera nada na palavra.",
+                "Troca a vogal por -y."
+            ],
+            answer: 1,
+            explanation: "Em verbos curtos de 1 sílaba terminados em CVC, dobramos a última consoante antes de colocar -ing (run -> running)."
+        },
+        {
+            q: "10. Como fica a grafia do verbo 'swim' (nadar) no Present Continuous?",
+            options: ["swiming", "swimming", "swimeing", "swimmy", "swimm"],
+            answer: 1,
+            explanation: "Swim tem 1 sílaba e final CVC (s-w-i-m). Dobra-se o 'm' -> swimming."
+        },
+        {
+            q: "11. Qual das alternativas apresenta uma EXCEÇÃO à regra do CVC (verbos terminados em -w ou -x)?",
+            options: ["run -> running", "sit -> sitting", "mix -> mixing", "stop -> stopping", "cut -> cutting"],
+            answer: 2,
+            explanation: "Verbos terminados em -w ou -x NÃO dobram a consoante! Mix vira mixing com apenas um 'x'."
+        },
+        {
+            q: "12. O que acontece com verbos terminados em -ie (como die ou lie)?",
+            options: [
+                "Adiciona-se -ing diretamente (dieing).",
+                "Troca-se o -ie por -y e adiciona-se -ing (dying).",
+                "Remove-se apenas o -e (diing).",
+                "Dobra-se o -e (dieeing).",
+                "O verbo não aceita -ing."
+            ],
+            answer: 1,
+            explanation: "Troca-se a terminação -ie por 'y' e acrescenta-se -ing: die -> dying."
+        },
+        {
+            q: "13. Qual é a forma negativa correta da frase: 'She is reading a book.'?",
+            options: [
+                "She not reading a book.",
+                "She is not reading a book. (ou She isn't...)",
+                "She don't reading a book.",
+                "She isn't read a book.",
+                "She are not reading a book."
+            ],
+            answer: 1,
+            explanation: "Para negar no Present Continuous, acrescenta-se not após o verbo to be (is not / isn't)."
+        },
+        {
+            q: "14. Como fica a forma contraída da negação 'are not'?",
+            options: ["isn't", "'m not", "aren't", "don't", "haven't"],
+            answer: 2,
+            explanation: "A fusão de 'are' + 'not' forma a contração aren't."
+        },
+        {
+            q: "15. Nicolas está ajudando em casa e dizendo: 'Eu estou arrumando minha cama.' Em inglês:",
+            options: [
+                "I am doing the laundry.",
+                "I am taking out the trash.",
+                "I am making the bed.",
+                "I am washing the dishes.",
+                "I am tidying up the kitchen."
+            ],
+            answer: 2,
+            explanation: "Arrumar a cama em inglês é a expressão 'making the bed'."
+        },
+        {
+            q: "16. O que significa a expressão do vocabulário 'taking out the trash'?",
+            options: [
+                "Lavar a louça do almoço.",
+                "Tirar o lixo para fora.",
+                "Arrumar o quarto.",
+                "Lavar as roupas na máquina.",
+                "Passear com o cachorro."
+            ],
+            answer: 1,
+            explanation: "Take out the trash significa levar/tirar o lixo para fora."
+        },
+        {
+            q: "17. Se a mãe do Nicolas está lavando as roupas, ela está:",
+            options: [
+                "doing the laundry.",
+                "making the bed.",
+                "taking out the trash.",
+                "tidying up the garden.",
+                "cooking dinner."
+            ],
+            answer: 0,
+            explanation: "Doing the laundry é a expressão em inglês usada para lavar roupas."
+        },
+        {
+            q: "18. Qual frase significa 'Nós estamos passando o tempo com nossos amigos no parque'?",
+            options: [
+                "We are doing the homework at the park.",
+                "We are hanging out with our friends at the park.",
+                "We is playing football at home.",
+                "We are making the bed at the park.",
+                "We aren't hanging out with friends."
+            ],
+            answer: 1,
+            explanation: "Hanging out with friends significa curtir/passar o tempo com os amigos."
+        },
+        {
+            q: "19. Analise a frase: 'Look! It _____ raining heavily right now.' Qual opção preenche corretamente?",
+            options: ["am", "is", "are", "be", "isn't not"],
+            answer: 1,
+            explanation: "O sujeito It exige a forma is do verbo to be -> It is raining."
+        },
+        {
+            q: "20. Qual das frases abaixo está escrita com a ortografia INCORRETA do -ing?",
+            options: [
+                "He is running in the park.",
+                "She is danceing in her bedroom.",
+                "They are listening to music.",
+                "I am studying English.",
+                "We are cooking dinner."
+            ],
+            answer: 1,
+            explanation: "Danceing está incorreto! Como dance termina com -e mudo, o correto é dancing (sem a letra e)."
+        },
+        {
+            q: "21. Nicolas e seu amigo Pedro estão estudando. Qual verbo to be usar para 'Nicolas and Pedro'?",
+            options: ["He / is", "They / are", "We / am", "You / is", "It / is"],
+            answer: 1,
+            explanation: "'Nicolas e Pedro' equivale ao pronome plural They (Eles), por isso usa-se are."
+        },
+        {
+            q: "22. Como transformar a frase 'You are watching TV.' em uma pergunta?",
+            options: [
+                "You are watching TV?",
+                "Are you watching TV?",
+                "Do you watching TV?",
+                "Is you watching TV?",
+                "Watching you TV?"
+            ],
+            answer: 1,
+            explanation: "Para fazer perguntas, o verbo to be muda de lugar e passa para a frente do sujeito (Are you...?)."
+        },
+        {
+            q: "23. Responda à pergunta: 'Is she doing her homework?' (Sim, ela está).",
+            options: ["Yes, he is.", "Yes, she are.", "Yes, she is.", "Yes, I am.", "Yes, she does."],
+            answer: 2,
+            explanation: "A resposta curta afirmativa para 'Is she...?' é 'Yes, she is.'"
+        },
+        {
+            q: "24. Responda à pergunta: 'Are they playing soccer?' (Não, eles não estão).",
+            options: ["No, they aren't.", "No, they isn't.", "No, he isn't.", "No, they don't.", "No, we aren't."],
+            answer: 0,
+            explanation: "A resposta curta negativa para 'Are they...?' é 'No, they aren't.'"
+        },
+        {
+            q: "25. O que a expressão 'tidying up' significa no vocabulário do livro?",
+            options: [
+                "Cozinhar o jantar.",
+                "Arrumar / Organizar (o quarto ou casa).",
+                "Lavar a louça.",
+                "Tirar o lixo.",
+                "Fazer dever de casa."
+            ],
+            answer: 1,
+            explanation: "Tidying up significa organizar, dar uma geral na bagunça."
+        },
+        {
+            q: "26. Qual é a forma correta do verbo 'get' no Present Continuous?",
+            options: ["geting", "getting", "getteing", "gting", "getsing"],
+            answer: 1,
+            explanation: "Get tem 1 sílaba com estrutura CVC (g-e-t). Dobra-se o 't' -> getting."
+        },
+        {
+            q: "27. Qual é a forma correta do verbo 'fix' (consertar) no Present Continuous?",
+            options: ["fixing", "fixingg", "fixxing", "fixeing", "fyxing"],
+            answer: 0,
+            explanation: "Lembre-se da exceção! Verbos terminados na letra 'x' não dobram consoante -> fixing."
+        },
+        {
+            q: "28. É 12:00 PM (almoço). Nicolas diz: 'It is 12:00 PM. We _____ lunch right now.'",
+            options: ["are having", "is having", "am haveing", "are haveing", "is eat"],
+            answer: 0,
+            explanation: "Com We usava-se are. O verbo have perde o -e mudo e vira having (are having)."
+        },
+        {
+            q: "29. Qual a diferença entre o Present Simple e o Present Continuous?",
+            options: [
+                "O Simple fala do futuro; o Continuous do passado.",
+                "O Simple fala de rotinas/hábitos; o Continuous de ações acontecendo AGORA.",
+                "Não há nenhuma diferença.",
+                "O Present Continuous não usa verbos.",
+                "O Present Simple usa sempre -ing."
+            ],
+            answer: 1,
+            explanation: "Present Simple = Hábitos do dia a dia. Present Continuous = O que ocorre neste momento (right now)."
+        },
+        {
+            q: "30. Qual frase resume com perfeição o aprendizado do Nicolas no Present Continuous?",
+            options: [
+                "I am learning English right now and doing a great job!",
+                "I is learn English yesterday.",
+                "I learning English tomorrow.",
+                "I am learn English every day.",
+                "I are learning English right now."
+            ],
+            answer: 0,
+            explanation: "Frase perfeita! Sujeito I + am + verbo learning + complemento e indicação de tempo right now."
+        }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    function loadQuestion() {
+        const q = questions[currentQuestion];
+        document.getElementById("question-number").innerText = `Questão ${currentQuestion + 1} de ${questions.length}`;
+        document.getElementById("score-counter").innerText = `Pontuação: ${score}`;
+        document.getElementById("question-text").innerText = q.q;
+
+        const optionsContainer = document.getElementById("options-container");
+        optionsContainer.innerHTML = "";
+
+        const feedbackBox = document.getElementById("feedback-box");
+        feedbackBox.style.display = "none";
+        document.getElementById("next-btn").style.display = "none";
+
+        const progressPercent = ((currentQuestion) / questions.length) * 100;
+        document.getElementById("progress-bar").style.width = `${progressPercent}%`;
+
+        q.options.forEach((opt, idx) => {
+            const btn = document.createElement("button");
+            btn.className = "option-btn";
+            btn.innerHTML = `<strong>${String.fromCharCode(65 + idx)})</strong>&nbsp;${opt}`;
+            btn.onclick = () => checkAnswer(idx);
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selectedIdx) {
+        const q = questions[currentQuestion];
+        const buttons = document.querySelectorAll(".option-btn");
+
+        buttons.forEach(btn => btn.disabled = true);
+
+        const feedbackBox = document.getElementById("feedback-box");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackText = document.getElementById("feedback-text");
+
+        if (selectedIdx === q.answer) {
+            score++;
+            buttons[selectedIdx].classList.add("selected-correct");
+            feedbackBox.className = "feedback-box correct";
+            feedbackTitle.innerHTML = "🎉 Parabéns, Nicolas! Você acertou!";
+        } else {
+            buttons[selectedIdx].classList.add("selected-wrong");
+            buttons[q.answer].classList.add("selected-correct");
+            feedbackBox.className = "feedback-box wrong";
+            feedbackTitle.innerHTML = `❌ Ops! A resposta certa é a alternativa ${String.fromCharCode(65 + q.answer)}`;
+        }
+
+        feedbackText.innerText = q.explanation;
+        feedbackBox.style.display = "block";
+        document.getElementById("next-btn").style.display = "inline-block";
+        document.getElementById("score-counter").innerText = `Pontuação: ${score}`;
+    }
+
+    function nextQuestion() {
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        document.getElementById("quiz-body").style.display = "none";
+        const resultsScreen = document.getElementById("results-screen");
+        resultsScreen.style.display = "block";
+
+        document.getElementById("final-score").innerText = `${score} / ${questions.length}`;
+
+        const percentage = (score / questions.length) * 100;
+        let message = "";
+
+        if (percentage >= 90) {
+            message = "🌟 Incrível, Nicolas! Você dominou o Present Continuous como um verdadeiro expert!";
+        } else if (percentage >= 70) {
+            message = "👏 Muito bem, Nicolas! Seu desempenho foi ótimo!";
+        } else {
+            message = "💪 Bom esforço! Vale a pena dar mais uma revisada nas regras para tirar nota 10!";
+        }
+
+        document.getElementById("final-message").innerText = message;
+    }
+
+    function restartQuiz() {
+        currentQuestion = 0;
+        score = 0;
+        document.getElementById("results-screen").style.display = "none";
+        document.getElementById("quiz-body").style.display = "block";
+        loadQuestion();
+    }
+
+    // Inicializa o quiz na primeira pergunta
+    loadQuestion();
+</script>
+</body>
+</html>
